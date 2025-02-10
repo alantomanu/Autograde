@@ -1,7 +1,6 @@
 "use client"
 import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button} from "@heroui/react";
-import { useState, useEffect } from 'react';
-import './Navbar.css';
+import { ModeToggle } from "@/components/ui/ModeToggle";
 
 export const AcmeLogo = () => {
   return (
@@ -17,18 +16,8 @@ export const AcmeLogo = () => {
 };
 
 export default function App() {
-  const [isDarkMode, setIsDarkMode] = useState(true);
-
-  const toggleTheme = () => {
-    setIsDarkMode(prevMode => !prevMode);
-  };
-
-  useEffect(() => {
-    document.body.classList.toggle('dark-mode', isDarkMode);
-  }, [isDarkMode]);
-
   return (
-    <Navbar shouldHideOnScroll style={{ backgroundColor: isDarkMode ? 'black' : 'white', transition: 'background-color 0.3s ease' }}>
+    <Navbar shouldHideOnScroll >
       <NavbarBrand>
         <AcmeLogo />
         <p className="font-bold text-inherit">AutoGrade</p>
@@ -60,12 +49,7 @@ export default function App() {
           </Button>
         </NavbarItem>
         <NavbarItem>
-          <Button 
-            onClick={toggleTheme} 
-            className={`transition-colors duration-300`}
-          >
-            {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-          </Button>
+          <ModeToggle />
         </NavbarItem>
       </NavbarContent>
     </Navbar>
