@@ -1,0 +1,40 @@
+/* autograde/components/ui/DarkBanner.css */
+.banner {
+  padding: 20px;
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  cursor: pointer; /* Change cursor to pointer for clickability */
+}
+
+.banner.light {
+  background-color: #f0f0f0; /* Light background */
+  color: #000; /* Dark text */
+}
+
+.banner.dark {
+  background-color: #1a1a1a; /* Dark background */
+  color: #ffffff; /* White text */
+}
+
+.banner h1 {
+  font-size: 2rem;
+  margin: 0;
+}
+
+.banner p {
+  font-size: 1.2rem;
+  margin: 10px 0;
+}
+
+.features {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.features span {
+  font-size: 1rem;
+  color: #007bff; /* Blue color for feature text */
+}

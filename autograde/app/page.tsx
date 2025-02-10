@@ -1,8 +1,14 @@
+import DarkBanner from "@/components/ui/Banner";
+import EvaluationSection from "@/components/ui/Why-autograde";
 
-export default function Home() {
+const HomePage: React.FC = () => {
   return (
-   <div>
-    hi
+    <div>
+      <DarkBanner />
+      <EvaluationSection />
+      {/* Other components */}
     </div>
   );
-}
+};
+
+export default HomePage;
