@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider"; // Import the Theme
 import { Inter } from "next/font/google"; // Import the Inter font
 import { Manrope } from "next/font/google"; // Import the Manrope font
 import { Poppins } from "next/font/google"; // Import the Poppins font
-
+import Footer from "@/components/ui/Footer";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -57,9 +57,13 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <NavbarComponent />  {/* Navbar will appear on every page */}
-            <main>{children}</main>
+            <main className="pb-16">
+              {children}
+            </main>
           </ThemeProvider>
+          <Footer />
         </body>
+        
       </html>
     </>
   );
