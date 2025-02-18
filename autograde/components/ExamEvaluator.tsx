@@ -6,6 +6,7 @@ import { Input } from './ui/input'
 import { Checkbox } from './ui/checkbox'
 import { Card } from './ui/card'
 import { Progress } from './ui/progress'
+import { FileUpload } from './ui/file-upload'
 
 const steps = [
   'Enter Student ID',
@@ -33,6 +34,16 @@ export default function ExamEvaluator() {
     console.log('Submitting data...')
   }
 
+  const handleAnswerSheetUpload = (file: File) => {
+    // Handle the uploaded file
+    console.log('Answer sheet uploaded:', file)
+  }
+
+  const handleAnswerKeyUpload = (file: File) => {
+    // Handle the uploaded file
+    console.log('Answer key uploaded:', file)
+  }
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
@@ -50,14 +61,10 @@ export default function ExamEvaluator() {
 
       case 1:
         return (
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Upload Answer Sheet (PDF)</h2>
-            <Card className="border-dashed border-2 p-8 text-center">
-              <p className="text-gray-500">
-                Drag and drop a PDF file here, or click to select a file
-              </p>
-            </Card>
-          </div>
+          <FileUpload
+            label=""
+            onFileUpload={handleAnswerSheetUpload}
+          />
         )
 
       case 2:
@@ -80,14 +87,10 @@ export default function ExamEvaluator() {
 
       case 3:
         return (
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Upload Answer Key (PDF)</h2>
-            <Card className="border-dashed border-2 p-8 text-center">
-              <p className="text-gray-500">
-                Drag and drop a PDF file here, or click to select a file
-              </p>
-            </Card>
-          </div>
+          <FileUpload
+            label=""
+            onFileUpload={handleAnswerKeyUpload}
+          />
         )
 
       case 4:

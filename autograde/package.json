@@ -20,7 +20,7 @@
     "@tabler/icons-react": "^3.30.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "framer-motion": "^12.4.3",
+    "framer-motion": "^12.4.4",
     "lucide-react": "^0.475.0",
     "motion": "^12.4.1",
     "next": "15.1.6",
