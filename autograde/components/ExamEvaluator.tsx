@@ -13,6 +13,7 @@ const steps = [
   'Upload Answer Sheet',
   'Review Answer Key',
   'Upload Answer Key',
+  'View Scores',
   'Submit'
 ]
 
@@ -49,13 +50,13 @@ export default function ExamEvaluator() {
       case 0:
         return (
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Student ID</h2>
+            <h1 className="text-2xl font-semibold">Student ID</h1>
             <Input
               placeholder="Enter Student ID"
               value={studentId}
               onChange={(e) => setStudentId(e.target.value)}
             />
-            <Button onClick={handleNext}>Continue</Button>
+            
           </div>
         )
 
@@ -70,7 +71,7 @@ export default function ExamEvaluator() {
       case 2:
         return (
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Answer Key Preview</h2>
+            <h2 className="text-2xl font-semibold">Answer Key Preview</h2>
             <Card className="p-4">
               <p className="text-gray-600">Answer key content will be displayed here...</p>
             </Card>
@@ -92,11 +93,28 @@ export default function ExamEvaluator() {
             onFileUpload={handleAnswerKeyUpload}
           />
         )
-
-      case 4:
+        case 4: // View Scores
         return (
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Class Name</h2>
+            <h1 className="text-2xl font-semibold">View Scores</h1>
+            <Card className="p-4">
+              <p className="text-gray-600">Here are the scores for each question:</p>
+              <ul className="list-disc pl-5">
+                {/* Example scores, replace with actual data */}
+                <li>Question 1: 5/5</li>
+                <li>Question 2: 4/5</li>
+                <li>Question 3: 3/5</li>
+                <li>Question 4: 5/5</li>
+                <li>Question 5: 2/5</li>
+              </ul>
+            </Card>
+          </div>
+        );
+  
+      case 5:
+        return (
+          <div className="space-y-4">
+            <h2 className="text-2xl font-semibold">Class Name</h2>
             <Input
               placeholder="Enter Class Name"
               value={className}
