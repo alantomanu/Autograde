@@ -22,6 +22,15 @@ export default function ExamEvaluator() {
   const [studentId, setStudentId] = useState('')
   const [className, setClassName] = useState('')
 
+  // Handlers for file uploads
+  const handleAnswerSheetUpload = (cloudinaryUrl: string) => {
+    console.log("Uploaded Answer Sheet URL:", cloudinaryUrl);
+  };
+
+  const handleAnswerKeyUpload = (cloudinaryUrl: string) => {
+    console.log("Uploaded Answer Key URL:", cloudinaryUrl);
+  };
+
   const handleNext = () => {
     setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1))
   }
@@ -31,18 +40,7 @@ export default function ExamEvaluator() {
   }
 
   const handleSubmit = () => {
-    // Handle final submission
     console.log('Submitting data...')
-  }
-
-  const handleAnswerSheetUpload = (file: File) => {
-    // Handle the uploaded file
-    console.log('Answer sheet uploaded:', file)
-  }
-
-  const handleAnswerKeyUpload = (file: File) => {
-    // Handle the uploaded file
-    console.log('Answer key uploaded:', file)
   }
 
   const renderStepContent = () => {
@@ -56,17 +54,11 @@ export default function ExamEvaluator() {
               value={studentId}
               onChange={(e) => setStudentId(e.target.value)}
             />
-            
           </div>
         )
 
       case 1:
-        return (
-          <FileUpload
-            label=""
-            onFileUpload={handleAnswerSheetUpload}
-          />
-        )
+        return <FileUpload label="Answer Sheet" onFileUpload={handleAnswerSheetUpload} />
 
       case 2:
         return (
@@ -87,20 +79,15 @@ export default function ExamEvaluator() {
         )
 
       case 3:
-        return (
-          <FileUpload
-            label=""
-            onFileUpload={handleAnswerKeyUpload}
-          />
-        )
-        case 4: // View Scores
+        return <FileUpload label="Answer Key" onFileUpload={handleAnswerKeyUpload} />
+
+      case 4:
         return (
           <div className="space-y-4">
             <h1 className="text-2xl font-semibold">View Scores</h1>
             <Card className="p-4">
               <p className="text-gray-600">Here are the scores for each question:</p>
               <ul className="list-disc pl-5">
-                {/* Example scores, replace with actual data */}
                 <li>Question 1: 5/5</li>
                 <li>Question 2: 4/5</li>
                 <li>Question 3: 3/5</li>
@@ -109,8 +96,8 @@ export default function ExamEvaluator() {
               </ul>
             </Card>
           </div>
-        );
-  
+        )
+
       case 5:
         return (
           <div className="space-y-4">
@@ -124,7 +111,9 @@ export default function ExamEvaluator() {
               <Checkbox id="continueClass" />
               <label htmlFor="continueClass">Continue uploading to this class</label>
             </div>
-            <Button variant="default">Submit Data to Database</Button>
+            <Button variant="default" onClick={handleSubmit}>
+              Submit Data to Database
+            </Button>
           </div>
         )
 
@@ -135,9 +124,6 @@ export default function ExamEvaluator() {
 
   return (
     <div className="max-w-3xl mx-auto p-6 dark:bg-black light:bg-white">
-      
-      
-      {/* Progress Steps */}
       <div className="mb-8">
         <div className="flex justify-between mb-2">
           {steps.map((step, index) => (
@@ -152,11 +138,9 @@ export default function ExamEvaluator() {
         <Progress value={(currentStep / (steps.length - 1)) * 100} />
       </div>
 
-      {/* Step Content */}
       <Card className="p-6 bg-white dark:bg-gray-800">
         {renderStepContent()}
-        
-        {/* Navigation Buttons */}
+
         <div className="flex justify-between mt-6">
           <Button
             variant="secondary"
