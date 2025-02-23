@@ -16,24 +16,47 @@ const secondaryVariant = {
 };
 
 interface FileUploadProps {
-  onFileUpload: (url: string) => void;
+  onFileUpload: (url: string, file: File) => void;
   label: string;
   className?: string;
+  folderName: string;
+  existingFile?: {
+    url: string;
+    name: string;
+    size: number;
+    type: string;
+    lastModified: number;
+  } | null;
 }
 
-export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, label, className }) => {
-  const [files, setFiles] = useState<File[]>([]);
+export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, label, className, folderName, existingFile }) => {
+  const [files, setFiles] = useState<File[]>(() => {
+    if (existingFile) {
+      // Create a File object from the existing file data
+      return [new File([], existingFile.name, {
+        type: existingFile.type,
+        lastModified: existingFile.lastModified
+      })];
+    }
+    return [];
+  });
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const uploadToCloudinary = async (file: File) => {
+    if (existingFile) {
+      setFiles([file]);
+      onFileUpload(existingFile.url, file);
+      return;
+    }
+
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "Answerpaper");
-    formData.append("folder", "Autograde");
-    formData.append("resource_type", "raw"); // Set resource type to raw
-  
+    formData.append("upload_preset", `${folderName}`);
+    formData.append("folder", `${folderName}`);
+    formData.append("resource_type", "raw");
+    
     setUploading(true);
     setUploadProgress(0);
   
@@ -55,7 +78,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, label, cla
           console.log("Cloudinary Response:", response);
           if (response.secure_url) {
             setUploadProgress(100);
-            onFileUpload(response.secure_url);
+            onFileUpload(response.secure_url, file);
             setFiles([file]);
           }
         } else {

@@ -17,14 +17,29 @@ const steps = [
   'Submit'
 ]
 
+interface UploadedFile {
+  url: string;
+  name: string;
+  size: number;
+  type: string;
+  lastModified: number;
+}
+
 export default function ExamEvaluator() {
   const [currentStep, setCurrentStep] = useState(0)
   const [studentId, setStudentId] = useState('')
   const [className, setClassName] = useState('')
+  const [uploadedAnswerSheet, setUploadedAnswerSheet] = useState<UploadedFile | null>(null);
 
   // Handlers for file uploads
-  const handleAnswerSheetUpload = (cloudinaryUrl: string) => {
-    console.log("Uploaded Answer Sheet URL:", cloudinaryUrl);
+  const handleAnswerSheetUpload = (url: string, file: File) => {
+    setUploadedAnswerSheet({
+      url,
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified
+    });
   };
 
   const handleAnswerKeyUpload = (cloudinaryUrl: string) => {
@@ -58,7 +73,15 @@ export default function ExamEvaluator() {
         )
 
       case 1:
-        return <FileUpload label="Answer Sheet" onFileUpload={handleAnswerSheetUpload} />
+        return (
+          <FileUpload 
+            label="Answer Sheet" 
+            onFileUpload={handleAnswerSheetUpload}
+            existingFile={uploadedAnswerSheet}
+            folderName="answer_sheets"
+            className="w-full max-w-4xl mx-auto min-h-96 border border-dashed bg-white dark:bg-black border-neutral-200 dark:border-neutral-800 rounded-lg"
+          />
+        )
 
       case 2:
         return (
@@ -79,7 +102,13 @@ export default function ExamEvaluator() {
         )
 
       case 3:
-        return <FileUpload label="Answer Key" onFileUpload={handleAnswerKeyUpload} />
+        return (
+          <FileUpload 
+            label="Answer Key" 
+            onFileUpload={handleAnswerKeyUpload}
+            folderName="answer_keys"
+          />
+        )
 
       case 4:
         return (
