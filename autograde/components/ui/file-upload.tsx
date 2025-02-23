@@ -32,35 +32,46 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, label, cla
     formData.append("file", file);
     formData.append("upload_preset", "Answerpaper");
     formData.append("folder", "Autograde");
+    formData.append("resource_type", "raw"); // Set resource type to raw
   
     setUploading(true);
     setUploadProgress(0);
   
     try {
-      const progressInterval = setInterval(() => {
-        setUploadProgress((prev) => {
-          const next = prev + 10;
-          return next > 100 ? 100 : next;
-        });
-      }, 500);
+      // ✅ Use XMLHttpRequest (XHR) for upload progress tracking
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "https://api.cloudinary.com/v1_1/dfivs4n49/raw/upload", true);
 
-      const response = await fetch("https://api.cloudinary.com/v1_1/dfivs4n49/image/upload", {
-        method: "POST",
-        body: formData,
-      });
-  
-      const data = JSON.parse(await response.text());
-  
-      clearInterval(progressInterval);
-      
-      if (data.secure_url) {
-        setUploadProgress(100);
-        onFileUpload(data.secure_url);
-        setFiles([file]);
-      }
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percentComplete = Math.round((event.loaded / event.total) * 100);
+          setUploadProgress(percentComplete);
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          const response = JSON.parse(xhr.responseText);
+          console.log("Cloudinary Response:", response);
+          if (response.secure_url) {
+            setUploadProgress(100);
+            onFileUpload(response.secure_url);
+            setFiles([file]);
+          }
+        } else {
+          console.error("Cloudinary Upload Error:", xhr.statusText);
+        }
+        setUploading(false);
+      };
+
+      xhr.onerror = () => {
+        console.error("Cloudinary Upload Failed");
+        setUploading(false);
+      };
+
+      xhr.send(formData);
     } catch (error) {
       console.error("Cloudinary Upload Error:", error);
-    } finally {
       setUploading(false);
     }
   };
