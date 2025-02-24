@@ -74,13 +74,26 @@ export default function ExamEvaluator() {
 
       case 1:
         return (
-          <FileUpload 
-            label="Answer Sheet" 
-            onFileUpload={handleAnswerSheetUpload}
-            existingFile={uploadedAnswerSheet}
-            folderName="answer_sheets"
-            className="w-full max-w-4xl mx-auto min-h-96 border border-dashed bg-white dark:bg-black border-neutral-200 dark:border-neutral-800 rounded-lg"
-          />
+          <div className="space-y-4">
+            <FileUpload 
+              label="Answer Sheet" 
+              onFileUpload={handleAnswerSheetUpload}
+              existingFile={uploadedAnswerSheet}
+              folderName="answer_sheets"
+              className="w-full max-w-4xl mx-auto min-h-96 border border-dashed bg-white dark:bg-black border-neutral-200 dark:border-neutral-800 rounded-lg"
+            />
+            {uploadedAnswerSheet && (
+              <div className="flex justify-end">
+                <Button variant="outline" onClick={() => {
+                  setUploadedAnswerSheet(null);
+                  // Reset the FileUpload component by forcing a remount
+                  setCurrentStep(1);
+                }}>
+                  Upload Another Answer Sheet
+                </Button>
+              </div>
+            )}
+          </div>
         )
 
       case 2:
