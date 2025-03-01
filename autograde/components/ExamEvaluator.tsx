@@ -197,7 +197,10 @@ export default function ExamEvaluator() {
               <div className="flex justify-end">
                 <Button variant="outline" onClick={() => {
                   setUploadedAnswerSheet(null);
-                  // Reset the FileUpload component by forcing a remount
+                  setUploadedAnswerKey(null);
+                  setExtractedText([]);
+                  setIsProcessed(false);
+                  setImageUrl(null);
                   setCurrentStep(1);
                 }}>
                   Upload Another Answer Sheet
