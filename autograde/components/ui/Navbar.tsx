@@ -30,12 +30,12 @@ export default function App() {
         </NavbarItem>
         <NavbarItem isActive>
           <Link aria-current="page" href="#">
-            Customers
+            Evaluator
           </Link>
         </NavbarItem>
         <NavbarItem>
           <Link color="foreground" href="#">
-            Integrations
+            Analytics
           </Link>
         </NavbarItem>
       </NavbarContent>
