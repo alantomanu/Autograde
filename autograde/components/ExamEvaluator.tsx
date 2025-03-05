@@ -2,11 +2,16 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { Button } from './ui/button'
-import { Input } from './ui/input'
-import { Checkbox } from './ui/checkbox'
+
+
 import { Card } from './ui/card'
 import { Progress } from './ui/progress'
-import { FileUpload } from './ui/file-upload'
+import { StudentIDStep } from './StudentIDStep'
+import { AnswerSheetUploadStep } from './AnswerSheetUploadStep'
+import { AnswerSheetPreviewStep } from './AnswerSheetPreviewStep'
+import { AnswerKeyUploadStep } from './AnswerKeyUploadStep'
+import { ViewScoresStep } from './ViewScoresStep'
+import { ClassNameStep } from './ClassNameStep'
 
 
 const steps = [
@@ -75,7 +80,6 @@ export default function ExamEvaluator() {
       }
 
       // Second API call - Process Image
-      // Use the currentImageUrl from first API response or existing imageUrl for reprocessing
       const imageUrlToProcess = currentImageUrl || imageUrl;
       if (imageUrlToProcess) {
         console.log('Starting second API call - Process Image');
@@ -126,7 +130,7 @@ export default function ExamEvaluator() {
       name: file.name,
       size: file.size,
       type: file.type,
-      lastModified: file.lastModified
+      lastModified: file.lastModified,
     });
   };
 
@@ -172,156 +176,50 @@ export default function ExamEvaluator() {
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
-        return (
-          <div className="space-y-4">
-            <h1 className="text-2xl font-semibold">Student ID</h1>
-            <Input
-              placeholder="Enter Student ID"
-              value={studentId}
-              onChange={(e) => setStudentId(e.target.value)}
-            />
-          </div>
-        )
-
+        return <StudentIDStep studentId={studentId} setStudentId={setStudentId} />;
       case 1:
         return (
-          <div className="space-y-4">
-            <FileUpload 
-              label="Answer Sheet" 
-              onFileUpload={handleAnswerSheetUpload}
-              existingFile={uploadedAnswerSheet}
-              folderName="answer_sheets"
-              className="w-full max-w-4xl mx-auto min-h-96 border border-dashed bg-white dark:bg-black border-neutral-200 dark:border-neutral-800 rounded-lg"
-            />
-            {uploadedAnswerSheet && (
-              <div className="flex justify-end">
-                <Button variant="outline" onClick={() => {
-                  setUploadedAnswerSheet(null);
-                  setUploadedAnswerKey(null);
-                  setExtractedText([]);
-                  setIsProcessed(false);
-                  setImageUrl(null);
-                  setCurrentStep(1);
-                }}>
-                  Upload Another Answer Sheet
-                </Button>
-              </div>
-            )}
-          </div>
-        )
-
+          <AnswerSheetUploadStep
+            uploadedAnswerSheet={uploadedAnswerSheet}
+            handleAnswerSheetUpload={handleAnswerSheetUpload}
+            resetUpload={() => {
+              setUploadedAnswerSheet(null);
+              setUploadedAnswerKey(null);
+              setExtractedText([]);
+              setIsProcessed(false);
+              setImageUrl(null);
+              setCurrentStep(1);
+            }}
+          />
+        );
       case 2:
         return (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold">Answer Sheet Preview</h2>
-            
-            {isProcessing ? (
-              <div className="space-y-4">
-                <div className="animate-pulse text-center p-4">
-                  <p className="text-lg font-medium">{processingStep}</p>
-                  <div className="mt-2">
-                    <Progress value={processingStep.includes('Stitching') ? 50 : 75} />
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <Card className="p-4">
-                {extractedText && extractedText.length > 0 ? (
-                  <ul className="list-disc pl-5">
-                    {extractedText.map(({ marginNumber, answer }) => (
-                      <li key={marginNumber}>
-                        <strong>{marginNumber}:</strong> {answer}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-gray-500">No text extracted yet.</p>
-                )}
-              </Card>
-            )}
-
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="continue" 
-                checked={continueChecked}
-                onCheckedChange={(checked) => setContinueChecked(checked as boolean)}
-              />
-              <label htmlFor="continue">Continue with this answer sheet</label>
-            </div>
-            
-            <div className="space-x-4">
-              <Button 
-                variant="outline" 
-                onClick={handleExtractAgain}
-                disabled={isProcessing}
-              >
-                Extract Again
-              </Button>
-            </div>
-          </div>
-        )
-
+          <AnswerSheetPreviewStep
+            isProcessing={isProcessing}
+            processingStep={processingStep}
+            extractedText={extractedText}
+            continueChecked={continueChecked}
+            setContinueChecked={setContinueChecked}
+            handleExtractAgain={handleExtractAgain}
+          />
+        );
       case 3:
         return (
-          <div className="space-y-4">
-            <FileUpload 
-              label="Answer Key" 
-              onFileUpload={handleAnswerKeyUpload}
-              existingFile={uploadedAnswerKey}
-              folderName="answer_keys"
-              className="w-full max-w-4xl mx-auto min-h-96 border border-dashed bg-white dark:bg-black border-neutral-200 dark:border-neutral-800 rounded-lg"
-            />
-            {uploadedAnswerKey && (
-              <div>
-                <div className="flex justify-end">
-                  <Button variant="outline" onClick={() => {
-                    setUploadedAnswerKey(null);
-                    setCurrentStep(3);
-                  }}>
-                    Upload Another Answer Key
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-        )
-
+          <AnswerKeyUploadStep
+            uploadedAnswerKey={uploadedAnswerKey}
+            handleAnswerKeyUpload={handleAnswerKeyUpload}
+            resetUpload={() => {
+              setUploadedAnswerKey(null);
+              setCurrentStep(3);
+            }}
+          />
+        );
       case 4:
-        return (
-          <div className="space-y-4">
-            <h1 className="text-2xl font-semibold">View Scores</h1>
-            <Card className="p-4">
-              <p className="text-gray-600">Here are the scores for each question:</p>
-              <ul className="list-disc pl-5">
-                <li>Question 1: 3/3</li>
-                <li>Question 2: 3/3</li>
-                <li>Question 3: 1/3</li>
-                <li>Question 4: 1.5/3</li>
-                <li>Question 5: 2/3</li>
-              </ul>
-            </Card>
-          </div>
-        )
-
+        return <ViewScoresStep />;
       case 5:
-        return (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold">Class Name</h2>
-            <Input
-              placeholder="Enter Class Name"
-              value={className}
-              onChange={(e) => setClassName(e.target.value)}
-            />
-            <div className="flex items-center space-x-2">
-              <Checkbox id="continueClass" />
-              <label htmlFor="continueClass">Continue uploading to this class</label>
-            </div>
-            
-          </div>
-        )
-
+        return <ClassNameStep className={className} setClassName={setClassName} />;
       default:
-        return null
+        return null;
     }
   }
 
