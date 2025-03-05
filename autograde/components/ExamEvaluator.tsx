@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { Button } from './ui/button'
-
-
 import { Card } from './ui/card'
 import { Progress } from './ui/progress'
 import { StudentIDStep } from './StudentIDStep'
@@ -13,11 +11,10 @@ import { AnswerKeyUploadStep } from './AnswerKeyUploadStep'
 import { ViewScoresStep } from './ViewScoresStep'
 import { ClassNameStep } from './ClassNameStep'
 
-
 const steps = [
   'Enter Student ID',
   'Upload Answer Sheet',
-  'Review Answer Sheet',
+  'Review Answers',
   'Upload Answer Key',
   'View Scores',
   'Submit'
@@ -30,9 +27,6 @@ interface UploadedFile {
   type: string;
   lastModified: number;
 }
-
-  // Add other properties if the API returns additional data
-
 
 export default function ExamEvaluator() {
   const [currentStep, setCurrentStep] = useState(0)
@@ -47,83 +41,70 @@ export default function ExamEvaluator() {
   const [isProcessed, setIsProcessed] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  // Define processAnswerSheet using useCallback
+  /** ✅ RESET FUNCTIONS for Upload Components */
+  const resetAnswerSheetUpload = () => setUploadedAnswerSheet(null);
+  const resetAnswerKeyUpload = () => setUploadedAnswerKey(null);
+
+  /** ✅ API PROCESSING FUNCTION */
   const processAnswerSheet = useCallback(async (pdfUrl: string, forceReprocess = false) => {
     if (!pdfUrl) return;
-    
+
     setIsProcessing(true);
     try {
       let currentImageUrl = imageUrl;
-      
+
       if (!forceReprocess) {
-        // First API call - Stitch PDF
         console.log('Starting first API call - Stitch PDF');
-        console.log('Sending pdfUrl:', pdfUrl);
-        
         setProcessingStep('Stitching PDF pages...');
+        
         const stitchResponse = await fetch('http://localhost:5000/stitch', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ pdfUrl }),
         });
 
-        if (!stitchResponse.ok) {
-          throw new Error('Failed to stitch PDF');
-        }
+        if (!stitchResponse.ok) throw new Error('Failed to stitch PDF');
 
         const stitchData = await stitchResponse.json();
-        console.log('First API response:', stitchData);
-        currentImageUrl = stitchData.imageUrl; // Use local variable instead of state
-        setImageUrl(currentImageUrl); // Update state
+        currentImageUrl = stitchData.imageUrl;
+        setImageUrl(currentImageUrl);
       }
 
-      // Second API call - Process Image
-      const imageUrlToProcess = currentImageUrl || imageUrl;
-      if (imageUrlToProcess) {
+      if (forceReprocess || !isProcessed) {
         console.log('Starting second API call - Process Image');
-        console.log('Sending imageUrl:', imageUrlToProcess);
-        
         setProcessingStep('Recognizing text...');
+
         const processResponse = await fetch('http://localhost:5000/process-image', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ imageUrl: imageUrlToProcess }),
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageUrl: currentImageUrl || imageUrl }),
         });
 
-        if (!processResponse.ok) {
-          console.error('Process image response not OK:', processResponse.status);
-          throw new Error('Failed to process image');
-        }
+        if (!processResponse.ok) throw new Error('Failed to process image');
 
         const processData = await processResponse.json();
-        console.log('Second API response:', processData);
-        const { answers } = processData;
-        setExtractedText(answers);
+        setExtractedText(processData.answers);
       }
 
       setIsProcessed(true);
 
     } catch (error) {
       console.error('Error in processAnswerSheet:', error);
-      // Handle error appropriately
     } finally {
       setIsProcessing(false);
       setProcessingStep('');
     }
-  }, [imageUrl]);
+  }, [imageUrl, isProcessed]);
 
-  // Update the useEffect with proper dependencies
+  /** ✅ PREVENT MULTIPLE API CALLS */
   useEffect(() => {
     if (currentStep === 2 && uploadedAnswerSheet?.url && !isProcessed) {
+      console.log('Calling processAnswerSheet once...');
       processAnswerSheet(uploadedAnswerSheet.url);
+      setIsProcessed(true);
     }
-  }, [currentStep, uploadedAnswerSheet?.url, isProcessed, processAnswerSheet]);
+  }, [currentStep, uploadedAnswerSheet?.url, isProcessed, processAnswerSheet]); // ✅ ADDED `processAnswerSheet`
 
-  // Handlers for file uploads
   const handleAnswerSheetUpload = (url: string, file: File) => {
     setUploadedAnswerSheet({
       url,
@@ -132,6 +113,7 @@ export default function ExamEvaluator() {
       type: file.type,
       lastModified: file.lastModified,
     });
+    setIsProcessed(false);
   };
 
   const handleAnswerKeyUpload = (url: string, file: File) => {
@@ -143,29 +125,6 @@ export default function ExamEvaluator() {
       lastModified: file.lastModified
     });
   };
-
-  // Update handleNext function
-  const handleNext = () => {
-    if (currentStep === 2 && !continueChecked) {
-      // Don't proceed if checkbox isn't checked on step 2
-      return;
-    }
-    
-    // If we're on step 1 and don't have an answer sheet, don't proceed
-    if (currentStep === 1 && !uploadedAnswerSheet) {
-      return;
-    }
-
-    setCurrentStep((prevStep) => Math.min(prevStep + 1, steps.length - 1));
-  }
-
-  const handleBack = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 0))
-  }
-
-  const handleSubmit = () => {
-    console.log('Submitting data...')
-  }
 
   const handleExtractAgain = async () => {
     if (imageUrl) {
@@ -182,14 +141,7 @@ export default function ExamEvaluator() {
           <AnswerSheetUploadStep
             uploadedAnswerSheet={uploadedAnswerSheet}
             handleAnswerSheetUpload={handleAnswerSheetUpload}
-            resetUpload={() => {
-              setUploadedAnswerSheet(null);
-              setUploadedAnswerKey(null);
-              setExtractedText([]);
-              setIsProcessed(false);
-              setImageUrl(null);
-              setCurrentStep(1);
-            }}
+            resetUpload={resetAnswerSheetUpload} // ✅ FIXED: Added resetUpload
           />
         );
       case 2:
@@ -208,10 +160,7 @@ export default function ExamEvaluator() {
           <AnswerKeyUploadStep
             uploadedAnswerKey={uploadedAnswerKey}
             handleAnswerKeyUpload={handleAnswerKeyUpload}
-            resetUpload={() => {
-              setUploadedAnswerKey(null);
-              setCurrentStep(3);
-            }}
+            resetUpload={resetAnswerKeyUpload} // ✅ FIXED: Added resetUpload
           />
         );
       case 4:
@@ -224,37 +173,35 @@ export default function ExamEvaluator() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-6 dark:bg-black light:bg-white">
-      <div className="mb-8">
-        <div className="flex justify-between mb-2">
+    <div className="max-w-4xl mx-auto p-6">
+      <div className="mb-6">
+        <div className="flex justify-between">
           {steps.map((step, index) => (
-            <span
-              key={step}
-              className={`text-sm ${index <= currentStep ? 'text-black dark:text-white' : 'text-gray-400'}`}
+            <div
+              key={index}
+              className={` text-center py-2 whitespace-nowrap ${currentStep === index ? 'font-bold' : 'text-gray-500'}`}
             >
               {step}
-            </span>
+            </div>
           ))}
         </div>
         <Progress value={(currentStep / (steps.length - 1)) * 100} />
       </div>
-
-      <Card className="p-6 bg-white dark:bg-gray-800">
+      <Card className="p-6">
         {renderStepContent()}
-
         <div className="flex justify-between mt-6">
-          <Button
-            variant="secondary"
-            onClick={handleBack}
-            disabled={currentStep === 0}
-          >
+          <Button variant="secondary" onClick={() => {
+            setCurrentStep(prev => Math.max(prev - 1, 0));
+            window.scrollTo(0, 0); // Scroll to the top of the page
+          }} disabled={currentStep === 0}>
             Back
           </Button>
-          {currentStep < steps.length - 1 ? (
-            <Button onClick={handleNext}>Next</Button>
-          ) : (
-            <Button onClick={handleSubmit}>Submit Data to Database</Button>
-          )}
+          <Button onClick={() => {
+            setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
+            window.scrollTo(0, 0); // Scroll to the top of the page
+          }}>
+            Next
+          </Button>
         </div>
       </Card>
     </div>
