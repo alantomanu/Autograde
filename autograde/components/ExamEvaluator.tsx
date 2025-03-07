@@ -115,7 +115,6 @@ export default function ExamEvaluator() {
     });
     setIsProcessed(false);
   };
-
   const handleAnswerKeyUpload = (url: string, file: File) => {
     setUploadedAnswerKey({
       url,
@@ -125,13 +124,11 @@ export default function ExamEvaluator() {
       lastModified: file.lastModified
     });
   };
-
   const handleExtractAgain = async () => {
     if (imageUrl) {
       await processAnswerSheet(imageUrl, true);
     }
   };
-
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
@@ -171,15 +168,14 @@ export default function ExamEvaluator() {
         return null;
     }
   }
-
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="mb-6">
-        <div className="flex justify-between">
+        <div className="flex flex-wrap justify-between">
           {steps.map((step, index) => (
             <div
               key={index}
-              className={` text-center py-2 whitespace-nowrap ${currentStep === index ? 'font-bold' : 'text-gray-500'}`}
+              className={` text-center py-2 whitespace-nowrap ${currentStep === index ? 'font-bold ' : 'text-gray-500 text-sm'}`}
             >
               {step}
             </div>
