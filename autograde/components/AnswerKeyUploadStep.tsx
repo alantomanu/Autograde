@@ -1,8 +1,9 @@
+import React from 'react';
 import { FileUpload } from './ui/file-upload';
 import { Button } from './ui/button';
 import { UploadedFile, AnswerKeyData } from '../types';
 import { useState } from 'react';
-import { Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { Loader2, CheckCircle2,  } from 'lucide-react';
 
 interface AnswerKeyUploadStepProps {
   uploadedAnswerKey: UploadedFile | null;
@@ -38,13 +39,13 @@ export function AnswerKeyUploadStep({
       const data: AnswerKeyData = await response.json();
 
       if (!response.ok || !data || data.status === false) {
-        throw new Error(data.message || 'Failed to process answer key. The answer key must follow the format you can download the format here');
+        throw new Error(data.message || 'Failed to process the answer key. \nPlease ensure that it follows the format of the template you can download above.');
       }
 
       onProcessingComplete(data);
       setProcessSuccess(true);
     } catch (error) {
-      setProcessError(error instanceof Error ? error.message : 'Failed to process answer key. The answer key must follow the format you can download the format here');
+      setProcessError(error instanceof Error ? error.message : 'Failed to process the answer key. \nPlease ensure that it follows the format of the template you can download above.');
     } finally {
       setIsProcessing(false);
     }
@@ -77,20 +78,27 @@ export function AnswerKeyUploadStep({
         {isProcessing && (
           <>
             <Loader2 className="h-4 w-4 animate-spin" />
-            <span className="text-sm text-gray-600">Processing answer key...</span>
+            <span className="text-m text-gray-600">Processing answer key...</span>
           </>
         )}
         {processSuccess && (
           <>
             <CheckCircle2 className="h-4 w-4 text-green-500" />
-            <span className="text-sm text-green-600">Answer key processed successfully</span>
+            <span className="text-m text-green-600">Answer key processed successfully</span>
           </>
         )}
         {processError && (
-          <>
-            <XCircle className="h-4 w-4 text-red-500" />
-            <span className="text-sm text-red-600">{processError}</span>
-          </>
+          <div className="flex flex-col items-center">
+        
+          <div className="text-center text-m text-red-600">
+            {processError.split('\n').map((line, index) => (
+              <span key={index}>
+                {line}
+                <br />
+              </span>
+            ))}
+          </div>
+        </div>
         )}
       </div>
     </div>

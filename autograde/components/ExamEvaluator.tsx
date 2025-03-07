@@ -11,6 +11,7 @@ import { AnswerKeyUploadStep } from './AnswerKeyUploadStep'
 import { ViewScoresStep } from './ViewScoresStep'
 import { ClassNameStep } from './ClassNameStep'
 import { AnswerKeyData } from '../types'
+import { DownloadTemplateButton } from './ui/DownloadTemplateButton'
 
 const steps = [
   'Enter Student ID',
@@ -157,15 +158,21 @@ export default function ExamEvaluator() {
         );
       case 3:
         return (
-          <AnswerKeyUploadStep
-            uploadedAnswerKey={uploadedAnswerKey}
-            handleAnswerKeyUpload={handleAnswerKeyUpload}
-            resetUpload={resetAnswerKeyUpload}
-            onProcessingComplete={(data) => {
-              setAnswerKeyData(data);
-              setProcessError(null);
-            }}
-          />
+          <div className="relative">
+            <DownloadTemplateButton 
+              templateUrl="https://res.cloudinary.com/dfivs4n49/raw/upload/v1741369572/answer_keys/Answer_Key_Template.docx"
+              fileName="Answer_Key_Template.docx"
+            />
+            <AnswerKeyUploadStep
+              uploadedAnswerKey={uploadedAnswerKey}
+              handleAnswerKeyUpload={handleAnswerKeyUpload}
+              resetUpload={resetAnswerKeyUpload}
+              onProcessingComplete={(data) => {
+                setAnswerKeyData(data);
+                setProcessError(null);
+              }}
+            />
+          </div>
         );
       case 4:
         return <ViewScoresStep answerKeyData={answerKeyData} />;
