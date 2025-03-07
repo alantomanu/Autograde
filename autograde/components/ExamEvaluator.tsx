@@ -10,6 +10,7 @@ import { AnswerSheetPreviewStep } from './AnswerSheetPreviewStep'
 import { AnswerKeyUploadStep } from './AnswerKeyUploadStep'
 import { ViewScoresStep } from './ViewScoresStep'
 import { ClassNameStep } from './ClassNameStep'
+import { AnswerKeyData } from '../types'
 
 const steps = [
   'Enter Student ID',
@@ -40,6 +41,8 @@ export default function ExamEvaluator() {
   const [extractedText, setExtractedText] = useState<{ marginNumber: string; answer: string }[]>([])
   const [isProcessed, setIsProcessed] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [processError, setProcessError] = useState<string | null>(null);
+  const [answerKeyData, setAnswerKeyData] = useState<AnswerKeyData | null>(null);
 
   /** ✅ RESET FUNCTIONS for Upload Components */
   const resetAnswerSheetUpload = () => setUploadedAnswerSheet(null);
@@ -157,11 +160,15 @@ export default function ExamEvaluator() {
           <AnswerKeyUploadStep
             uploadedAnswerKey={uploadedAnswerKey}
             handleAnswerKeyUpload={handleAnswerKeyUpload}
-            resetUpload={resetAnswerKeyUpload} // ✅ FIXED: Added resetUpload
+            resetUpload={resetAnswerKeyUpload}
+            onProcessingComplete={(data) => {
+              setAnswerKeyData(data);
+              setProcessError(null);
+            }}
           />
         );
       case 4:
-        return <ViewScoresStep />;
+        return <ViewScoresStep answerKeyData={answerKeyData} />;
       case 5:
         return <ClassNameStep className={className} setClassName={setClassName} />;
       default:
@@ -188,14 +195,20 @@ export default function ExamEvaluator() {
         <div className="flex justify-between mt-6">
           <Button variant="secondary" onClick={() => {
             setCurrentStep(prev => Math.max(prev - 1, 0));
-            window.scrollTo(0, 0); // Scroll to the top of the page
+            window.scrollTo(0, 0);
           }} disabled={currentStep === 0}>
             Back
           </Button>
-          <Button onClick={() => {
-            setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
-            window.scrollTo(0, 0); // Scroll to the top of the page
-          }}>
+          <Button 
+            onClick={() => {
+              setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
+              window.scrollTo(0, 0);
+            }}
+            disabled={
+              (currentStep === 3 && (!uploadedAnswerKey || !answerKeyData || !!processError)) ||
+              (currentStep === 4 && !answerKeyData)
+            }
+          >
             Next
           </Button>
         </div>
