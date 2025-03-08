@@ -36,8 +36,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "My Next.js App",
-  description: "A modern UI with Hero UI",
+  title: "AutoGrade",
+  description: "AutoGrade is a platform for automatic grading of exams",
 };
 
 export default function RootLayout({

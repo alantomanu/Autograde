@@ -1,6 +1,7 @@
 "use client"
 import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button} from "@heroui/react";
 import { ModeToggle } from "@/components/ui/ModeToggle";
+import { usePathname } from "next/navigation";
 
 export const AcmeLogo = () => {
   return (
@@ -16,35 +17,39 @@ export const AcmeLogo = () => {
 };
 
 export default function App() {
+  const pathname = usePathname();
+
   return (
-    <Navbar shouldHideOnScroll >
+    <Navbar shouldHideOnScroll>
       <NavbarBrand>
-        <AcmeLogo />
-        <p className="font-bold text-inherit">AutoGrade</p>
+        <Link href="/" className="flex items-center">
+          <AcmeLogo />
+          <p className="font-bold text-inherit">AutoGrade</p>
+        </Link>
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
-          <Link color="foreground" href="#">
+          <Link color="foreground" href="/features">
             Features
           </Link>
         </NavbarItem>
-        <NavbarItem isActive>
-          <Link aria-current="page" href="#">
+        <NavbarItem isActive={pathname === '/'}>
+          <Link aria-current="page" href="/">
             Evaluator
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="#">
+          <Link color="foreground" href="/analytics">
             Analytics
           </Link>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem className="hidden lg:flex">
-          <Link href="#">Login</Link>
+          <Link href="/login">Login</Link>
         </NavbarItem>
         <NavbarItem>
-          <Button as={Link} color="primary" href="#" variant="flat">
+          <Button as={Link} color="primary" href="/signup" variant="flat">
             Sign Up
           </Button>
         </NavbarItem>

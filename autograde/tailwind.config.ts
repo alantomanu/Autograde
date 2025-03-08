@@ -1,5 +1,6 @@
 import {heroui} from '@heroui/theme';
 import type { Config } from "tailwindcss";
+import tailwindAnimate from "tailwindcss-animate";
 
 export default {
     darkMode: ["class"],
@@ -60,5 +61,5 @@ export default {
   		}
   	}
   },
-  plugins: [heroui(), require("tailwindcss-animate")],
+  plugins: [heroui(), tailwindAnimate],
 } satisfies Config;
