@@ -19,6 +19,7 @@ export function LoginForm() {
       return;
     }
     console.log("Login Data:", { teacherId, password });
+    console.log("User logged in with email:", teacherId);
   };
 
   // Handle Google OAuth Login
@@ -26,6 +27,9 @@ export function LoginForm() {
     try {
       // Simulating OAuth authentication
       setIsOAuth(true);
+      // In a real OAuth implementation, you would get the email from the OAuth response
+      const mockGoogleEmail = "user@gmail.com"; // This would come from Google OAuth response
+      console.log("User signed in with Google email:", mockGoogleEmail);
       alert("Google OAuth successful!");
     } catch (error) {
       console.error("OAuth Login Failed", error);

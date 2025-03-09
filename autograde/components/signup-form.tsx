@@ -1,16 +1,29 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
+import { signIn } from "next-auth/react";
+import { Button } from "./ui/button";
 import { IconBrandGoogle } from "@tabler/icons-react";
 
+interface FormData {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  teacherId: string;
+}
+
 export function SignupForm() {
-  const [email, setEmail] = useState("");
-  const [teacherId, setTeacherId] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    teacherId: ""
+  });
   const [isOAuth, setIsOAuth] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState("");
   const [passwordsMatch, setPasswordsMatch] = useState(true);
@@ -35,16 +48,16 @@ export function SignupForm() {
 
   // Check if passwords match
   useEffect(() => {
-    if (confirmPassword) {
-      setPasswordsMatch(password === confirmPassword);
+    if (formData.password) {
+      setPasswordsMatch(formData.password === formData.confirmPassword);
     }
-  }, [password, confirmPassword]);
+  }, [formData.password, formData.confirmPassword]);
 
   // Handle manual signup
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!isOAuth) {
-      if (!email || !password || !teacherId || !confirmPassword) {
+      if (!formData.email || !formData.password || !formData.teacherId || !formData.confirmPassword) {
         alert("Please fill in all required fields.");
         return;
       }
@@ -57,20 +70,13 @@ export function SignupForm() {
         return;
       }
     }
-    console.log("Signup Data:", { email, teacherId, password });
+    console.log("Signup Data:", { ...formData });
   };
 
   // Handle Google OAuth Signup
-  const handleGoogleSignup = async () => {
-    try {
-      // Simulating OAuth authentication
-      const oauthEmail = "user@gmail.com"; // Replace with actual OAuth response
-      setEmail(oauthEmail);
-      setIsOAuth(true);
-      alert("Google OAuth successful! Enter your Teacher ID to complete signup.");
-    } catch (error) {
-      console.error("OAuth Signup Failed", error);
-    }
+  const handleGoogleSignIn = () => {
+    signIn("google", { callbackUrl: "/" });
+    setIsOAuth(true); // Set OAuth flag
   };
 
   return (
@@ -87,14 +93,15 @@ export function SignupForm() {
       <form className="my-8" onSubmit={handleSubmit}>
         {/* OAuth Button at the top */}
         <div className="flex flex-col space-y-4 mb-8">
-          <button
-            className="flex items-center space-x-2 justify-center w-full text-black rounded-md h-10 font-medium bg-gray-50 dark:bg-zinc-900"
+          <Button
+            onClick={handleGoogleSignIn}
             type="button"
-            onClick={handleGoogleSignup}
+            className="w-full flex items-center justify-center gap-3"
+            variant="outline"
           >
-            <IconBrandGoogle className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
-            <span>Sign up with Google</span>
-          </button>
+            <IconBrandGoogle className="h-5 w-5" />
+            Continue with Google
+          </Button>
         </div>
 
         {/* Divider */}
@@ -115,9 +122,9 @@ export function SignupForm() {
           <Input
             id="email"
             type="email"
-            value={email}
+            value={formData.email}
             disabled={isOAuth}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             placeholder="yourname@example.com"
           />
         </LabelInputContainer>
@@ -128,8 +135,8 @@ export function SignupForm() {
           <Input
             id="teacherId"
             type="text"
-            value={teacherId}
-            onChange={(e) => setTeacherId(e.target.value)}
+            value={formData.teacherId}
+            onChange={(e) => setFormData({ ...formData, teacherId: e.target.value })}
             placeholder="Enter your Teacher ID"
           />
         </LabelInputContainer>
@@ -142,14 +149,14 @@ export function SignupForm() {
               <Input
                 id="password"
                 type="password"
-                value={password}
+                value={formData.password}
                 onChange={(e) => {
-                  setPassword(e.target.value);
+                  setFormData({ ...formData, password: e.target.value });
                   setPasswordStrength(checkPasswordStrength(e.target.value));
                 }}
                 placeholder="Enter The Password"
               />
-              {password && (
+              {formData.password && (
                 <div className={cn(
                   "text-sm",
                   passwordStrength === "Weak" && "text-red-500",
@@ -166,11 +173,11 @@ export function SignupForm() {
               <Input
                 id="confirmPassword"
                 type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                 placeholder="Confirm Your Password"
               />
-              {confirmPassword && !passwordsMatch && (
+              {formData.confirmPassword && !passwordsMatch && (
                 <div className="text-sm text-red-500">
                   Passwords do not match
                 </div>
