@@ -30,6 +30,28 @@ interface UploadedFile {
   lastModified: number;
 }
 
+interface EvaluationResult {
+  questionNumber: string;
+  mark: string;
+  adjustedMark: string;
+  reason: string;
+  justification: string;
+  hasDiagram: boolean;
+  evaluationMethod: string;
+  diagramMarks: number;
+}
+
+interface EvaluationResponse {
+  success: boolean;
+  timestamp: string;
+  results: EvaluationResult[];
+  summary: {
+    totalQuestions: number;
+    totalMarks: string;
+    percentage: number;
+  };
+}
+
 export default function ExamEvaluator() {
   const [currentStep, setCurrentStep] = useState(0)
   const [studentId, setStudentId] = useState('')
@@ -44,6 +66,7 @@ export default function ExamEvaluator() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [processError, setProcessError] = useState<string | null>(null);
   const [answerKeyData, setAnswerKeyData] = useState<AnswerKeyData | null>(null);
+  const [evaluationData, setEvaluationData] = useState<EvaluationResponse | null>(null);
 
   /** ✅ RESET FUNCTIONS for Upload Components */
   const resetAnswerSheetUpload = () => setUploadedAnswerSheet(null);
@@ -120,6 +143,7 @@ export default function ExamEvaluator() {
     setIsProcessed(false);
   };
   const handleAnswerKeyUpload = (url: string, file: File) => {
+    setEvaluationData(null);
     setUploadedAnswerKey({
       url,
       name: file.name,
@@ -131,6 +155,31 @@ export default function ExamEvaluator() {
   const handleExtractAgain = async () => {
     if (imageUrl) {
       await processAnswerSheet(imageUrl, true);
+    }
+  };
+  const evaluateAnswers = async () => {
+    if (!extractedText || !answerKeyData) return;
+
+    try {
+      const response = await fetch('http://localhost:5000/evaluate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          answers: extractedText,
+          key: answerKeyData,
+        }),
+      });
+
+      const data = await response.json();
+      console.log("Evaluation API Response:", data);
+
+      if (!response.ok) throw new Error('Failed to evaluate answers');
+
+      setEvaluationData(data);
+    } catch (error) {
+      console.error('Error evaluating answers:', error);
     }
   };
   const renderStepContent = () => {
@@ -166,7 +215,10 @@ export default function ExamEvaluator() {
             <AnswerKeyUploadStep
               uploadedAnswerKey={uploadedAnswerKey}
               handleAnswerKeyUpload={handleAnswerKeyUpload}
-              resetUpload={resetAnswerKeyUpload}
+              resetUpload={() => {
+                resetAnswerKeyUpload();
+                setEvaluationData(null);
+              }}
               onProcessingComplete={(data) => {
                 setAnswerKeyData(data);
                 setProcessError(null);
@@ -175,13 +227,26 @@ export default function ExamEvaluator() {
           </div>
         );
       case 4:
-        return <ViewScoresStep answerKeyData={answerKeyData} />;
+        return (
+          <ViewScoresStep 
+            evaluationData={evaluationData} 
+            setEvaluationData={setEvaluationData}
+          />
+        );
       case 5:
         return <ClassNameStep className={className} setClassName={setClassName} />;
       default:
         return null;
     }
   }
+  const handleNextStep = () => {
+    const nextStep = Math.min(currentStep + 1, steps.length - 1);
+    if (currentStep === 3 && nextStep === 4) {
+      evaluateAnswers();
+    }
+    setCurrentStep(nextStep);
+    window.scrollTo(0, 0);
+  };
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="mb-6">
@@ -207,10 +272,7 @@ export default function ExamEvaluator() {
             Back
           </Button>
           <Button 
-            onClick={() => {
-              setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
-              window.scrollTo(0, 0);
-            }}
+            onClick={handleNextStep}
             disabled={
               (currentStep === 3 && (!uploadedAnswerKey || !answerKeyData || !!processError)) ||
               (currentStep === 4 && !answerKeyData)
