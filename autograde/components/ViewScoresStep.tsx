@@ -36,7 +36,7 @@ export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScores
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [inputValues, setInputValues] = useState<{ [key: string]: string }>({});
   const [isSaving, setIsSaving] = useState(false);
-  const [savedUrl, setSavedUrl] = useState<string | null>(null);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
 
   if (!evaluationData) return <div>Loading evaluation results...</div>;
 
@@ -109,32 +109,35 @@ export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScores
     
     try {
       setIsSaving(true);
+      setSaveStatus('saving');
       
       const jsonString = JSON.stringify(evaluationData);
       
       const formData = new FormData();
       formData.append('file', new Blob([jsonString], { type: 'application/json' }));
-      formData.append('upload_preset', 'evaluation-results'); // Updated with your preset name
+      formData.append('upload_preset', 'evaluation-results');
       
       const response = await fetch(
-        `https://api.cloudinary.com/v1_1/dfivs4n49/raw/upload`, // Replace YOUR_CLOUD_NAME with your actual cloud name
+        `https://api.cloudinary.com/v1_1/dfivs4n49/raw/upload`,
         {
           method: 'POST',
           body: formData,
         }
       );
 
-      const data = await response.json();
-      
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to upload to Cloudinary');
+        throw new Error('Failed to upload to Cloudinary');
       }
 
-      setSavedUrl(data.secure_url);
-      alert('Marks saved successfully!');
+      setSaveStatus('success');
+      
+      // Reset success status after 3 seconds
+      setTimeout(() => {
+        setSaveStatus('idle');
+      }, 3000);
     } catch (error) {
       console.error('Error saving to Cloudinary:', error);
-      alert('Failed to save marks. Please try again.');
+      setSaveStatus('error');
     } finally {
       setIsSaving(false);
     }
@@ -142,39 +145,7 @@ export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScores
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Evaluation Results</h2>
-        <Button
-          onClick={handleSaveToCloudinary}
-          disabled={isSaving}
-          className="flex items-center gap-2"
-        >
-          {isSaving ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Saving...
-            </>
-          ) : (
-            'Save Marks'
-          )}
-        </Button>
-      </div>
-
-      {savedUrl && (
-        <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-          <p className="text-sm text-green-700 dark:text-green-300">
-            Marks saved successfully! Access them at:{' '}
-            <a 
-              href={savedUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline"
-            >
-              {savedUrl}
-            </a>
-          </p>
-        </div>
-      )}
+      <h2 className="text-2xl font-bold">Evaluation Results</h2>
 
       <div className="space-y-4">
         {evaluationData.results.map((result: EvaluationResult) => {
@@ -241,8 +212,52 @@ export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScores
             <span className="text-gray-600 dark:text-gray-400">Percentage:</span>
             <span className="font-medium">{evaluationData.summary.percentage}%</span>
           </p>
+          
+          <div className="pt-4 mt-4 border-t flex justify-end">
+            <Button
+              onClick={handleSaveToCloudinary}
+              disabled={isSaving}
+              size="sm"
+              className={`flex items-center gap-2 transition-all duration-200
+                ${saveStatus === 'success' ? 'bg-green-600 hover:bg-green-700' : ''}
+                ${saveStatus === 'error' ? 'bg-red-600 hover:bg-red-700' : ''}
+                ${saveStatus === 'saving' ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
+            >
+              {saveStatus === 'saving' && (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Uploading...</span>
+                </>
+              )}
+              {saveStatus === 'success' && (
+                <>
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Uploaded</span>
+                </>
+              )}
+              {saveStatus === 'error' && (
+                <>
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  <span>Failed</span>
+                </>
+              )}
+              {saveStatus === 'idle' && (
+                <>
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  </svg>
+                  <span>Save Marks</span>
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </Card>
     </div>
   );
 }
+
