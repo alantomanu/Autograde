@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Input } from './ui/input';
 import { Card } from './ui/card';
 import { Pencil } from 'lucide-react';
+import { Button } from './ui/button';
+import { Loader2 } from 'lucide-react';
 
 interface EvaluationResult {
   questionNumber: string;
@@ -33,6 +35,8 @@ interface ViewScoresStepProps {
 export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScoresStepProps) {
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [inputValues, setInputValues] = useState<{ [key: string]: string }>({});
+  const [isSaving, setIsSaving] = useState(false);
+  const [savedUrl, setSavedUrl] = useState<string | null>(null);
 
   if (!evaluationData) return <div>Loading evaluation results...</div>;
 
@@ -67,7 +71,11 @@ export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScores
 
     const updatedResults = evaluationData.results.map((result: EvaluationResult) => {
       if (result.questionNumber === questionNumber) {
-        return { ...result, mark: `${received}/${total}` };
+        return { 
+          ...result, 
+          mark: `${received}/${total}`,
+          adjustedMark: `${received}/${total}`
+        };
       }
       return result;
     });
@@ -96,10 +104,78 @@ export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScores
     });
   };
 
+  const handleSaveToCloudinary = async () => {
+    if (!evaluationData) return;
+    
+    try {
+      setIsSaving(true);
+      
+      const jsonString = JSON.stringify(evaluationData);
+      
+      const formData = new FormData();
+      formData.append('file', new Blob([jsonString], { type: 'application/json' }));
+      formData.append('upload_preset', 'evaluation-results'); // Updated with your preset name
+      
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/dfivs4n49/raw/upload`, // Replace YOUR_CLOUD_NAME with your actual cloud name
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to upload to Cloudinary');
+      }
+
+      setSavedUrl(data.secure_url);
+      alert('Marks saved successfully!');
+    } catch (error) {
+      console.error('Error saving to Cloudinary:', error);
+      alert('Failed to save marks. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Evaluation Results</h2>
-      
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Evaluation Results</h2>
+        <Button
+          onClick={handleSaveToCloudinary}
+          disabled={isSaving}
+          className="flex items-center gap-2"
+        >
+          {isSaving ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            'Save Marks'
+          )}
+        </Button>
+      </div>
+
+      {savedUrl && (
+        <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+          <p className="text-sm text-green-700 dark:text-green-300">
+            Marks saved successfully! Access them at:{' '}
+            <a 
+              href={savedUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              {savedUrl}
+            </a>
+          </p>
+        </div>
+      )}
+
       <div className="space-y-4">
         {evaluationData.results.map((result: EvaluationResult) => {
           const [receivedMark, totalMark] = result.mark.split('/');
