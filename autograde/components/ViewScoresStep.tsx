@@ -118,10 +118,10 @@ export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScores
                               type="text"
                               value={inputValues[result.questionNumber] ?? receivedMark}
                               onChange={(e) => handleMarkUpdate(result.questionNumber, e.target.value, totalMark)}
-                              className="w-10 border-dashed text-right px-1"
+                              className="w-10 border-dashed text-center px-1"
                             />
                             <span className="mx-0.5">/</span>
-                            <span className="w-10 text-gray-600 text-right">{totalMark}</span>
+                            <span className="w-3 text-gray-600 text-right">{totalMark}</span>
                           </div>
                           <Pencil className="h-3 w-3 text-blue-500" />
                         </div>
@@ -134,7 +134,7 @@ export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScores
                   </div>
                   {result.diagramMarks > 0 && (
                     <div className="text-sm text-gray-600 dark:text-gray-400 ml-4">
-                      <span className="font-medium">Diagram mark:</span> {result.diagramMarks} (award the diagram marks)
+                      <span className="font-medium">Diagram mark:</span> {result.diagramMarks} ( Evaluate the diagram and award the marks )
                       
                     </div>
                   )}
