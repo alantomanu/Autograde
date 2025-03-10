@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1741603567244,
-      "tag": "0000_past_shiva",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1741612426381,
-      "tag": "0001_safe_rawhide_kid",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1741612931986,
-      "tag": "0002_sour_beyonder",
+      "when": 1741618283691,
+      "tag": "0000_chubby_stryfe",
       "breakpoints": true
     }
   ]

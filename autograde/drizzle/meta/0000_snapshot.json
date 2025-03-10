@@ -1,5 +1,5 @@
 {
-  "id": "46ae2253-3e8d-465e-9c4c-7e55e4547a38",
+  "id": "c4b41d60-8510-4e56-a1ac-966e548030f3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -8,9 +8,9 @@
       "name": "courses",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
+        "course_code": {
+          "name": "course_code",
+          "type": "varchar(255)",
           "primaryKey": true,
           "notNull": true
         },
@@ -22,34 +22,13 @@
         },
         "teacher_id": {
           "name": "teacher_id",
-          "type": "integer",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "courses_teacher_id_teachers_id_fk": {
-          "name": "courses_teacher_id_teachers_id_fk",
-          "tableFrom": "courses",
-          "tableTo": "teachers",
-          "columnsFrom": [
-            "teacher_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -60,27 +39,39 @@
       "name": "scores",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
         "student_id": {
           "name": "student_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "course_id": {
-          "name": "course_id",
+        "course_code": {
+          "name": "course_code",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "course_name": {
+          "name": "course_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_marks": {
+          "name": "total_marks",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "score": {
-          "name": "score",
+        "max_marks": {
+          "name": "max_marks",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "percentage": {
+          "name": "percentage",
+          "type": "real",
           "primaryKey": false,
           "notNull": true
         },
@@ -89,31 +80,10 @@
           "type": "varchar(2048)",
           "primaryKey": false,
           "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "scores_course_id_courses_id_fk": {
-          "name": "scores_course_id_courses_id_fk",
-          "tableFrom": "scores",
-          "tableTo": "courses",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -124,38 +94,23 @@
       "name": "teachers",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
+        "teacher_id": {
+          "name": "teacher_id",
+          "type": "varchar(255)",
           "primaryKey": true,
           "notNull": true
         },
-        "oauth_id": {
-          "name": "oauth_id",
+        "email": {
+          "name": "email",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "teachers_oauth_id_unique": {
-          "name": "teachers_oauth_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "oauth_id"
-          ]
-        }
-      },
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
