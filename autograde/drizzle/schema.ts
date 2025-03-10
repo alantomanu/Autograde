@@ -4,7 +4,7 @@ import { pgTable, serial, varchar, integer, timestamp, real } from "drizzle-orm/
 export const teachers = pgTable("teachers", {
     id: serial("id").primaryKey(),
     teacherId: varchar("teacher_id", { length: 255 }).unique().notNull(),
-    email: varchar("email", { length: 255 }).unique(),
+    email: varchar("email", { length: 255 }).unique().notNull(),
     password: varchar("password", { length: 255 }),
     oauthId: varchar("oauth_id", { length: 255 }).unique(),
     createdAt: timestamp("created_at").defaultNow(),

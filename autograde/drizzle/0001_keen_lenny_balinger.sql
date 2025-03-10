@@ -1,0 +1,1 @@
+ALTER TABLE "teachers" ALTER COLUMN "email" SET NOT NULL;
