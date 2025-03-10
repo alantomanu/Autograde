@@ -7,15 +7,19 @@ import { teachers } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
+// Extend the built-in types
 declare module "next-auth" {
   interface Session {
     user: {
       id?: string;
-      name?: string | null;
       email?: string | null;
       image?: string | null;
       teacherId?: string;
     }
+  }
+
+  interface User {
+    teacherId?: string;
   }
 }
 
@@ -28,33 +32,52 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        teacherId: { label: "Teacher ID", type: "text" },
+        identifier: { label: "Email or Teacher ID", type: "text" },
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.teacherId || !credentials?.password) {
+        try {
+          if (!credentials?.identifier || !credentials?.password) {
+            return null;
+          }
+
+          // Try to find teacher by either email or teacherId
+          const teacher = await db.query.teachers.findFirst({
+            where: (teachers, { or, eq }) => or(
+              eq(teachers.email, credentials.identifier.toLowerCase()),
+              eq(teachers.teacherId, credentials.identifier)
+            ),
+          });
+
+          if (!teacher) {
+            console.log("Teacher not found");
+            return null;
+          }
+
+          if (!teacher.password) {
+            console.log("No password set for this account");
+            return null;
+          }
+
+          const isValid = await bcrypt.compare(
+            credentials.password,
+            teacher.password
+          );
+
+          if (!isValid) {
+            console.log("Invalid password");
+            return null;
+          }
+
+          return {
+            id: teacher.id.toString(),
+            email: teacher.email,
+            teacherId: teacher.teacherId,
+          };
+        } catch (error) {
+          console.error("Auth error:", error);
           return null;
         }
-
-        const teacher = await db.query.teachers.findFirst({
-          where: eq(teachers.teacherId, credentials.teacherId),
-        });
-
-        if (!teacher || !teacher.password) {
-          return null;
-        }
-
-        const isValid = await bcrypt.compare(credentials.password, teacher.password);
-
-        if (!isValid) {
-          return null;
-        }
-
-        return {
-          id: teacher.id.toString(),
-          email: teacher.email,
-          teacherId: teacher.teacherId,
-        };
       }
     })
   ],
@@ -78,17 +101,18 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    async session({ session }) {
-      if (session.user) {
-        const teacher = await db.query.teachers.findFirst({
-          where: eq(teachers.email, session.user.email!),
-        });
-        if (teacher) {
-          session.user.teacherId = teacher.teacherId;
-        }
+    async jwt({ token, user }) {
+      if (user) {
+        token.teacherId = user.teacherId;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user && token.teacherId) {
+        session.user.teacherId = token.teacherId as string;
       }
       return session;
-    },
+    }
   },
   pages: {
     signIn: '/login',

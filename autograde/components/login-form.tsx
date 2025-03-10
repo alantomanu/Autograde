@@ -5,34 +5,57 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
 import { IconBrandGoogle } from "@tabler/icons-react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export function LoginForm() {
-  const [teacherId, setTeacherId] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
-  const [isOAuth, setIsOAuth] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   // Handle manual login
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!isOAuth && (!teacherId || !password)) {
-      alert("Please fill in all required fields.");
+    setError(null);
+    
+    if (!identifier || !password) {
+      setError("Please fill in all required fields.");
       return;
     }
-    console.log("Login Data:", { teacherId, password });
-    console.log("User logged in with email:", teacherId);
+
+    setIsLoading(true);
+    try {
+      const result = await signIn("credentials", {
+        identifier,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError("Invalid credentials");
+      } else {
+        router.push("/");
+        router.refresh();
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      setError("An error occurred during login");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Handle Google OAuth Login
   const handleGoogleLogin = async () => {
+    setError(null);
     try {
-      // Simulating OAuth authentication
-      setIsOAuth(true);
-      // In a real OAuth implementation, you would get the email from the OAuth response
-      const mockGoogleEmail = "user@gmail.com"; // This would come from Google OAuth response
-      console.log("User signed in with Google email:", mockGoogleEmail);
-      alert("Google OAuth successful!");
+      setIsLoading(true);
+      await signIn("google", { callbackUrl: "/" });
     } catch (error) {
       console.error("OAuth Login Failed", error);
+      setError("Failed to login with Google");
     }
   };
 
@@ -49,9 +72,10 @@ export function LoginForm() {
         {/* OAuth Button at the top */}
         <div className="flex flex-col space-y-4 mb-8">
           <button
-            className="flex items-center space-x-2 justify-center w-full text-black rounded-md h-10 font-medium bg-gray-50 dark:bg-zinc-900"
+            className="flex items-center space-x-2 justify-center w-full text-black rounded-md h-10 font-medium bg-gray-50 dark:bg-zinc-900 disabled:opacity-50"
             type="button"
             onClick={handleGoogleLogin}
+            disabled={isLoading}
           >
             <IconBrandGoogle className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
             <span>Sign in with Google</span>
@@ -70,15 +94,21 @@ export function LoginForm() {
           </div>
         </div>
 
-        {/* Teacher ID Field */}
+        {error && (
+          <div className="mb-4 p-2 text-sm text-red-500 bg-red-50 dark:bg-red-900/10 rounded-md">
+            {error}
+          </div>
+        )}
+
+        {/* Email/Teacher ID Field */}
         <LabelInputContainer className="mb-4">
-          <Label htmlFor="teacherId">Teacher ID</Label>
+          <Label htmlFor="identifier">Email or Teacher ID</Label>
           <Input
-            id="teacherId"
+            id="identifier"
             type="text"
-            value={teacherId}
-            onChange={(e) => setTeacherId(e.target.value)}
-            placeholder="Enter your Teacher ID"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
+            placeholder="Enter your Email or Teacher ID"
           />
         </LabelInputContainer>
 
@@ -96,10 +126,11 @@ export function LoginForm() {
 
         {/* Login Button */}
         <button
-          className="bg-black dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium"
+          className="bg-black dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium disabled:opacity-50"
           type="submit"
+          disabled={isLoading}
         >
-          Login
+          {isLoading ? "Logging in..." : "Login"}
         </button>
       </form>
     </div>
