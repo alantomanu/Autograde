@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { signIn } from "next-auth/react";
@@ -8,6 +8,24 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "./ui/button";
 import { IconBrandGoogle } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
+
+// Add this function outside the component
+const checkPasswordStrength = (password: string): { strength: number; message: string } => {
+  let strength = 0;
+  
+  if (password.length >= 8) strength += 1;
+  if (/[A-Z]/.test(password)) strength += 1;
+  if (/[a-z]/.test(password)) strength += 1;
+  if (/[0-9]/.test(password)) strength += 1;
+  if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+
+  let message = '';
+  if (strength < 2) message = 'Weak';
+  else if (strength < 4) message = 'Medium';
+  else message = 'Strong';
+
+  return { strength, message };
+};
 
 export function SignupForm() {
   const router = useRouter();
@@ -20,14 +38,47 @@ export function SignupForm() {
     confirmPassword: "",
     teacherId: "",
   });
+  const [error, setError] = useState<string | null>(null);
+  const [passwordStrength, setPasswordStrength] = useState({ strength: 0, message: '' });
+  const [passwordMatch, setPasswordMatch] = useState(true);
+
+  // Add password strength check effect
+  useEffect(() => {
+    if (formData.password) {
+      setPasswordStrength(checkPasswordStrength(formData.password));
+    } else {
+      setPasswordStrength({ strength: 0, message: '' });
+    }
+  }, [formData.password]);
+
+  // Add password match check effect
+  useEffect(() => {
+    if (formData.confirmPassword) {
+      setPasswordMatch(formData.password === formData.confirmPassword);
+    } else {
+      setPasswordMatch(true);
+    }
+  }, [formData.password, formData.confirmPassword]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(null);
+    
+    // Check password strength and match before setting loading state
+    if (!isOAuth && passwordStrength.strength < 2) {
+      setError('Please use a stronger password');
+      return;
+    }
+
+    if (!isOAuth && !passwordMatch) {
+      setError('Passwords do not match');
+      return;
+    }
+
     setLoading(true);
 
     try {
       if (isOAuth) {
-        // OAuth signup - only need teacherId
         const response = await fetch('/api/auth/register', {
           method: 'POST',
           headers: {
@@ -35,16 +86,18 @@ export function SignupForm() {
           },
           body: JSON.stringify({
             teacherId: formData.teacherId,
-            email: searchParams.get('email'), // This will be set by the OAuth callback
-            oauthId: searchParams.get('oauthId'), // This will be set by the OAuth callback
+            email: searchParams.get('email'),
+            oauthId: searchParams.get('oauthId'),
           }),
         });
 
+        const data = await response.json();
+        
         if (!response.ok) {
-          throw new Error('Failed to register');
+          setError(data.message || 'Please check your information and try again');
+          return;
         }
       } else {
-        // Manual signup
         const response = await fetch('/api/auth/register', {
           method: 'POST',
           headers: {
@@ -57,15 +110,19 @@ export function SignupForm() {
           }),
         });
 
+        const data = await response.json();
+        
         if (!response.ok) {
-          throw new Error('Failed to register');
+          setError(data.message || 'This Email address or Id is already registered');
+          return;
         }
       }
 
+      // Only redirect if registration was successful
       router.push('/');
-    } catch (error) {
-      console.error('Registration error:', error);
-      alert(error instanceof Error ? error.message : 'An error occurred during signup');
+    } catch {
+      // Generic error message for unexpected errors
+      setError('Unable to complete registration. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -75,11 +132,35 @@ export function SignupForm() {
     signIn("google", { callbackUrl: "/signup?oauth=google" });
   };
 
+  const getStrengthColor = () => {
+    if (passwordStrength.strength < 2) return 'bg-red-500';
+    if (passwordStrength.strength < 4) return 'bg-yellow-500';
+    return 'bg-green-500';
+  };
+
   return (
     <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
       <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
         {isOAuth ? "Complete Your Registration" : "Create an Account"}
       </h2>
+
+      {error && (
+        <div className="mt-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-600">
+          {error}
+        </div>
+      )}
+
+      {!isOAuth && (
+        <Button
+          className="mt-4 w-full"
+          type="button"
+          onClick={handleGoogleSignIn}
+          variant="outline"
+        >
+          <IconBrandGoogle className="mr-2" />
+          Continue with Google
+        </Button>
+      )}
 
       <form className="my-8" onSubmit={handleSubmit}>
         <div className="flex flex-col md:flex-col gap-4">
@@ -104,6 +185,25 @@ export function SignupForm() {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 />
+                {formData.password && (
+                  <div className="mt-1">
+                    <div className="h-1 w-full bg-gray-200 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full transition-all duration-300 ${getStrengthColor()}`}
+                        style={{ 
+                          width: `${(passwordStrength.strength / 5) * 100}%`
+                        }}
+                      />
+                    </div>
+                    <p className={`text-xs mt-0.5 ${
+                      passwordStrength.strength < 2 ? 'text-red-500' : 
+                      passwordStrength.strength < 4 ? 'text-yellow-500' : 
+                      'text-green-500'
+                    }`}>
+                      Password Strength: {passwordStrength.message}
+                    </p>
+                  </div>
+                )}
               </div>
               <div>
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
@@ -114,6 +214,11 @@ export function SignupForm() {
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                 />
+                {formData.confirmPassword && !passwordMatch && (
+                  <p className="text-xs mt-0.5 text-red-500">
+                    Passwords do not match
+                  </p>
+                )}
               </div>
             </>
           )}
@@ -137,18 +242,6 @@ export function SignupForm() {
         >
           {loading ? "Signing up..." : "Sign Up"}
         </Button>
-
-        {!isOAuth && (
-          <Button
-            className="mt-4 w-full"
-            type="button"
-            onClick={handleGoogleSignIn}
-            variant="outline"
-          >
-            <IconBrandGoogle className="mr-2" />
-            Continue with Google
-          </Button>
-        )}
       </form>
     </div>
   );

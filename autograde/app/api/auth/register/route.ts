@@ -21,6 +21,18 @@ export async function POST(req: Request) {
       );
     }
 
+    // Check if email already exists
+    const existingUser = await db.query.teachers.findFirst({
+      where: eq(teachers.email, email),
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { message: "Email address is already registered" },
+        { status: 400 }
+      );
+    }
+
     // Hash password if provided
     const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
 
