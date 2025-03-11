@@ -66,7 +66,6 @@ export default function ExamEvaluator() {
   const [extractedText, setExtractedText] = useState<{ marginNumber: string; answer: string }[]>([])
   const [isProcessed, setIsProcessed] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [processError, setProcessError] = useState<string | null>(null);
   const [answerKeyData, setAnswerKeyData] = useState<AnswerKeyData | null>(null);
   const [evaluationData, setEvaluationData] = useState<EvaluationResponse | null>(null);
   const [courseId, setCourseId] = useState('');
@@ -234,7 +233,6 @@ export default function ExamEvaluator() {
               }}
               onProcessingComplete={(data) => {
                 setAnswerKeyData(data);
-                setProcessError(null);
               }}
             />
           </div>
@@ -254,17 +252,22 @@ export default function ExamEvaluator() {
   }
   const handleNextStep = async () => {
     if (currentStep === 0) {
+      // Check if all fields are filled
+      if (!studentId || !courseId || !courseName) {
+        setProcessingStep('Please fill in all required fields');
+        return;
+      }
+
       try {
         const teacherId = session?.user?.teacherId;
 
         if (!teacherId) {
-          throw new Error('No teacher ID found in session. Please log in again.');
+          setProcessingStep('No teacher ID found. Please log in again.');
+          return;
         }
 
         setProcessingStep('Verifying course details...');
         setIsProcessing(true);
-
-        console.log('Sending data:', { courseId, courseName, teacherId });
 
         const response = await fetch('/api/courses', {
           method: 'POST',
@@ -281,36 +284,33 @@ export default function ExamEvaluator() {
         const data = await response.json();
         console.log('Response received:', data);
 
-        if (!response.ok) {
-          console.error('Server error:', data.error);
-          throw new Error(data.error || 'Failed to add course');
+        if (data.status === 'name_mismatch') {
+          setProcessingStep(`This course exists with name: ${data.existingName}`);
+          setIsProcessing(false);
+          return;
         }
 
-        setProcessingStep('Course verified successfully!');
-        setTimeout(() => {
-          setProcessingStep('');
-          setIsProcessing(false);
-          // Move to next step
-          const nextStep = Math.min(currentStep + 1, steps.length - 1);
-          setCurrentStep(nextStep);
-          window.scrollTo(0, 0);
-        }, 1000); // Show success message for 1 second
+        // If status is success or exists, proceed to next step
+        if (data.status === 'success' || data.status === 'exists') {
+          setProcessingStep('Course verified successfully!');
+          setTimeout(() => {
+            setProcessingStep('');
+            setIsProcessing(false);
+            const nextStep = Math.min(currentStep + 1, steps.length - 1);
+            setCurrentStep(nextStep);
+            window.scrollTo(0, 0);
+          }, 1000);
+          return;
+        }
+
+        // Handle any other status
+        setProcessingStep(data.message || 'Verification failed. Please try again.');
+        setIsProcessing(false);
 
       } catch (error) {
-        if (error instanceof Error) {
-          console.error('Error details:', {
-            name: error.name,
-            message: error.message,
-            stack: error.stack
-          });
-          alert(`Error: ${error.message}`);
-        } else {
-          console.error('Unknown error:', error);
-          alert('An unexpected error occurred');
-        }
+        console.error('Error:', error);
+        setProcessingStep('An error occurred. Please try again.');
         setIsProcessing(false);
-        setProcessingStep('');
-        return;
       }
     } else {
       const nextStep = Math.min(currentStep + 1, steps.length - 1);
@@ -337,8 +337,12 @@ export default function ExamEvaluator() {
         <Progress value={(currentStep / (steps.length - 1)) * 100} />
       </div>
       <Card className="p-6">
-        {isProcessing && processingStep && (
-          <div className="mb-4 text-center text-blue-600">
+        {processingStep && (
+          <div className={`mb-4 text-center ${
+            processingStep.includes('Please fill') || processingStep.includes('exists with name') 
+              ? 'text-red-600' 
+              : 'text-blue-600'
+          }`}>
             {processingStep}
           </div>
         )}
@@ -348,6 +352,7 @@ export default function ExamEvaluator() {
             variant="secondary" 
             onClick={() => {
               setCurrentStep(prev => Math.max(prev - 1, 0));
+              setProcessingStep('');
               window.scrollTo(0, 0);
             }} 
             disabled={currentStep === 0 || isProcessing}
@@ -356,11 +361,7 @@ export default function ExamEvaluator() {
           </Button>
           <Button 
             onClick={handleNextStep}
-            disabled={
-              isProcessing ||
-              (currentStep === 3 && (!uploadedAnswerKey || !answerKeyData || !!processError)) ||
-              (currentStep === 4 && !answerKeyData)
-            }
+            disabled={isProcessing}
           >
             {isProcessing ? 'Processing...' : 'Next'}
           </Button>

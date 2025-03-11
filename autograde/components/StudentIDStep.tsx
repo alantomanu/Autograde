@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Input } from './ui/input';
 
 interface StudentIDStepProps {
@@ -20,17 +20,15 @@ export const StudentIDStep: React.FC<StudentIDStepProps> = ({
 }) => {
   const [courseIdMessage, setCourseIdMessage] = useState<string>('');
   const [courseNameMessage, setCourseNameMessage] = useState<string>('');
-  const [verificationMessage, setVerificationMessage] = useState<string>('');
   const [messageType, setMessageType] = useState<'info' | 'error'>('info');
-  const [correctCourseName, setCorrectCourseName] = useState<string>('');
+  const [existingCourseName, setExistingCourseName] = useState<string>('');
 
-  const verifyCourseId = async (id: string) => {
-    if (!id) return;
-
-    setCourseIdMessage('Verifying course ID...');
-    setMessageType('info');
-    setCourseNameMessage('');
-    setVerificationMessage(''); // Reset verification message
+  const verifyCourseId = useCallback(async (id: string) => {
+    if (!id) {
+      setCourseIdMessage('');
+      setCourseNameMessage('');
+      return;
+    }
 
     try {
       const response = await fetch('/api/courses', {
@@ -41,41 +39,45 @@ export const StudentIDStep: React.FC<StudentIDStepProps> = ({
         body: JSON.stringify({
           courseId: id,
           courseName,
-          teacherId: 'placeholder', // This will be replaced with session teacherId
+          teacherId: 'placeholder',
         }),
       });
 
       const data = await response.json();
+      console.log('Verification response:', data);
 
-      if (data.status === 'exists') {
-        setCourseIdMessage('Course ID verified.');
-        setCorrectCourseName(data.course.courseName);
-        
-        // Check if the entered course name matches the existing course name
-        if (courseName && data.course.courseName !== courseName) {
-          setCourseNameMessage(`This course ID is registered with the name: "${data.course.courseName}". Please enter this name to continue.`);
-          setVerificationMessage(`This is the course name for the course ID: "${data.course.courseName}". Enter this name to continue.`);
-        } else {
-          setCourseNameMessage('');
-          setVerificationMessage(''); // Clear verification message if names match
+      if (data.status === 'name_mismatch') {
+        setExistingCourseName(data.existingName);
+        setCourseNameMessage(
+          `Course name mismatch: You entered "${data.providedName}" but this course exists as "${data.existingName}". Click here to use the existing name.`
+        );
+        setMessageType('info');
+      } else if (data.status === 'exists') {
+        setCourseIdMessage(data.message);
+        if (data.course?.courseName) {
+          setExistingCourseName(data.course.courseName);
         }
       } else {
         setCourseIdMessage('');
         setCourseNameMessage('');
-        setCorrectCourseName('');
+        setExistingCourseName('');
       }
     } catch (error) {
       console.error('Verification error:', error);
-      setCourseIdMessage('Unable to verify course. You can continue with your entered details.');
+      setCourseIdMessage('Unable to verify course.');
       setMessageType('error');
     }
-  };
+  }, [courseName]);
 
-  const handleCourseNameChange = (newName: string) => {
-    setCourseName(newName);
-    if (correctCourseName && newName !== correctCourseName) {
-      setCourseNameMessage(`This course ID is registered with the name: "${correctCourseName}". Please enter this name to continue.`);
-    } else {
+  React.useEffect(() => {
+    if (courseId) {
+      verifyCourseId(courseId);
+    }
+  }, [courseId, courseName, verifyCourseId]);
+
+  const handleCourseNameClick = () => {
+    if (existingCourseName) {
+      setCourseName(existingCourseName);
       setCourseNameMessage('');
     }
   };
@@ -101,10 +103,7 @@ export const StudentIDStep: React.FC<StudentIDStepProps> = ({
           id="courseId"
           placeholder="Enter Course ID"
           value={courseId}
-          onChange={(e) => {
-            setCourseId(e.target.value);
-            verifyCourseId(e.target.value);
-          }}
+          onChange={(e) => setCourseId(e.target.value)}
         />
         {courseIdMessage && (
           <p className={`mt-1 text-sm ${
@@ -122,16 +121,14 @@ export const StudentIDStep: React.FC<StudentIDStepProps> = ({
           id="courseName"
           placeholder="Enter Course Name"
           value={courseName}
-          onChange={(e) => handleCourseNameChange(e.target.value)}
+          onChange={(e) => setCourseName(e.target.value)}
         />
         {courseNameMessage && (
-          <p className="mt-1 text-sm text-blue-600">
+          <p 
+            className="mt-1 text-sm text-blue-600 cursor-pointer hover:text-blue-800 transition-colors"
+            onClick={handleCourseNameClick}
+          >
             {courseNameMessage}
-          </p>
-        )}
-        {verificationMessage && (
-          <p className="mt-1 text-sm text-blue-600">
-            {verificationMessage}
           </p>
         )}
       </div>
