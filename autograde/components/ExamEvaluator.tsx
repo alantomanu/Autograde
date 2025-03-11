@@ -12,6 +12,7 @@ import { ViewScoresStep } from './ViewScoresStep'
 import { ClassNameStep } from './ClassNameStep'
 import { AnswerKeyData } from '../types'
 import { DownloadTemplateButton } from './ui/DownloadTemplateButton'
+import { useSession } from "next-auth/react";
 
 const steps = [
   'Enter Student ID',
@@ -53,6 +54,7 @@ interface EvaluationResponse {
 }
 
 export default function ExamEvaluator() {
+  const { data: session } = useSession();
   const [currentStep, setCurrentStep] = useState(0)
   const [studentId, setStudentId] = useState('')
   const [className, setClassName] = useState('')
@@ -250,7 +252,54 @@ export default function ExamEvaluator() {
         return null;
     }
   }
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
+    if (currentStep === 0) {
+      try {
+        const teacherId = session?.user?.teacherId;
+
+        if (!teacherId) {
+          throw new Error('No teacher ID found in session. Please log in again.');
+        }
+
+        console.log('Sending data:', { courseId, courseName, teacherId });
+
+        const response = await fetch('/api/courses', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            courseId,
+            courseName,
+            teacherId,
+          }),
+        });
+
+        const data = await response.json();
+        console.log('Response received:', data);
+
+        if (!response.ok) {
+          console.error('Server error:', data.error);
+          throw new Error(data.error || 'Failed to add course');
+        }
+
+        console.log('Course added successfully:', data);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error('Error details:', {
+            name: error.name,
+            message: error.message,
+            stack: error.stack
+          });
+          alert(`Error: ${error.message}`);
+        } else {
+          console.error('Unknown error:', error);
+          alert('An unexpected error occurred');
+        }
+        return;
+      }
+    }
+
     const nextStep = Math.min(currentStep + 1, steps.length - 1);
     if (currentStep === 3 && nextStep === 4) {
       evaluateAnswers();
