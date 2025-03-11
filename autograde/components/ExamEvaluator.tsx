@@ -67,6 +67,8 @@ export default function ExamEvaluator() {
   const [processError, setProcessError] = useState<string | null>(null);
   const [answerKeyData, setAnswerKeyData] = useState<AnswerKeyData | null>(null);
   const [evaluationData, setEvaluationData] = useState<EvaluationResponse | null>(null);
+  const [courseId, setCourseId] = useState('');
+  const [courseName, setCourseName] = useState('');
 
   /** ✅ RESET FUNCTIONS for Upload Components */
   const resetAnswerSheetUpload = () => setUploadedAnswerSheet(null);
@@ -185,7 +187,16 @@ export default function ExamEvaluator() {
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
-        return <StudentIDStep studentId={studentId} setStudentId={setStudentId} />;
+        return (
+          <StudentIDStep 
+            studentId={studentId} 
+            setStudentId={setStudentId} 
+            courseId={courseId} 
+            setCourseId={setCourseId} 
+            courseName={courseName} 
+            setCourseName={setCourseName} 
+          />
+        );
       case 1:
         return (
           <AnswerSheetUploadStep
