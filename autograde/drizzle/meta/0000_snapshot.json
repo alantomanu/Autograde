@@ -1,5 +1,5 @@
 {
-  "id": "f0fa64d0-db84-487c-9a4d-a62dd1b64d46",
+  "id": "215e8c8d-5a69-446d-86bd-1948004729d2",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -26,12 +26,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "teacher_id": {
-          "name": "teacher_id",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -41,21 +35,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "courses_teacher_id_teachers_teacher_id_fk": {
-          "name": "courses_teacher_id_teachers_teacher_id_fk",
-          "tableFrom": "courses",
-          "tableTo": "teachers",
-          "columnsFrom": [
-            "teacher_id"
-          ],
-          "columnsTo": [
-            "teacher_id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "courses_course_code_unique": {
@@ -82,19 +62,13 @@
         },
         "student_id": {
           "name": "student_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "course_id": {
+          "name": "course_id",
           "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "course_code": {
-          "name": "course_code",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "course_name": {
-          "name": "course_name",
-          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
@@ -132,15 +106,73 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "scores_course_code_courses_course_code_fk": {
-          "name": "scores_course_code_courses_course_code_fk",
+        "scores_course_id_courses_id_fk": {
+          "name": "scores_course_id_courses_id_fk",
           "tableFrom": "scores",
           "tableTo": "courses",
           "columnsFrom": [
-            "course_code"
+            "course_id"
           ],
           "columnsTo": [
-            "course_code"
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.teacher_courses": {
+      "name": "teacher_courses",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "teacher_id": {
+          "name": "teacher_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "course_id": {
+          "name": "course_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "teacher_courses_teacher_id_teachers_id_fk": {
+          "name": "teacher_courses_teacher_id_teachers_id_fk",
+          "tableFrom": "teacher_courses",
+          "tableTo": "teachers",
+          "columnsFrom": [
+            "teacher_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "teacher_courses_course_id_courses_id_fk": {
+          "name": "teacher_courses_course_id_courses_id_fk",
+          "tableFrom": "teacher_courses",
+          "tableTo": "courses",
+          "columnsFrom": [
+            "course_id"
+          ],
+          "columnsTo": [
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -172,7 +204,7 @@
           "name": "email",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "password": {
           "name": "password",

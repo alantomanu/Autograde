@@ -51,6 +51,7 @@ interface EvaluationResponse {
     totalMarks: string;
     percentage: number;
   };
+  cloudinaryUrl?: string;
 }
 
 export default function ExamEvaluator() {
@@ -315,6 +316,93 @@ export default function ExamEvaluator() {
     } else if (currentStep === 2 && !continueChecked) {
       setProcessingStep('Please verify the digital answer sheet before continuing');
       return;
+    } else if (currentStep === 4 && evaluationData) {
+      try {
+        setIsProcessing(true);
+        setProcessingStep('Saving scores...');
+
+        // Debug logging
+        console.log('Current studentId:', studentId);
+        console.log('Current courseId:', courseId);
+
+        // Validate studentId
+        if (!studentId) {
+          setProcessingStep('Please enter a Student ID in step 1');
+          setIsProcessing(false);
+          return;
+        }
+
+        // First ensure we have a cloudinaryUrl by saving to Cloudinary if not already done
+        let cloudinaryUrl = evaluationData.cloudinaryUrl;
+        
+        if (!cloudinaryUrl) {
+          // Save to Cloudinary first
+          const jsonString = JSON.stringify(evaluationData);
+          const formData = new FormData();
+          formData.append('file', new Blob([jsonString], { type: 'application/json' }));
+          formData.append('upload_preset', 'evaluation-results');
+          
+          const cloudinaryResponse = await fetch(
+            `https://api.cloudinary.com/v1_1/dfivs4n49/raw/upload`,
+            {
+              method: 'POST',
+              body: formData,
+            }
+          );
+
+          if (!cloudinaryResponse.ok) {
+            throw new Error('Failed to upload to Cloudinary');
+          }
+
+          const cloudinaryData = await cloudinaryResponse.json();
+          cloudinaryUrl = cloudinaryData.secure_url;
+        }
+
+        // Extract total marks from summary
+        const [totalMarks, maxMarks] = evaluationData.summary.totalMarks.split('/').map(Number);
+
+        const requestBody = {
+          studentId: studentId, // Use studentId directly as a string
+          courseId: courseId,
+          totalMarks,
+          maxMarks,
+          percentage: evaluationData.summary.percentage,
+          cloudinaryUrl
+        };
+
+        // Debug log to check request body
+        console.log('Request body:', requestBody);
+
+        const response = await fetch('/api/scores', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
+        });
+
+        const data = await response.json();
+        console.log('API Response:', data);
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to save scores');
+        }
+
+        setProcessingStep('Scores saved successfully!');
+        setTimeout(() => {
+          setProcessingStep('');
+          setIsProcessing(false);
+          const nextStep = Math.min(currentStep + 1, steps.length - 1);
+          setCurrentStep(nextStep);
+          window.scrollTo(0, 0);
+        }, 1000);
+
+      } catch (error) {
+        console.error('Error saving scores:', error);
+        setProcessingStep(error instanceof Error ? error.message : 'Failed to save scores. Please try again.');
+        setIsProcessing(false);
+        return;
+      }
     } else {
       const nextStep = Math.min(currentStep + 1, steps.length - 1);
       if (currentStep === 3 && nextStep === 4) {

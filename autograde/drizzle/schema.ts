@@ -28,7 +28,7 @@ export const teacherCourses = pgTable("teacher_courses", {
 // 🏆 Scores Table
 export const scores = pgTable("scores", {
     id: serial("id").primaryKey(),
-    studentId: integer("student_id").notNull(),
+    studentId: varchar("student_id", { length: 255 }).notNull(),
     
     // ✅ Now references `courseId`
     courseId: integer("course_id").notNull().references(() => courses.id, { onDelete: "cascade" }),
