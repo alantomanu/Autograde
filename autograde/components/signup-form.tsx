@@ -8,6 +8,7 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "./ui/button";
 import { IconBrandGoogle } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 // Add this function outside the component
 const checkPasswordStrength = (password: string): { strength: number; message: string } => {
@@ -30,6 +31,7 @@ const checkPasswordStrength = (password: string): { strength: number; message: s
 export function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: session, status } = useSession();
   const isOAuth = searchParams.get('oauth') === 'google';
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -59,6 +61,14 @@ export function SignupForm() {
       setPasswordMatch(true);
     }
   }, [formData.password, formData.confirmPassword]);
+
+  // Add useEffect for session handling
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user?.teacherId) {
+      router.push('/');
+      router.refresh(); // Refresh to update the navbar with teacher ID
+    }
+  }, [status, session, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -97,6 +107,12 @@ export function SignupForm() {
           setError(data.message || 'Please check your information and try again');
           return;
         }
+
+        // After successful OAuth registration, refresh the session
+        await signIn('google', { 
+          redirect: false,
+          callbackUrl: '/'
+        });
       } else {
         const response = await fetch('/api/auth/register', {
           method: 'POST',
@@ -116,12 +132,22 @@ export function SignupForm() {
           setError(data.message || 'This Email address or Id is already registered');
           return;
         }
+
+        // After successful manual registration, sign in the user
+        const signInResult = await signIn('credentials', {
+          identifier: formData.email,
+          password: formData.password,
+          redirect: false,
+        });
+
+        if (signInResult?.error) {
+          setError('Failed to sign in after registration');
+          return;
+        }
       }
 
-      // Only redirect if registration was successful
-      router.push('/');
+      // The useEffect will handle the redirect once the session is updated
     } catch {
-      // Generic error message for unexpected errors
       setError('Unable to complete registration. Please try again later.');
     } finally {
       setLoading(false);
