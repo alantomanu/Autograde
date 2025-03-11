@@ -33,8 +33,26 @@ export function AnswerSheetPreviewStep({
         )) : <p>No text extracted yet.</p>}</Card>
       )}
 
-      <Checkbox checked={continueChecked} onCheckedChange={(checked) => setContinueChecked(checked as boolean)} />
-      <Button onClick={handleExtractAgain} disabled={isProcessing}>Extract Again</Button>
+      <div className="flex items-center space-x-2 mt-4">
+        <Checkbox 
+          id="verify-answers"
+          checked={continueChecked} 
+          onCheckedChange={(checked) => setContinueChecked(checked as boolean)} 
+        />
+        <label
+          htmlFor="verify-answers"
+          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        >
+          I have verified the digital answer sheet and confirm it matches the uploaded document
+        </label>
+      </div>
+      <Button 
+        onClick={handleExtractAgain} 
+        disabled={isProcessing}
+        className="mt-2"
+      >
+        Extract Again
+      </Button>
     </div>
   );
 }

@@ -312,6 +312,9 @@ export default function ExamEvaluator() {
         setProcessingStep('An error occurred. Please try again.');
         setIsProcessing(false);
       }
+    } else if (currentStep === 2 && !continueChecked) {
+      setProcessingStep('Please verify the digital answer sheet before continuing');
+      return;
     } else {
       const nextStep = Math.min(currentStep + 1, steps.length - 1);
       if (currentStep === 3 && nextStep === 4) {
@@ -337,34 +340,40 @@ export default function ExamEvaluator() {
         <Progress value={(currentStep / (steps.length - 1)) * 100} />
       </div>
       <Card className="p-6">
-        {processingStep && (
-          <div className={`mb-4 text-center ${
-            processingStep.includes('Please fill') || processingStep.includes('exists with name') 
-              ? 'text-red-600' 
-              : 'text-blue-600'
-          }`}>
-            {processingStep}
-          </div>
-        )}
         {renderStepContent()}
-        <div className="flex justify-between mt-6">
-          <Button 
-            variant="secondary" 
-            onClick={() => {
-              setCurrentStep(prev => Math.max(prev - 1, 0));
-              setProcessingStep('');
-              window.scrollTo(0, 0);
-            }} 
-            disabled={currentStep === 0 || isProcessing}
-          >
-            Back
-          </Button>
-          <Button 
-            onClick={handleNextStep}
-            disabled={isProcessing}
-          >
-            {isProcessing ? 'Processing...' : 'Next'}
-          </Button>
+        <div className="mt-6">
+          {processingStep && (
+            <div className={`mb-4 text-center ${
+              processingStep.includes('Please fill') || processingStep.includes('exists with name') 
+                ? 'text-red-600' 
+                : 'text-blue-600'
+            }`}>
+              {processingStep}
+            </div>
+          )}
+          <div className="flex justify-between">
+            {currentStep > 0 && (
+              <Button 
+                variant="secondary" 
+                onClick={() => {
+                  setCurrentStep(prev => Math.max(prev - 1, 0));
+                  setProcessingStep('');
+                  window.scrollTo(0, 0);
+                }} 
+                disabled={isProcessing}
+              >
+                Back
+              </Button>
+            )}
+            <div className="flex justify-end w-full">
+              <Button 
+                onClick={handleNextStep}
+                disabled={isProcessing}
+              >
+                {isProcessing ? 'Processing...' : 'Next'}
+              </Button>
+            </div>
+          </div>
         </div>
       </Card>
     </div>
