@@ -161,7 +161,7 @@ export default function ExamEvaluator() {
       await processAnswerSheet(imageUrl, true);
     }
   };
-  const evaluateAnswers = async () => {
+  const evaluateAnswers = async () => { 
     if (!extractedText || !answerKeyData) return;
 
     try {
@@ -261,6 +261,9 @@ export default function ExamEvaluator() {
           throw new Error('No teacher ID found in session. Please log in again.');
         }
 
+        setProcessingStep('Verifying course details...');
+        setIsProcessing(true);
+
         console.log('Sending data:', { courseId, courseName, teacherId });
 
         const response = await fetch('/api/courses', {
@@ -283,7 +286,16 @@ export default function ExamEvaluator() {
           throw new Error(data.error || 'Failed to add course');
         }
 
-        console.log('Course added successfully:', data);
+        setProcessingStep('Course verified successfully!');
+        setTimeout(() => {
+          setProcessingStep('');
+          setIsProcessing(false);
+          // Move to next step
+          const nextStep = Math.min(currentStep + 1, steps.length - 1);
+          setCurrentStep(nextStep);
+          window.scrollTo(0, 0);
+        }, 1000); // Show success message for 1 second
+
       } catch (error) {
         if (error instanceof Error) {
           console.error('Error details:', {
@@ -296,16 +308,18 @@ export default function ExamEvaluator() {
           console.error('Unknown error:', error);
           alert('An unexpected error occurred');
         }
+        setIsProcessing(false);
+        setProcessingStep('');
         return;
       }
+    } else {
+      const nextStep = Math.min(currentStep + 1, steps.length - 1);
+      if (currentStep === 3 && nextStep === 4) {
+        evaluateAnswers();
+      }
+      setCurrentStep(nextStep);
+      window.scrollTo(0, 0);
     }
-
-    const nextStep = Math.min(currentStep + 1, steps.length - 1);
-    if (currentStep === 3 && nextStep === 4) {
-      evaluateAnswers();
-    }
-    setCurrentStep(nextStep);
-    window.scrollTo(0, 0);
   };
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -323,22 +337,32 @@ export default function ExamEvaluator() {
         <Progress value={(currentStep / (steps.length - 1)) * 100} />
       </div>
       <Card className="p-6">
+        {isProcessing && processingStep && (
+          <div className="mb-4 text-center text-blue-600">
+            {processingStep}
+          </div>
+        )}
         {renderStepContent()}
         <div className="flex justify-between mt-6">
-          <Button variant="secondary" onClick={() => {
-            setCurrentStep(prev => Math.max(prev - 1, 0));
-            window.scrollTo(0, 0);
-          }} disabled={currentStep === 0}>
+          <Button 
+            variant="secondary" 
+            onClick={() => {
+              setCurrentStep(prev => Math.max(prev - 1, 0));
+              window.scrollTo(0, 0);
+            }} 
+            disabled={currentStep === 0 || isProcessing}
+          >
             Back
           </Button>
           <Button 
             onClick={handleNextStep}
             disabled={
+              isProcessing ||
               (currentStep === 3 && (!uploadedAnswerKey || !answerKeyData || !!processError)) ||
               (currentStep === 4 && !answerKeyData)
             }
           >
-            Next
+            {isProcessing ? 'Processing...' : 'Next'}
           </Button>
         </div>
       </Card>

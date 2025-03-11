@@ -11,41 +11,26 @@ export async function POST(req: Request) {
 
     // Validate required fields
     if (!courseId || !courseName || !teacherId) {
-      console.log('Missing fields:', { courseId, courseName, teacherId });
       return NextResponse.json(
-        { error: `Missing required fields: ${[
-          !courseId && 'courseId',
-          !courseName && 'courseName',
-          !teacherId && 'teacherId'
-        ].filter(Boolean).join(', ')}` },
+        { error: "Please fill in all required fields" },
         { status: 400 }
       );
     }
 
-    // Check if course already exists
+    // Check if course exists and get its details
     const existingCourse = await db.query.courses.findFirst({
       where: (courses, { eq }) => eq(courses.courseCode, courseId)
     });
 
     if (existingCourse) {
-      console.log('Course already exists:', existingCourse);
-      return NextResponse.json(
-        { error: `Course with ID ${courseId} already exists` },
-        { status: 400 }
-      );
-    }
-
-    // Check if teacher exists
-    const teacherExists = await db.query.teachers.findFirst({
-      where: (teachers, { eq }) => eq(teachers.teacherId, teacherId)
-    });
-
-    if (!teacherExists) {
-      console.log('Teacher not found:', teacherId);
-      return NextResponse.json(
-        { error: `Teacher with ID ${teacherId} not found` },
-        { status: 400 }
-      );
+      return NextResponse.json({
+        status: 'exists',
+        message: "Course already exists",
+        course: {
+          courseCode: existingCourse.courseCode,
+          courseName: existingCourse.courseName
+        }
+      });
     }
 
     // Create new course
@@ -55,22 +40,16 @@ export async function POST(req: Request) {
       teacherId: teacherId,
     }).returning();
 
-    console.log('Course added successfully:', newCourse[0]);
-
     return NextResponse.json({ 
+      status: 'success',
       message: "Course added successfully",
       course: newCourse[0]
     });
 
   } catch (error) {
-    console.error("Detailed course creation error:", {
-      error,
-      message: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined
-    });
-    
+    console.error("Course operation error:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Internal server error" },
+      { error: "Unable to process request. Please try again." },
       { status: 500 }
     );
   }
