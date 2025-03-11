@@ -83,9 +83,9 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account }) {
-      if (account?.provider === "google") {
+      if (account?.provider === "google" && user.email) {
         const existingTeacher = await db.query.teachers.findFirst({
-          where: eq(teachers.email, user.email!),
+          where: eq(teachers.email, user.email),
         });
 
         if (!existingTeacher) {
@@ -96,19 +96,31 @@ export const authOptions: NextAuthOptions = {
         if (!existingTeacher.oauthId) {
           await db.update(teachers)
             .set({ oauthId: user.id })
-            .where(eq(teachers.email, user.email!));
+            .where(eq(teachers.email, user.email));
         }
       }
       return true;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
-        token.teacherId = user.teacherId;
+        // For credentials provider
+        if (user.teacherId) {
+          token.teacherId = user.teacherId;
+        }
+        // For OAuth provider
+        else if (account?.provider === "google" && token.email) {
+          const teacher = await db.query.teachers.findFirst({
+            where: eq(teachers.email, token.email),
+          });
+          if (teacher) {
+            token.teacherId = teacher.teacherId;
+          }
+        }
       }
       return token;
     },
     async session({ session, token }) {
-      if (session.user && token.teacherId) {
+      if (token.teacherId) {
         session.user.teacherId = token.teacherId as string;
       }
       return session;

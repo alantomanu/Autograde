@@ -1,7 +1,8 @@
 "use client"
-import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button} from "@heroui/react";
+import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem} from "@heroui/react";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 
 export const AcmeLogo = () => {
   return (
@@ -16,8 +17,13 @@ export const AcmeLogo = () => {
   );
 };
 
-export default function App() {
+export function App() {
   const pathname = usePathname();
+  const { data: session, status } = useSession();
+
+  const handleLogout = () => {
+    signOut({ callbackUrl: '/login' });
+  };
 
   return (
     <Navbar shouldHideOnScroll>
@@ -45,14 +51,33 @@ export default function App() {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
-          <Link href="/login">Login</Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Button as={Link} color="primary" href="/signup" variant="flat">
-            Sign Up
-          </Button>
-        </NavbarItem>
+        {status === "authenticated" && session?.user?.teacherId ? (
+          <NavbarItem>
+            <Dropdown>
+              <DropdownTrigger>
+                <Button variant="light">
+                  {session.user.teacherId}
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu aria-label="User actions">
+                <DropdownItem key="logout" onClick={handleLogout}>
+                  Logout
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </NavbarItem>
+        ) : (
+          <>
+            <NavbarItem className="hidden lg:flex">
+              <Link href="/login">Login</Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Button as={Link} color="primary" href="/signup" variant="flat">
+                Sign Up
+              </Button>
+            </NavbarItem>
+          </>
+        )}
         <NavbarItem>
           <ModeToggle />
         </NavbarItem>
@@ -60,3 +85,5 @@ export default function App() {
     </Navbar>
   );
 }
+
+export default App;

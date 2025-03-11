@@ -52,7 +52,9 @@ export function LoginForm() {
     setError(null);
     try {
       setIsLoading(true);
-      await signIn("google", { callbackUrl: "/" });
+      await signIn("google", {
+        callbackUrl: "/",
+      });
     } catch (error) {
       console.error("OAuth Login Failed", error);
       setError("Failed to login with Google");
