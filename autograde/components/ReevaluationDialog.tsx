@@ -6,36 +6,44 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface ReevaluationDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirmReeval: () => void;
   onUpdateScore: () => void;
-  step: 'initial' | 'update';
+  step: 'initial' | 'update' | 'enterNewId';
   existingScore: {
     totalMarks: number;
     maxMarks: number;
     percentage: number;
   } | null;
   message?: string;
+  newStudentId: string;
+  setNewStudentId: React.Dispatch<React.SetStateAction<string>>;
+  onNewStudentIdSubmit: () => void;
+  setReevalStep: React.Dispatch<React.SetStateAction<'initial' | 'update' | 'enterNewId'>>;
 }
 
 export function ReevaluationDialog({
   isOpen,
   onClose,
   onConfirmReeval,
-  onUpdateScore,
   step,
   existingScore,
-  message
+  message,
+  newStudentId,
+  setNewStudentId,
+  onNewStudentIdSubmit,
+  setReevalStep
 }: ReevaluationDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {step === 'initial' ? 'Score Already Exists' : 'Update Existing Score'}
+            {step === 'initial' ? 'Score Already Exists' : step === 'enterNewId' ? 'Enter New Student ID' : 'Update Existing Score'}
           </DialogTitle>
         </DialogHeader>
 
@@ -54,6 +62,17 @@ export function ReevaluationDialog({
               <div className="text-sm text-muted-foreground font-medium">
                 Is this a Re-evaluation?
               </div>
+            </div>
+          ) : step === 'enterNewId' ? (
+            <div className="space-y-4">
+              <div className="text-sm text-muted-foreground font-medium">
+                Enter New Student ID:
+              </div>
+              <Input
+                placeholder="Enter new student ID"
+                value={newStudentId}
+                onChange={(e) => setNewStudentId(e.target.value)}
+              />
             </div>
           ) : (
             <div className="space-y-4">
@@ -78,14 +97,19 @@ export function ReevaluationDialog({
         </div>
 
         <div className="flex justify-end space-x-2 mt-4">
-          <Button variant="outline" onClick={onClose}>
-            No
-          </Button>
-          <Button 
-            onClick={step === 'initial' ? onConfirmReeval : onUpdateScore}
-          >
-            Yes
-          </Button>
+          {step === 'initial' && (
+            <>
+              <Button variant="outline" onClick={() => setReevalStep('enterNewId')}>
+                No
+              </Button>
+              <Button onClick={onConfirmReeval}>
+                Yes
+              </Button>
+            </>
+          )}
+          {step === 'enterNewId' && (
+            <Button onClick={onNewStudentIdSubmit}>Submit New ID</Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>

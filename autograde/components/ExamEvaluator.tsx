@@ -80,8 +80,9 @@ export default function ExamEvaluator() {
   const [courseName, setCourseName] = useState('');
   const [isMarksSaved, setIsMarksSaved] = useState(false);
   const [showReevalDialog, setShowReevalDialog] = useState(false);
-  const [reevalStep, setReevalStep] = useState<'initial' | 'update'>('initial');
+  const [reevalStep, setReevalStep] = useState<'initial' | 'update' | 'enterNewId'>('initial');
   const [existingScore, setExistingScore] = useState<ExistingScore | null>(null);
+  const [newStudentId, setNewStudentId] = useState('');
   const router = useRouter();
 
   /** ✅ RESET FUNCTIONS for Upload Components */
@@ -447,6 +448,42 @@ export default function ExamEvaluator() {
     }
   };
 
+  const handleNewStudentIdSubmit = async () => {
+    try {
+      setProcessingStep('Saving new student ID...');
+      const response = await fetch('/api/scores', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          studentId: newStudentId,
+          courseId,
+          totalMarks: evaluationData?.summary.totalMarks.split('/')[0],
+          maxMarks: evaluationData?.summary.totalMarks.split('/')[1],
+          percentage: evaluationData?.summary.percentage,
+          cloudinaryUrl: evaluationData?.cloudinaryUrl
+        })
+      });
+
+      if (response.ok) {
+        setProcessingStep('New score saved successfully');
+        toast.success('New score submitted successfully');
+        setShowReevalDialog(false);
+        setReevalStep('initial');
+        setCurrentStep(4);
+      } else {
+        const errorData = await response.json();
+        setProcessingStep(errorData.message || 'Failed to save new score');
+        toast.error(errorData.message || 'Failed to save new score');
+      }
+    } catch (err) {
+      console.error('Error saving new score:', err);
+      setProcessingStep('Error saving new score');
+      toast.error('Failed to save new score');
+    }
+  };
+
   return (
     <>
       <div className="max-w-4xl mx-auto p-6">
@@ -511,6 +548,10 @@ export default function ExamEvaluator() {
         step={reevalStep}
         existingScore={existingScore}
         message={processingStep}
+        newStudentId={newStudentId}
+        setNewStudentId={setNewStudentId}
+        onNewStudentIdSubmit={handleNewStudentIdSubmit}
+        setReevalStep={setReevalStep}
       />
     </>
   )

@@ -1,5 +1,5 @@
 {
-  "id": "215e8c8d-5a69-446d-86bd-1948004729d2",
+  "id": "f16a1850-07ee-499f-b374-7359f604617e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -72,6 +72,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "checked_by_teacher_id": {
+          "name": "checked_by_teacher_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
         "total_marks": {
           "name": "total_marks",
           "type": "integer",
@@ -90,8 +96,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "cloudinary_url": {
-          "name": "cloudinary_url",
+        "feedback": {
+          "name": "feedback",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "answer_sheet_url": {
+          "name": "answer_sheet_url",
           "type": "varchar(2048)",
           "primaryKey": false,
           "notNull": true
@@ -117,6 +129,19 @@
             "id"
           ],
           "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "scores_checked_by_teacher_id_teachers_id_fk": {
+          "name": "scores_checked_by_teacher_id_teachers_id_fk",
+          "tableFrom": "scores",
+          "tableTo": "teachers",
+          "columnsFrom": [
+            "checked_by_teacher_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
           "onUpdate": "no action"
         }
       },

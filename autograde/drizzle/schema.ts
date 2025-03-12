@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar, integer, timestamp, real } from "drizzle-orm/pg-core";
+import { pgTable, serial, varchar, integer, timestamp, real, jsonb } from "drizzle-orm/pg-core";
 
 // 🏫 Teachers Table
 export const teachers = pgTable("teachers", {
@@ -10,7 +10,7 @@ export const teachers = pgTable("teachers", {
     createdAt: timestamp("created_at").defaultNow(),
 });
 
-// 📚 Courses Table (No Direct Teacher Relation)
+// 📚 Courses Table (Independent from Teachers)
 export const courses = pgTable("courses", {
     id: serial("id").primaryKey(),  // Unique Course ID
     courseCode: varchar("course_code", { length: 255 }).unique().notNull(),
@@ -25,17 +25,24 @@ export const teacherCourses = pgTable("teacher_courses", {
     courseId: integer("course_id").notNull().references(() => courses.id, { onDelete: "cascade" }),
 });
 
-// 🏆 Scores Table
+// 🏆 Scores Table (Updated with `teacherId`)
 export const scores = pgTable("scores", {
     id: serial("id").primaryKey(),
     studentId: varchar("student_id", { length: 255 }).notNull(),
-    
-    // ✅ Now references `courseId`
     courseId: integer("course_id").notNull().references(() => courses.id, { onDelete: "cascade" }),
+
+    // ✅ Tracks which teacher checked this answer sheet
+    checkedByTeacherId: integer("checked_by_teacher_id").notNull().references(() => teachers.id, { onDelete: "set null" }),
 
     totalMarks: integer("total_marks").notNull(),
     maxMarks: integer("max_marks").notNull(),
     percentage: real("percentage").notNull(),
-    cloudinaryUrl: varchar("cloudinary_url", { length: 2048 }).notNull(),
+
+    // ✅ JSONB column for per-question marks & feedback
+    feedback: jsonb("feedback").notNull(),
+
+    // ✅ URL of the student's scanned/written answer sheet
+    answerSheetUrl: varchar("answer_sheet_url", { length: 2048 }).notNull(),
+
     createdAt: timestamp("created_at").defaultNow(),
 });
