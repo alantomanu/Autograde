@@ -199,7 +199,38 @@ export default function ExamEvaluator() {
 
       if (!response.ok) throw new Error('Failed to evaluate answers');
 
-      setEvaluationData(data);
+      // Validate the structure of data.results
+      if (!Array.isArray(data.results)) {
+        throw new Error('Invalid results format');
+      }
+
+      const updatedResults = data.results.map((result: EvaluationResult) => {
+        if (!result || typeof result !== 'object') {
+          console.error('Invalid result object:', result);
+          return result;
+        }
+
+        const { mark, questionNumber, reason } = result;
+        if (!mark || !questionNumber) {
+          console.error('Missing mark or questionNumber in result:', result);
+          return result;
+        }
+
+        // Construct feedback from existing fields
+        return {
+          ...result,
+          feedback: {
+            mark: parseInt(mark.split('/')[0], 10), // Extract the received mark
+            questionNumber,
+            reason,
+          },
+        };
+      });
+
+      setEvaluationData({
+        ...data,
+        results: updatedResults,
+      });
     } catch (error) {
       console.error('Error evaluating answers:', error);
     }
@@ -349,6 +380,9 @@ export default function ExamEvaluator() {
           return;
         }
 
+        // Extract feedback from evaluationData
+        const feedback = evaluationData.results.map(result => result.feedback);
+
         const response = await fetch('/api/scores', {
           method: 'POST',
           headers: {
@@ -362,6 +396,7 @@ export default function ExamEvaluator() {
             percentage: evaluationData.summary.percentage,
             answerSheetUrl: uploadedAnswerSheet?.url,
             checkedByTeacherId: teacherId,
+            feedback, // Include feedback in the request body
           })
         });
 

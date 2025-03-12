@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     console.log('Received request body:', body);
 
-    const { studentId, courseId, totalMarks, maxMarks, percentage, answerSheetUrl, checkedByTeacherId } = body;
+    const { studentId, courseId, totalMarks, maxMarks, percentage, answerSheetUrl, checkedByTeacherId, feedback } = body;
 
     // Ensure studentId is a string
     const studentIdStr = studentId.toString();
@@ -23,6 +23,7 @@ export async function POST(req: Request) {
     console.log('percentage:', percentage);
     console.log('answerSheetUrl:', answerSheetUrl);
     console.log('checkedByTeacherId:', checkedByTeacherId);
+    console.log('feedback:', feedback);
 
     // Debug logging
     console.log('Field validation:', {
@@ -91,7 +92,7 @@ export async function POST(req: Request) {
         percentage,
         answerSheetUrl,
         checkedByTeacherId: checkedByTeacherId,
-        feedback: {}, // Ensure feedback is initialized
+        feedback,
       })
       .returning();
 
