@@ -52,7 +52,7 @@ export function ReevaluationDialog({
                 A score already exists for this student and course.
               </div>
               <div className="text-sm text-muted-foreground font-medium">
-                Is this a reevaluation?
+                Is this a Re-evaluation?
               </div>
             </div>
           ) : (

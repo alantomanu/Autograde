@@ -386,6 +386,27 @@ export default function ExamEvaluator() {
     }
   };
 
+  const handleDialogClose = () => {
+    if (reevalStep === 'initial') {
+      setShowReevalDialog(false);
+      setReevalStep('initial');
+      setCurrentStep(0);
+      setProcessingStep('');
+      toast('Please verify the student ID', {
+        icon: '🔍',
+        style: {
+          background: '#EFF6FF',
+          color: '#1E40AF',
+          border: '1px solid #BFDBFE'
+        },
+      });
+    } else {
+      setShowReevalDialog(false);
+      setReevalStep('initial');
+      router.push('/');
+    }
+  };
+
   const handleReevalConfirm = () => {
     setReevalStep('update');
   };
@@ -424,15 +445,6 @@ export default function ExamEvaluator() {
     } finally {
       setShowReevalDialog(false);
     }
-  };
-
-  const handleDialogClose = () => {
-    if (reevalStep === 'initial') {
-      toast.error('Please verify the student ID');
-      router.push('/');
-    }
-    setShowReevalDialog(false);
-    setReevalStep('initial');
   };
 
   return (
