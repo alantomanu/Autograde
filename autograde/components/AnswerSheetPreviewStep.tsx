@@ -18,6 +18,10 @@ export function AnswerSheetPreviewStep({
   setContinueChecked: (checked: boolean) => void;
   handleExtractAgain: () => void;
 }) {
+  // Check for duplicate margin numbers
+  const hasDuplicateKeys = extractedText.length > 0 && 
+    new Set(extractedText.map(item => item.marginNumber)).size !== extractedText.length;
+
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-semibold">Answer Sheet Preview</h2>
@@ -28,9 +32,18 @@ export function AnswerSheetPreviewStep({
           <Progress value={processingStep.includes('Stitching') ? 50 : 75} />
         </div>
       ) : (
-        <Card className="p-4">{extractedText.length > 0 ? extractedText.map(({ marginNumber, answer }) => (
-          <p key={marginNumber}><strong>{marginNumber}:</strong> {answer}</p>
-        )) : <p>No text extracted yet.</p>}</Card>
+        <>
+          {hasDuplicateKeys && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+              Error: Duplicate question numbers detected. Please click &quot;Extract Again&quot; to retry text extraction.
+            </div>
+          )}
+          <Card className="p-4">
+            {extractedText.length > 0 ? extractedText.map(({ marginNumber, answer }, index) => (
+              <p key={`${marginNumber}-${index}`}><strong>{marginNumber}:</strong> {answer}</p>
+            )) : <p>No text extracted yet.</p>}
+          </Card>
+        </>
       )}
 
       <div className="flex items-center space-x-2 mt-4">

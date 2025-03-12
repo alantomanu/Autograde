@@ -4,6 +4,7 @@ import { Card } from './ui/card';
 import { Pencil } from 'lucide-react';
 import { Button } from './ui/button';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 interface EvaluationResult {
   questionNumber: string;
@@ -30,9 +31,11 @@ interface EvaluationResponse {
 interface ViewScoresStepProps {
   evaluationData: EvaluationResponse | null;
   setEvaluationData: React.Dispatch<React.SetStateAction<EvaluationResponse | null>>;
+  setIsMarksSaved: React.Dispatch<React.SetStateAction<boolean>>;
+  isMarksSaved: boolean;
 }
 
-export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScoresStepProps) {
+export function ViewScoresStep({ evaluationData, setEvaluationData, setIsMarksSaved }: ViewScoresStepProps) {
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [inputValues, setInputValues] = useState<{ [key: string]: string }>({});
   const [isSaving, setIsSaving] = useState(false);
@@ -130,6 +133,8 @@ export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScores
       }
 
       setSaveStatus('success');
+      setIsMarksSaved(true);
+      toast.success('Marks saved successfully');
       
       // Reset success status after 3 seconds
       setTimeout(() => {
@@ -138,6 +143,7 @@ export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScores
     } catch (error) {
       console.error('Error saving to Cloudinary:', error);
       setSaveStatus('error');
+      setIsMarksSaved(false);
     } finally {
       setIsSaving(false);
     }

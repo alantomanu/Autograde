@@ -9,7 +9,6 @@ import { AnswerSheetUploadStep } from './AnswerSheetUploadStep'
 import { AnswerSheetPreviewStep } from './AnswerSheetPreviewStep'
 import { AnswerKeyUploadStep } from './AnswerKeyUploadStep'
 import { ViewScoresStep } from './ViewScoresStep'
-import { ClassNameStep } from './ClassNameStep'
 import { AnswerKeyData } from '../types'
 import { DownloadTemplateButton } from './ui/DownloadTemplateButton'
 import { useSession } from "next-auth/react";
@@ -19,8 +18,7 @@ const steps = [
   'Upload Answer Sheet',
   'Review Answers',
   'Upload Answer Key',
-  'View Scores',
-  'Submit'
+  'View Scores'
 ]
 
 interface UploadedFile {
@@ -58,7 +56,6 @@ export default function ExamEvaluator() {
   const { data: session } = useSession();
   const [currentStep, setCurrentStep] = useState(0)
   const [studentId, setStudentId] = useState('')
-  const [className, setClassName] = useState('')
   const [uploadedAnswerSheet, setUploadedAnswerSheet] = useState<UploadedFile | null>(null);
   const [uploadedAnswerKey, setUploadedAnswerKey] = useState<UploadedFile | null>(null);
   const [isProcessing, setIsProcessing] = useState(false)
@@ -71,6 +68,7 @@ export default function ExamEvaluator() {
   const [evaluationData, setEvaluationData] = useState<EvaluationResponse | null>(null);
   const [courseId, setCourseId] = useState('');
   const [courseName, setCourseName] = useState('');
+  const [isMarksSaved, setIsMarksSaved] = useState(false);
 
   /** ✅ RESET FUNCTIONS for Upload Components */
   const resetAnswerSheetUpload = () => setUploadedAnswerSheet(null);
@@ -243,10 +241,10 @@ export default function ExamEvaluator() {
           <ViewScoresStep 
             evaluationData={evaluationData} 
             setEvaluationData={setEvaluationData}
+            setIsMarksSaved={setIsMarksSaved}
+            isMarksSaved={isMarksSaved}
           />
         );
-      case 5:
-        return <ClassNameStep className={className} setClassName={setClassName} />;
       default:
         return null;
     }
@@ -316,24 +314,22 @@ export default function ExamEvaluator() {
     } else if (currentStep === 2 && !continueChecked) {
       setProcessingStep('Please verify the digital answer sheet before continuing');
       return;
-    } else if (currentStep === 4 && evaluationData) {
+    } else if (currentStep === 4) {
+      if (!isMarksSaved) {
+        setProcessingStep('Please save marks before submitting');
+        return;
+      }
       try {
         setIsProcessing(true);
         setProcessingStep('Saving scores...');
 
-        // Debug logging
-        console.log('Current studentId:', studentId);
-        console.log('Current courseId:', courseId);
-
-        // Validate studentId
-        if (!studentId) {
-          setProcessingStep('Please enter a Student ID in step 1');
-          setIsProcessing(false);
-          return;
+        // Add null check for evaluationData
+        if (!evaluationData) {
+          throw new Error('No evaluation data available');
         }
 
         // First ensure we have a cloudinaryUrl by saving to Cloudinary if not already done
-        let cloudinaryUrl = evaluationData.cloudinaryUrl;
+        let cloudinaryUrl = evaluationData?.cloudinaryUrl;
         
         if (!cloudinaryUrl) {
           // Save to Cloudinary first
@@ -362,7 +358,7 @@ export default function ExamEvaluator() {
         const [totalMarks, maxMarks] = evaluationData.summary.totalMarks.split('/').map(Number);
 
         const requestBody = {
-          studentId: studentId, // Use studentId directly as a string
+          studentId: studentId,
           courseId: courseId,
           totalMarks,
           maxMarks,
@@ -458,7 +454,7 @@ export default function ExamEvaluator() {
                 onClick={handleNextStep}
                 disabled={isProcessing}
               >
-                {isProcessing ? 'Processing...' : 'Next'}
+                {isProcessing ? 'Processing...' : currentStep === 4 ? 'Submit' : 'Next'}
               </Button>
             </div>
           </div>
