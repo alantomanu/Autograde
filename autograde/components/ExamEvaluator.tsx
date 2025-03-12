@@ -440,7 +440,7 @@ export default function ExamEvaluator() {
         setIsProcessing(false);
         router.push('/');
         
-        setProcessingStep('You can view detailed analytics in ');
+        setProcessingStep('You can view detailed analytics in Analytics');
         <Button 
           onClick={() => router.push('/analytics')} 
           size="sm"
@@ -482,28 +482,28 @@ export default function ExamEvaluator() {
   };
 
   const handleDialogClose = () => {
-    if (reevalStep === 'initial') {
-      setShowReevalDialog(false);
-      setReevalStep('initial');
-      setCurrentStep(0);
-      setProcessingStep('');
-      toast('Please verify the student ID', {
-        icon: '🔍',
-        style: {
-          background: '#EFF6FF',
-          color: '#1E40AF',
-          border: '1px solid #BFDBFE'
-        },
-      });
-    } else {
-      setShowReevalDialog(false);
-      setReevalStep('initial');
-      router.push('/');
-    }
+    setShowReevalDialog(false);
+    setReevalStep('initial');
+    setCurrentStep(4);
   };
 
   const handleReevalConfirm = () => {
     setReevalStep('update');
+  };
+
+  const resetAllData = () => {
+    setStudentId('');
+    setCourseId('');
+    setCourseName('');
+    setUploadedAnswerSheet(null);
+    setUploadedAnswerKey(null);
+    setExtractedText([]);
+    setEvaluationData(null);
+    setIsMarksSaved(false);
+    setIsProcessed(false);
+    setContinueChecked(false);
+    setExistingScore(null);
+    setNewStudentId('');
   };
 
   const handleUpdateScore = async () => {
@@ -528,6 +528,10 @@ export default function ExamEvaluator() {
         setProcessingStep('Score updated successfully');
         toast.success('Score updated successfully');
         router.push('/');
+        setTimeout(() => {
+          setCurrentStep(0);
+          resetAllData();
+        }, 5000);
       } else {
         const errorData = await response.json();
         setProcessingStep(errorData.message || 'Failed to update score');
@@ -568,6 +572,12 @@ export default function ExamEvaluator() {
         setShowReevalDialog(false);
         setReevalStep('initial');
         setCurrentStep(4);
+
+        // Navigate back to case 0 after 5 seconds
+        setTimeout(() => {
+          setCurrentStep(0);
+          resetAllData();
+        }, 5000);
       } else {
         const errorData = await response.json();
         setProcessingStep(errorData.message || 'Failed to save new score');

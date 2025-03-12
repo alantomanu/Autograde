@@ -29,7 +29,7 @@ interface ReevaluationDialogProps {
 
 export function ReevaluationDialog({
   isOpen,
-
+  onClose,
   onConfirmReeval,
   onUpdateScore,
   step,
@@ -41,7 +41,7 @@ export function ReevaluationDialog({
   setReevalStep
 }: ReevaluationDialogProps) {
   return (
-    <Dialog open={isOpen} onOpenChange={() => setReevalStep('initial')}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
