@@ -5,7 +5,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,18 +29,19 @@ interface ReevaluationDialogProps {
 
 export function ReevaluationDialog({
   isOpen,
-  onClose,
+
   onConfirmReeval,
   onUpdateScore,
   step,
   existingScore,
+
   newStudentId,
   setNewStudentId,
   onNewStudentIdSubmit,
   setReevalStep
 }: ReevaluationDialogProps) {
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={() => setReevalStep('initial')}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
@@ -55,8 +55,10 @@ export function ReevaluationDialog({
               <p>Previous Score Details:</p>
               <p>Marks: {existingScore?.totalMarks}/{existingScore?.maxMarks}</p>
               <p>Percentage: {existingScore?.percentage}%</p>
-              <Button onClick={onConfirmReeval}>Yes, this is a re-evaluation</Button>
-              <Button variant="outline" onClick={() => setReevalStep('enterNewId')}>No, enter a new student ID</Button>
+              <div className="mt-6">
+                <Button onClick={onConfirmReeval} className="mr-4">Yes, this is a re-evaluation</Button>
+                <Button variant="outline" onClick={() => setReevalStep('enterNewId')}>No, enter a new student ID</Button>
+              </div>
             </>
           )}
           {step === 'enterNewId' && (
@@ -66,6 +68,7 @@ export function ReevaluationDialog({
                 placeholder="Enter new student ID"
                 value={newStudentId}
                 onChange={(e) => setNewStudentId(e.target.value)}
+                className="mb-6"
               />
               <Button onClick={onNewStudentIdSubmit}>Submit New ID</Button>
             </>
@@ -73,13 +76,10 @@ export function ReevaluationDialog({
           {step === 'update' && (
             <>
               <p>Do you want to update this score?</p>
-              <Button onClick={onUpdateScore}>Yes, update the score</Button>
+              <Button onClick={onUpdateScore} className="mt-6">Yes, update the score</Button>
             </>
           )}
         </DialogDescription>
-        <DialogFooter>
-          <Button variant="secondary" onClick={onClose}>Cancel</Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
