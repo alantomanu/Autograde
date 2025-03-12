@@ -12,6 +12,9 @@ import { ViewScoresStep } from './ViewScoresStep'
 import { AnswerKeyData } from '../types'
 import { DownloadTemplateButton } from './ui/DownloadTemplateButton'
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
+import { ReevaluationDialog } from './ReevaluationDialog'
 
 const steps = [
   'Enter Student ID',
@@ -52,6 +55,13 @@ interface EvaluationResponse {
   cloudinaryUrl?: string;
 }
 
+// Define the interface for existing score
+interface ExistingScore {
+  totalMarks: number;
+  maxMarks: number;
+  percentage: number;
+}
+
 export default function ExamEvaluator() {
   const { data: session } = useSession();
   const [currentStep, setCurrentStep] = useState(0)
@@ -69,6 +79,10 @@ export default function ExamEvaluator() {
   const [courseId, setCourseId] = useState('');
   const [courseName, setCourseName] = useState('');
   const [isMarksSaved, setIsMarksSaved] = useState(false);
+  const [showReevalDialog, setShowReevalDialog] = useState(false);
+  const [reevalStep, setReevalStep] = useState<'initial' | 'update'>('initial');
+  const [existingScore, setExistingScore] = useState<ExistingScore | null>(null);
+  const router = useRouter();
 
   /** ✅ RESET FUNCTIONS for Upload Components */
   const resetAnswerSheetUpload = () => setUploadedAnswerSheet(null);
@@ -321,83 +335,46 @@ export default function ExamEvaluator() {
       }
       try {
         setIsProcessing(true);
-        setProcessingStep('Saving scores...');
+        setProcessingStep('Checking existing scores...');
 
-        // Add null check for evaluationData
         if (!evaluationData) {
           throw new Error('No evaluation data available');
         }
-
-        // First ensure we have a cloudinaryUrl by saving to Cloudinary if not already done
-        let cloudinaryUrl = evaluationData?.cloudinaryUrl;
-        
-        if (!cloudinaryUrl) {
-          // Save to Cloudinary first
-          const jsonString = JSON.stringify(evaluationData);
-          const formData = new FormData();
-          formData.append('file', new Blob([jsonString], { type: 'application/json' }));
-          formData.append('upload_preset', 'evaluation-results');
-          
-          const cloudinaryResponse = await fetch(
-            `https://api.cloudinary.com/v1_1/dfivs4n49/raw/upload`,
-            {
-              method: 'POST',
-              body: formData,
-            }
-          );
-
-          if (!cloudinaryResponse.ok) {
-            throw new Error('Failed to upload to Cloudinary');
-          }
-
-          const cloudinaryData = await cloudinaryResponse.json();
-          cloudinaryUrl = cloudinaryData.secure_url;
-        }
-
-        // Extract total marks from summary
-        const [totalMarks, maxMarks] = evaluationData.summary.totalMarks.split('/').map(Number);
-
-        const requestBody = {
-          studentId: studentId,
-          courseId: courseId,
-          totalMarks,
-          maxMarks,
-          percentage: evaluationData.summary.percentage,
-          cloudinaryUrl
-        };
-
-        // Debug log to check request body
-        console.log('Request body:', requestBody);
 
         const response = await fetch('/api/scores', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify({
+            studentId,
+            courseId,
+            totalMarks: evaluationData.summary.totalMarks.split('/')[0],
+            maxMarks: evaluationData.summary.totalMarks.split('/')[1],
+            percentage: evaluationData.summary.percentage,
+            cloudinaryUrl: evaluationData.cloudinaryUrl
+          })
         });
 
         const data = await response.json();
-        console.log('API Response:', data);
 
-        if (!response.ok) {
-          throw new Error(data.message || 'Failed to save scores');
+        if (data.status === 'reevaluation') {
+          setIsProcessing(false);
+          setProcessingStep(data.message || 'Score already exists for this student');
+          setExistingScore(data.existingScore);
+          setShowReevalDialog(true);
+          setReevalStep('initial');
+          return;
         }
 
-        setProcessingStep('Scores saved successfully!');
-        setTimeout(() => {
-          setProcessingStep('');
-          setIsProcessing(false);
-          const nextStep = Math.min(currentStep + 1, steps.length - 1);
-          setCurrentStep(nextStep);
-          window.scrollTo(0, 0);
-        }, 1000);
+        setProcessingStep('New score saved successfully');
+        toast.success('Score submitted successfully');
+        router.push('/');
 
-      } catch (error) {
-        console.error('Error saving scores:', error);
-        setProcessingStep(error instanceof Error ? error.message : 'Failed to save scores. Please try again.');
+      } catch  {
         setIsProcessing(false);
-        return;
+        setProcessingStep('Error submitting score');
+        toast.error('Failed to submit score');
       }
     } else {
       const nextStep = Math.min(currentStep + 1, steps.length - 1);
@@ -408,58 +385,121 @@ export default function ExamEvaluator() {
       window.scrollTo(0, 0);
     }
   };
+
+  const handleReevalConfirm = () => {
+    setReevalStep('update');
+  };
+
+  const handleUpdateScore = async () => {
+    try {
+      setProcessingStep('Updating existing score...');
+      const response = await fetch('/api/scores', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          studentId,
+          courseId,
+          totalMarks: evaluationData?.summary.totalMarks.split('/')[0],
+          maxMarks: evaluationData?.summary.totalMarks.split('/')[1],
+          percentage: evaluationData?.summary.percentage,
+          cloudinaryUrl: evaluationData?.cloudinaryUrl
+        })
+      });
+
+      if (response.ok) {
+        setProcessingStep('Score updated successfully');
+        toast.success('Score updated successfully');
+        router.push('/');
+      } else {
+        const errorData = await response.json();
+        setProcessingStep(errorData.message || 'Failed to update score');
+        toast.error(errorData.message || 'Failed to update score');
+      }
+    } catch (err) {
+      console.error('Error updating score:', err);
+      setProcessingStep('Error updating score');
+      toast.error('Failed to update score');
+    } finally {
+      setShowReevalDialog(false);
+    }
+  };
+
+  const handleDialogClose = () => {
+    if (reevalStep === 'initial') {
+      toast.error('Please verify the student ID');
+      router.push('/');
+    }
+    setShowReevalDialog(false);
+    setReevalStep('initial');
+  };
+
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="mb-6">
-        <div className="flex flex-wrap justify-between">
-          {steps.map((step, index) => (
-            <div
-              key={index}
-              className={` text-center py-2 whitespace-nowrap ${currentStep === index ? 'font-bold ' : 'text-gray-500 text-sm'}`}
-            >
-              {step}
-            </div>
-          ))}
+    <>
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="mb-6">
+          <div className="flex flex-wrap justify-between">
+            {steps.map((step, index) => (
+              <div
+                key={index}
+                className={` text-center py-2 whitespace-nowrap ${currentStep === index ? 'font-bold ' : 'text-gray-500 text-sm'}`}
+              >
+                {step}
+              </div>
+            ))}
+          </div>
+          <Progress value={(currentStep / (steps.length - 1)) * 100} />
         </div>
-        <Progress value={(currentStep / (steps.length - 1)) * 100} />
-      </div>
-      <Card className="p-6">
-        {renderStepContent()}
-        <div className="mt-6">
-          {processingStep && (
-            <div className={`mb-4 text-center ${
-              processingStep.includes('Please fill') || processingStep.includes('exists with name') 
-                ? 'text-red-600' 
-                : 'text-blue-600'
-            }`}>
-              {processingStep}
-            </div>
-          )}
-          <div className="flex justify-between">
-            {currentStep > 0 && (
-              <Button 
-                variant="secondary" 
-                onClick={() => {
-                  setCurrentStep(prev => Math.max(prev - 1, 0));
-                  setProcessingStep('');
-                  window.scrollTo(0, 0);
-                }} 
-                disabled={isProcessing}
-              >
-                Back
-              </Button>
+        <Card className="p-6">
+          {renderStepContent()}
+          <div className="mt-6">
+            {processingStep && (
+              <div className={`mb-4 text-center ${
+                processingStep.includes('Please fill') || 
+                processingStep.includes('exists with name') || 
+                processingStep.includes('Reevaluation check required')
+                  ? 'text-amber-600 font-medium bg-amber-50 p-3 rounded-md border border-amber-200' 
+                  : 'text-blue-600'
+              }`}>
+                {processingStep}
+              </div>
             )}
-            <div className="flex justify-end w-full">
-              <Button 
-                onClick={handleNextStep}
-                disabled={isProcessing}
-              >
-                {isProcessing ? 'Processing...' : currentStep === 4 ? 'Submit' : 'Next'}
-              </Button>
+            <div className="flex justify-between">
+              {currentStep > 0 && (
+                <Button 
+                  variant="secondary" 
+                  onClick={() => {
+                    setCurrentStep(prev => Math.max(prev - 1, 0));
+                    setProcessingStep('');
+                    window.scrollTo(0, 0);
+                  }} 
+                  disabled={isProcessing}
+                >
+                  Back
+                </Button>
+              )}
+              <div className="flex justify-end w-full">
+                <Button 
+                  onClick={handleNextStep}
+                  disabled={isProcessing}
+                >
+                  {isProcessing ? 'Processing...' : currentStep === 4 ? 'Submit' : 'Next'}
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      </Card>
-    </div>
+        </Card>
+      </div>
+      <ReevaluationDialog
+        isOpen={showReevalDialog}
+        onClose={handleDialogClose}
+        onConfirmReeval={handleReevalConfirm}
+        onUpdateScore={handleUpdateScore}
+        step={reevalStep}
+        existingScore={existingScore}
+        message={processingStep}
+      />
+    </>
   )
 }
