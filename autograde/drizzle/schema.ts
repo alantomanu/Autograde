@@ -32,7 +32,7 @@ export const scores = pgTable("scores", {
     courseId: integer("course_id").notNull().references(() => courses.id, { onDelete: "cascade" }),
 
     // ✅ Tracks which teacher checked this answer sheet
-    checkedByTeacherId: integer("checked_by_teacher_id").notNull().references(() => teachers.id, { onDelete: "set null" }),
+    checkedByTeacherId: varchar("checked_by_teacher_id", { length: 255 }).notNull(),
 
     totalMarks: integer("total_marks").notNull(),
     maxMarks: integer("max_marks").notNull(),

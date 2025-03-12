@@ -13,11 +13,16 @@ export function AnswerSheetUploadStep({
   handleAnswerSheetUpload,
   resetUpload,
 }: AnswerSheetUploadStepProps) {
+  const handleFileUpload = (url: string, file: File) => {
+    // Call the handler with the URL and file
+    handleAnswerSheetUpload(url, file);
+  };
+
   return (
     <div className="space-y-4">
       <FileUpload
         label="Answer Sheet"
-        onFileUpload={handleAnswerSheetUpload}
+        onFileUpload={handleFileUpload}
         existingFile={uploadedAnswerSheet}
         folderName="answer_sheets"
         className="w-full max-w-4xl mx-auto min-h-96 border border-dashed bg-white dark:bg-black border-neutral-200 dark:border-neutral-800 rounded-lg"

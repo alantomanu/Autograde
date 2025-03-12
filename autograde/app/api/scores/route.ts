@@ -5,18 +5,32 @@ import { eq, and } from "drizzle-orm";
 
 export async function POST(req: Request) {
   try {
+    console.log('API endpoint hit');
+
     const body = await req.json();
-    const { studentId, courseId, totalMarks, maxMarks, percentage, cloudinaryUrl } = body;
+    console.log('Received request body:', body);
+
+    const { studentId, courseId, totalMarks, maxMarks, percentage, answerSheetUrl, checkedByTeacherId } = body;
+
+    // Ensure studentId is a string
+    const studentIdStr = studentId.toString();
+
+    // Log each field to ensure they are present
+    console.log('studentId:', studentId);
+    console.log('courseId:', courseId);
+    console.log('totalMarks:', totalMarks);
+    console.log('maxMarks:', maxMarks);
+    console.log('percentage:', percentage);
+    console.log('answerSheetUrl:', answerSheetUrl);
+    console.log('checkedByTeacherId:', checkedByTeacherId);
 
     // Debug logging
-    console.log('Received request body:', body);
     console.log('Field validation:', {
       studentId: Boolean(studentId),
       courseId: Boolean(courseId),
       totalMarks: Boolean(totalMarks),
       maxMarks: Boolean(maxMarks),
-      percentage: Boolean(percentage),
-      cloudinaryUrl: Boolean(cloudinaryUrl)
+      percentage: Boolean(percentage)
     });
 
     // First, get the course ID from courses table
@@ -25,6 +39,7 @@ export async function POST(req: Request) {
     });
 
     if (!course) {
+      console.log('Course not found');
       return NextResponse.json({
         status: 'error',
         message: "Course not found"
@@ -35,13 +50,13 @@ export async function POST(req: Request) {
     const existingScore = await db.query.scores.findFirst({
       where: (scores, { eq, and }) => 
         and(
-          eq(scores.studentId, studentId.toString()),
+          eq(scores.studentId, studentIdStr),
           eq(scores.courseId, course.id)
         )
     });
 
-    // If score exists, return it with reevaluation status
     if (existingScore) {
+      console.log('Score already exists:', existingScore);
       return NextResponse.json({
         status: 'reevaluation',
         message: "Score already exists for this student and course",
@@ -53,17 +68,42 @@ export async function POST(req: Request) {
       }, { status: 200 });
     }
 
-    // If no existing score, insert new score
+    // Assuming you have a function to get the teacher's ID
+    const teacher = await db.query.teachers.findFirst({
+      where: (teachers, { eq }) => eq(teachers.teacherId, checkedByTeacherId)
+    });
+
+    if (!teacher) {
+      console.log('Teacher not found');
+      return NextResponse.json({
+        status: 'error',
+        message: "Teacher not found"
+      }, { status: 404 });
+    }
+
+    // Use the teacher's numeric ID
     const [newScore] = await db.insert(scores)
       .values({
-        studentId: studentId.toString(),
+        studentId: studentIdStr,
         courseId: course.id,
         totalMarks,
         maxMarks,
         percentage,
-        cloudinaryUrl
+        answerSheetUrl,
+        checkedByTeacherId: checkedByTeacherId,
+        feedback: {}, // Ensure feedback is initialized
       })
       .returning();
+
+    if (!newScore) {
+      console.error('Failed to insert new score');
+      return NextResponse.json({
+        status: 'error',
+        message: "Failed to save new score"
+      }, { status: 500 });
+    }
+
+    console.log('Inserted new score:', newScore);
 
     return NextResponse.json({
       status: 'success',
@@ -72,6 +112,7 @@ export async function POST(req: Request) {
     }, { status: 201 });
 
   } catch (error) {
+    console.error('Error in POST handler:', error);
     console.error('Error saving score:', error);
     return NextResponse.json({
       status: 'error',
@@ -84,7 +125,7 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
   try {
     const body = await req.json();
-    const { studentId, courseId, totalMarks, maxMarks, percentage, cloudinaryUrl } = body;
+    const { studentId, courseId, totalMarks, maxMarks, percentage } = body;
 
     // First, get the course ID from courses table
     const course = await db.query.courses.findFirst({
@@ -119,8 +160,7 @@ export async function PUT(req: Request) {
       .set({
         totalMarks,
         maxMarks,
-        percentage,
-        cloudinaryUrl
+        percentage
       })
       .where(
         and(

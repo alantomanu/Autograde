@@ -41,6 +41,11 @@ interface EvaluationResult {
   hasDiagram: boolean;
   evaluationMethod: string;
   diagramMarks: number;
+  feedback: {
+    mark: number;
+    questionNumber: string;
+    reason: string;
+  };
 }
 
 interface EvaluationResponse {
@@ -330,16 +335,18 @@ export default function ExamEvaluator() {
       setProcessingStep('Please verify the digital answer sheet before continuing');
       return;
     } else if (currentStep === 4) {
-      if (!isMarksSaved) {
-        setProcessingStep('Please save marks before submitting');
-        return;
-      }
       try {
         setIsProcessing(true);
         setProcessingStep('Checking existing scores...');
 
         if (!evaluationData) {
           throw new Error('No evaluation data available');
+        }
+
+        const teacherId = session?.user?.teacherId;
+        if (!teacherId) {
+          setProcessingStep('No teacher ID found. Please log in again.');
+          return;
         }
 
         const response = await fetch('/api/scores', {
@@ -353,7 +360,8 @@ export default function ExamEvaluator() {
             totalMarks: evaluationData.summary.totalMarks.split('/')[0],
             maxMarks: evaluationData.summary.totalMarks.split('/')[1],
             percentage: evaluationData.summary.percentage,
-            cloudinaryUrl: evaluationData.cloudinaryUrl
+            answerSheetUrl: uploadedAnswerSheet?.url,
+            checkedByTeacherId: teacherId,
           })
         });
 

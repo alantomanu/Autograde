@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 import { Input } from './ui/input';
 import { Card } from './ui/card';
 import { Pencil } from 'lucide-react';
-import { Button } from './ui/button';
-import { Loader2 } from 'lucide-react';
-import { toast } from 'react-hot-toast';
 
 interface EvaluationResult {
   questionNumber: string;
@@ -15,6 +12,11 @@ interface EvaluationResult {
   hasDiagram: boolean;
   evaluationMethod: string;
   diagramMarks: number;
+  feedback: {
+    mark: number;
+    questionNumber: string;
+    reason: string;
+  };
 }
 
 interface EvaluationResponse {
@@ -35,11 +37,9 @@ interface ViewScoresStepProps {
   isMarksSaved: boolean;
 }
 
-export function ViewScoresStep({ evaluationData, setEvaluationData, setIsMarksSaved }: ViewScoresStepProps) {
+export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScoresStepProps) {
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [inputValues, setInputValues] = useState<{ [key: string]: string }>({});
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
 
   if (!evaluationData) return <div>Loading evaluation results...</div>;
 
@@ -77,7 +77,13 @@ export function ViewScoresStep({ evaluationData, setEvaluationData, setIsMarksSa
         return { 
           ...result, 
           mark: `${received}/${total}`,
-          adjustedMark: `${received}/${total}`
+          adjustedMark: `${received}/${total}`,
+          feedback: {
+            ...result.feedback,
+            mark: received,
+            questionNumber,
+            reason: result.reason
+          }
         };
       }
       return result;
@@ -105,48 +111,6 @@ export function ViewScoresStep({ evaluationData, setEvaluationData, setIsMarksSa
         percentage: Math.round(newPercentage),
       },
     });
-  };
-
-  const handleSaveToCloudinary = async () => {
-    if (!evaluationData) return;
-    
-    try {
-      setIsSaving(true);
-      setSaveStatus('saving');
-      
-      const jsonString = JSON.stringify(evaluationData);
-      
-      const formData = new FormData();
-      formData.append('file', new Blob([jsonString], { type: 'application/json' }));
-      formData.append('upload_preset', 'evaluation-results');
-      
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/dfivs4n49/raw/upload`,
-        {
-          method: 'POST',
-          body: formData,
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to upload to Cloudinary');
-      }
-
-      setSaveStatus('success');
-      setIsMarksSaved(true);
-      toast.success('Marks saved successfully');
-      
-      // Reset success status after 3 seconds
-      setTimeout(() => {
-        setSaveStatus('idle');
-      }, 3000);
-    } catch (error) {
-      console.error('Error saving to Cloudinary:', error);
-      setSaveStatus('error');
-      setIsMarksSaved(false);
-    } finally {
-      setIsSaving(false);
-    }
   };
 
   return (
@@ -188,7 +152,6 @@ export function ViewScoresStep({ evaluationData, setEvaluationData, setIsMarksSa
                   {result.diagramMarks > 0 && (
                     <div className="text-sm text-gray-600 dark:text-gray-400 ml-4">
                       <span className="font-medium">Diagram mark:</span> {result.diagramMarks} ( Evaluate the diagram and award the marks )
-                      
                     </div>
                   )}
                   {errors[result.questionNumber] && (
@@ -218,49 +181,6 @@ export function ViewScoresStep({ evaluationData, setEvaluationData, setIsMarksSa
             <span className="text-gray-600 dark:text-gray-400">Percentage:</span>
             <span className="font-medium">{evaluationData.summary.percentage}%</span>
           </p>
-          
-          <div className="pt-4 mt-4 border-t flex justify-end">
-            <Button
-              onClick={handleSaveToCloudinary}
-              disabled={isSaving}
-              size="sm"
-              className={`flex items-center gap-2 transition-all duration-200
-                ${saveStatus === 'success' ? 'bg-green-600 hover:bg-green-700' : ''}
-                ${saveStatus === 'error' ? 'bg-red-600 hover:bg-red-700' : ''}
-                ${saveStatus === 'saving' ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
-            >
-              {saveStatus === 'saving' && (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Uploading...</span>
-                </>
-              )}
-              {saveStatus === 'success' && (
-                <>
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Uploaded</span>
-                </>
-              )}
-              {saveStatus === 'error' && (
-                <>
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                  <span>Failed</span>
-                </>
-              )}
-              {saveStatus === 'idle' && (
-                <>
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                  </svg>
-                  <span>Save Marks</span>
-                </>
-              )}
-            </Button>
-          </div>
         </div>
       </Card>
     </div>
