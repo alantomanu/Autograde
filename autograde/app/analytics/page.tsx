@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
+import { Bar, Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -15,6 +15,8 @@ import {
   LineElement,
 } from 'chart.js';
 import { useSession } from "next-auth/react";
+import * as XLSX from 'xlsx';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 // Register the necessary components
 ChartJS.register(
@@ -54,8 +56,9 @@ export default function AnalyticsPage() {
   const { data: session } = useSession();
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [passPercentages, setPassPercentages] = useState<Record<string, number>>({});
+  const [expandedCourses, setExpandedCourses] = useState<Record<string, boolean>>({});
   
   // Retrieve the teacher ID from the session
   const teacherId = session?.user?.teacherId;
@@ -72,19 +75,23 @@ export default function AnalyticsPage() {
       try {
         const response = await fetch(`/api/analytics?teacherId=${teacherId}`);
         const result = await response.json();
-        
-        console.log('API Response:', result); // Log the API response
 
         if (result.status === 'success') {
           setAnalyticsData(result.data);
           
-          // Log the analytics data
-          console.log('Analytics Data:', result.data);
-
-          // Set first course as selected by default
-          if (Object.keys(result.data).length > 0) {
-            setSelectedCourse(Object.keys(result.data)[0]);
-          }
+          // Initialize pass percentages to 40% for each course
+          const initialPassPercentages: Record<string, number> = {};
+          Object.keys(result.data).forEach(courseId => {
+            initialPassPercentages[courseId] = 40;
+          });
+          setPassPercentages(initialPassPercentages);
+          
+          // Initialize all courses as collapsed
+          const initialExpandedState: Record<string, boolean> = {};
+          Object.keys(result.data).forEach(courseId => {
+            initialExpandedState[courseId] = false;
+          });
+          setExpandedCourses(initialExpandedState);
         } else {
           setError(result.message);
         }
@@ -98,6 +105,62 @@ export default function AnalyticsPage() {
 
     fetchAnalytics();
   }, [teacherId]);
+
+  const handlePassPercentageChange = (courseId: string, value: string) => {
+    const numValue = Number(value);
+    if (!isNaN(numValue) && numValue >= 0 && numValue <= 100) {
+      setPassPercentages(prev => ({
+        ...prev,
+        [courseId]: numValue
+      }));
+    }
+  };
+
+  const toggleCourseExpand = (courseId: string) => {
+    setExpandedCourses(prev => ({
+      ...prev,
+      [courseId]: !prev[courseId]
+    }));
+  };
+
+  const downloadXLSX = (courseId: string) => {
+    if (!analyticsData) return;
+
+    const course = analyticsData[courseId];
+    const passThreshold = passPercentages[courseId] || 40;
+    
+    const worksheetData = course.students.map(student => ({
+      'Student ID': student.studentId,
+      'Course': course.courseName,
+      'Total Marks': student.totalMarks,
+      'Percentage': student.percentage.toFixed(1) + '%',
+      'Status': student.percentage >= passThreshold ? 'Pass' : 'Fail',
+      'Evaluation Date': new Date(student.evaluatedTime).toLocaleDateString()
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Students');
+
+    XLSX.writeFile(workbook, `${course.courseName}_Students.xlsx`);
+  };
+
+  // Generate pass/fail data for pie chart
+  const getPassFailData = (courseId: string) => {
+    if (!analyticsData) return { pass: 0, fail: 0 };
+    
+    const course = analyticsData[courseId];
+    const passThreshold = passPercentages[courseId] || 40;
+    
+    const passCount = course.students.filter(student => 
+      student.percentage >= passThreshold
+    ).length;
+    
+    return {
+      pass: passCount,
+      fail: course.students.length - passCount
+    };
+  };
 
   if (loading) {
     return (
@@ -157,24 +220,24 @@ export default function AnalyticsPage() {
     <div className="flex flex-col min-h-screen p-6 bg-gray-50">
       <h1 className="text-3xl font-bold mb-6 text-center">Teacher Analytics Dashboard</h1>
       
-      {/* Overview Statistics */}
+      {/* Overall Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white shadow-md rounded-lg p-6">
+        <div className="bg-white shadow-md rounded-lg p-6 transition-all hover:shadow-lg">
           <h2 className="text-xl font-semibold mb-2">Total Courses</h2>
           <p className="text-3xl font-bold text-blue-600">{totalCourses}</p>
         </div>
-        <div className="bg-white shadow-md rounded-lg p-6">
+        <div className="bg-white shadow-md rounded-lg p-6 transition-all hover:shadow-lg">
           <h2 className="text-xl font-semibold mb-2">Answer Sheets Checked</h2>
           <p className="text-3xl font-bold text-green-600">{totalSheets}</p>
         </div>
-        <div className="bg-white shadow-md rounded-lg p-6">
+        <div className="bg-white shadow-md rounded-lg p-6 transition-all hover:shadow-lg">
           <h2 className="text-xl font-semibold mb-2">Average Score</h2>
           <p className="text-3xl font-bold text-purple-600">{averageScore}%</p>
         </div>
       </div>
       
       {/* All Courses Overview Chart */}
-      <div className="bg-white shadow-md rounded-lg p-6 mb-8">
+      <div className="bg-white shadow-md rounded-lg p-6 mb-8 transition-all hover:shadow-lg">
         <h2 className="text-xl font-semibold mb-4">Course Overview</h2>
         <div className="h-64">
           <Bar 
@@ -191,32 +254,168 @@ export default function AnalyticsPage() {
         </div>
       </div>
       
-      {/* Course Selector */}
-      <div className="bg-white shadow-md rounded-lg p-6 mb-8">
-        <h2 className="text-xl font-semibold mb-4">Select Course for Detailed Analysis</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {Object.entries(analyticsData).map(([courseId, course]) => (
-            <button
-              key={courseId}
-              onClick={() => setSelectedCourse(courseId)}
-              className={`p-3 rounded-md text-center transition-colors ${
-                selectedCourse === courseId 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-200 hover:bg-gray-300'
-              }`}
-            >
-              {course.courseName}
-            </button>
-          ))}
-        </div>
+      {/* Individual Course Analysis Cards */}
+      <div className="space-y-6">
+        {Object.entries(analyticsData).map(([courseId, course]) => {
+          const isExpanded = expandedCourses[courseId];
+          const passFailData = getPassFailData(courseId);
+          
+          const pieData = {
+            labels: ['Pass', 'Fail'],
+            datasets: [
+              {
+                data: [passFailData.pass, passFailData.fail],
+                backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+                borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+                borderWidth: 1,
+              },
+            ],
+          };
+          
+          return (
+            <div key={courseId} className="bg-white shadow-md rounded-lg overflow-hidden transition-all hover:shadow-lg">
+              {/* Course Header - Always Visible */}
+              <div className="p-6 border-b border-gray-200">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-semibold">{course.courseName}</h2>
+                  <button 
+                    onClick={() => toggleCourseExpand(courseId)}
+                    className="p-2 rounded-full hover:bg-gray-100"
+                  >
+                    {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                  </button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                  <div>
+                    <p className="text-gray-500">Evaluated Sheets</p>
+                    <p className="text-2xl font-bold">{course.evaluatedCount}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Average Score</p>
+                    <p className="text-2xl font-bold">{course.averageScore.toFixed(1)}%</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Max Score</p>
+                    <p className="text-2xl font-bold">{course.maxScore}</p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Expandable Course Details */}
+              {isExpanded && (
+                <div className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    {/* Pass Percentage Input */}
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h3 className="text-lg font-medium mb-3">Set Pass Percentage</h3>
+                      <div className="flex items-center space-x-4">
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          value={passPercentages[courseId] || 40}
+                          onChange={(e) => handlePassPercentageChange(courseId, e.target.value)}
+                          className="p-2 border rounded w-24 text-center"
+                        />
+                        <span className="text-lg font-semibold">%</span>
+                      </div>
+                      <p className="mt-2 text-sm text-gray-500">
+                        Students with scores at or above this percentage will pass
+                      </p>
+                    </div>
+                    
+                    {/* Pass/Fail Pie Chart */}
+                    <div className="bg-gray-50 p-4 rounded-lg flex flex-col items-center">
+                      <h3 className="text-lg font-medium mb-3">Pass/Fail Distribution</h3>
+                      <div className="w-40 h-40">
+                        <Pie 
+                          data={pieData} 
+                          options={{
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: {
+                              legend: {
+                                position: 'bottom'
+                              }
+                            }
+                          }}
+                        />
+                      </div>
+                      <div className="mt-2 text-center">
+                        <p className="text-sm">
+                          Pass: {passFailData.pass} students ({((passFailData.pass / course.students.length) * 100).toFixed(1)}%)
+                        </p>
+                        <p className="text-sm">
+                          Fail: {passFailData.fail} students ({((passFailData.fail / course.students.length) * 100).toFixed(1)}%)
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Student Results Table */}
+                  <div className="mt-6">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-medium">Student Results</h3>
+                      <button 
+                        onClick={() => downloadXLSX(courseId)}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors flex items-center"
+                      >
+                        Download XLSX
+                      </button>
+                    </div>
+                    
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Student ID
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Total Marks
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Percentage
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Status
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {course.students.map((student, index) => (
+                            <tr key={index} className="hover:bg-gray-50">
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm font-medium text-gray-900">{student.studentId}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-900">{student.totalMarks}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-900">{student.percentage.toFixed(1)}%</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                  student.percentage >= (passPercentages[courseId] || 40)
+                                    ? 'bg-green-100 text-green-800'
+                                    : 'bg-red-100 text-red-800'
+                                }`}>
+                                  {student.percentage >= (passPercentages[courseId] || 40) ? 'Pass' : 'Fail'}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
-      
-      {/* Selected Course Analysis */}
-      {selectedCourse && (
-        <div className="bg-white shadow-md rounded-lg p-6 mb-8">
-          {/* Add your content here */}
-        </div>
-      )}
     </div>
   );
 }
