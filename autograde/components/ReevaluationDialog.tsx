@@ -4,6 +4,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,9 +32,9 @@ export function ReevaluationDialog({
   isOpen,
   onClose,
   onConfirmReeval,
+  onUpdateScore,
   step,
   existingScore,
-  message,
   newStudentId,
   setNewStudentId,
   onNewStudentIdSubmit,
@@ -40,77 +42,44 @@ export function ReevaluationDialog({
 }: ReevaluationDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>
             {step === 'initial' ? 'Score Already Exists' : step === 'enterNewId' ? 'Enter New Student ID' : 'Update Existing Score'}
           </DialogTitle>
         </DialogHeader>
-
-        {message && (
-          <div className="bg-amber-50 text-amber-800 p-3 rounded-md mt-2 text-sm">
-            {message}
-          </div>
-        )}
-
-        <div className="mt-4 space-y-4">
-          {step === 'initial' ? (
-            <div className="space-y-2">
-              <div className="text-sm text-muted-foreground">
-                A score already exists for this student and course.
-              </div>
-              <div className="text-sm text-muted-foreground font-medium">
-                Is this a Re-evaluation?
-              </div>
-            </div>
-          ) : step === 'enterNewId' ? (
-            <div className="space-y-4">
-              <div className="text-sm text-muted-foreground font-medium">
-                Enter New Student ID:
-              </div>
+        <DialogDescription>
+          {step === 'initial' && (
+            <>
+              <p>Score already exists for this student and course.</p>
+              <p>Previous Score Details:</p>
+              <p>Marks: {existingScore?.totalMarks}/{existingScore?.maxMarks}</p>
+              <p>Percentage: {existingScore?.percentage}%</p>
+              <Button onClick={onConfirmReeval}>Yes, this is a re-evaluation</Button>
+              <Button variant="outline" onClick={() => setReevalStep('enterNewId')}>No, enter a new student ID</Button>
+            </>
+          )}
+          {step === 'enterNewId' && (
+            <>
+              <p>Enter New Student ID:</p>
               <Input
                 placeholder="Enter new student ID"
                 value={newStudentId}
                 onChange={(e) => setNewStudentId(e.target.value)}
               />
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="text-sm text-muted-foreground font-medium">
-                Previous Score Details:
-              </div>
-              {existingScore && (
-                <div className="bg-muted p-3 rounded-md space-y-1">
-                  <div className="text-sm">
-                    Marks: {existingScore.totalMarks}/{existingScore.maxMarks}
-                  </div>
-                  <div className="text-sm">
-                    Percentage: {existingScore.percentage}%
-                  </div>
-                </div>
-              )}
-              <div className="text-sm text-muted-foreground font-medium">
-                Do you want to update this score?
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="flex justify-end space-x-2 mt-4">
-          {step === 'initial' && (
-            <>
-              <Button variant="outline" onClick={() => setReevalStep('enterNewId')}>
-                No
-              </Button>
-              <Button onClick={onConfirmReeval}>
-                Yes
-              </Button>
+              <Button onClick={onNewStudentIdSubmit}>Submit New ID</Button>
             </>
           )}
-          {step === 'enterNewId' && (
-            <Button onClick={onNewStudentIdSubmit}>Submit New ID</Button>
+          {step === 'update' && (
+            <>
+              <p>Do you want to update this score?</p>
+              <Button onClick={onUpdateScore}>Yes, update the score</Button>
+            </>
           )}
-        </div>
+        </DialogDescription>
+        <DialogFooter>
+          <Button variant="secondary" onClick={onClose}>Cancel</Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

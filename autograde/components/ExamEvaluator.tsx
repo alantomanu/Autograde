@@ -67,6 +67,30 @@ interface ExistingScore {
   percentage: number;
 }
 
+// Define a custom type for the router
+type CustomRouter = {
+  push: (url: string) => void;
+  // Add other methods you might need from the router
+};
+
+// Custom Toast Component
+const AnalyticsToast = ({ closeToast, router }: { closeToast: () => void, router: CustomRouter }) => (
+  <div>
+    New score saved successfully. You can view the detailed score report{' '}
+    <a
+      href="/analytics"
+      onClick={(e) => {
+        e.preventDefault();
+        closeToast();
+        router.push('/analytics');
+      }}
+      style={{ color: '#1E40AF', textDecoration: 'underline' }}
+    >
+      here
+    </a>.
+  </div>
+);
+
 export default function ExamEvaluator() {
   const { data: session } = useSession();
   const [currentStep, setCurrentStep] = useState(0)
@@ -411,11 +435,38 @@ export default function ExamEvaluator() {
           return;
         }
 
-        setProcessingStep('New score saved successfully');
-        toast.success('Score submitted successfully');
+        setProcessingStep('New score saved successfully.');
+        toast((t) => <AnalyticsToast closeToast={() => toast.dismiss(t.id)} router={router} />);
+        setIsProcessing(false);
         router.push('/');
+        
+        setProcessingStep('You can view detailed analytics in ');
+        <Button 
+          onClick={() => router.push('/analytics')} 
+          size="sm"
+          style={{ marginLeft: '5px' }}
+        >
+           Here
+        </Button>
+        setTimeout(() => {
+          setCurrentStep(0); // Move to case 0 after 5 seconds
+        }, 5000);
 
-      } catch  {
+        // Clear all saved states
+        setStudentId('');
+        setCourseId('');
+        setCourseName('');
+        setUploadedAnswerSheet(null);
+        setUploadedAnswerKey(null);
+        setExtractedText([]);
+        setEvaluationData(null);
+        setIsMarksSaved(false);
+        setIsProcessed(false);
+        setContinueChecked(false);
+        setExistingScore(null);
+        setNewStudentId('');
+
+      } catch {
         setIsProcessing(false);
         setProcessingStep('Error submitting score');
         toast.error('Failed to submit score');
@@ -505,7 +556,9 @@ export default function ExamEvaluator() {
           totalMarks: evaluationData?.summary.totalMarks.split('/')[0],
           maxMarks: evaluationData?.summary.totalMarks.split('/')[1],
           percentage: evaluationData?.summary.percentage,
-          cloudinaryUrl: evaluationData?.cloudinaryUrl
+          answerSheetUrl: uploadedAnswerSheet?.url,
+          checkedByTeacherId: session?.user?.teacherId,
+          feedback: evaluationData?.results.map(result => result.feedback),
         })
       });
 
