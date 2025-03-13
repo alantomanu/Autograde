@@ -43,7 +43,7 @@ export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScores
 
   if (!evaluationData) return <div>Loading evaluation results...</div>;
 
-  console.log("Questions with diagram:", evaluationData.results.find(r => r.hasDiagram)); // Debug log
+  console.log("Question with diagram:", evaluationData.results.find(r => r.hasDiagram)); // Debug log
 
   const handleMarkUpdate = (questionNumber: string, newReceivedMark: string, totalMark: string) => {
     // Update the input value immediately
