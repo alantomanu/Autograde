@@ -218,8 +218,8 @@ export default function AnalyticsPage() {
 
   return (
     <div className="flex flex-col min-h-screen p-6 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold mb-10 text-center">Teacher Analytics Dashboard</h2>
+      <div className="container mx-auto px-4 lg:px-16">
+        <h3 className="text-3xl font-bold mb-10 text-center">Teacher Analytics Dashboard</h3>
         
         {/* Overall Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -358,12 +358,14 @@ export default function AnalyticsPage() {
                     <div className="mt-6">
                       <div className="flex justify-between items-center mb-4">
                         <h3 className="text-lg font-medium">Student Results</h3>
-                        <button 
-                          onClick={() => downloadXLSX(courseId)}
-                          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors flex items-center"
-                        >
-                          Download XLSX
-                        </button>
+                        <div className="flex-grow flex justify-end mr-8">
+                          <button 
+                            onClick={() => downloadXLSX(courseId)}
+                            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors flex items-center"
+                          >
+                            Download XLSX
+                          </button>
+                        </div>
                       </div>
                       
                       <div className="overflow-x-auto">
