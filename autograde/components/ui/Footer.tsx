@@ -1,8 +1,12 @@
 import React from 'react';
 
-const Footer = () => {
+interface FooterProps {
+  className?: string;
+}
+
+const Footer: React.FC<FooterProps> = ({ className }) => {
   return (
-    <footer className="bg-white dark:bg-black text-gray-900 dark:text-white py-12">
+    <footer className={`bg-white dark:bg-black text-gray-900 dark:text-white py-12 ${className}`}>
       <div className="container mx-auto px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Section */}

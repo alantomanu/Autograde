@@ -60,7 +60,7 @@ export default async function RootLayout({
             <main className="flex-grow">
               {children}
             </main>
-            <Footer />
+            <Footer className="mt-6" />
           </div>
         </Providers>
       </body>
