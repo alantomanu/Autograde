@@ -136,7 +136,10 @@ export default function ExamEvaluator() {
           body: JSON.stringify({ pdfUrl }),
         });
 
-        if (!stitchResponse.ok) throw new Error('Failed to stitch PDF');
+        if (!stitchResponse.ok) {
+          setProcessingStep('Failed to stitch PDF');
+          return; // Stop further processing
+        }
 
         const stitchData = await stitchResponse.json();
         currentImageUrl = stitchData.imageUrl;
@@ -153,7 +156,10 @@ export default function ExamEvaluator() {
           body: JSON.stringify({ imageUrl: currentImageUrl || imageUrl }),
         });
 
-        if (!processResponse.ok) throw new Error('Failed to process image');
+        if (!processResponse.ok) {
+          setProcessingStep('Failed to process image');
+          return; // Stop further processing
+        }
 
         const processData = await processResponse.json();
         setExtractedText(processData.answers);
@@ -163,6 +169,7 @@ export default function ExamEvaluator() {
 
     } catch (error) {
       console.error('Error in processAnswerSheet:', error);
+      setProcessingStep('An error occurred while processing the answer sheet');
     } finally {
       setIsProcessing(false);
       setProcessingStep('');
@@ -221,11 +228,15 @@ export default function ExamEvaluator() {
       const data = await response.json();
       console.log("Evaluation API Response:", data);
 
-      if (!response.ok) throw new Error('Failed to evaluate answers');
+      if (!response.ok) {
+        setProcessingStep('Failed to evaluate answers');
+        return; // Stop further processing
+      }
 
       // Validate the structure of data.results
       if (!Array.isArray(data.results)) {
-        throw new Error('Invalid results format');
+        setProcessingStep('Invalid results format');
+        return; // Stop further processing
       }
 
       const updatedResults = data.results.map((result: EvaluationResult) => {
@@ -257,6 +268,7 @@ export default function ExamEvaluator() {
       });
     } catch (error) {
       console.error('Error evaluating answers:', error);
+      setProcessingStep('An error occurred while evaluating the answers');
     }
   };
   const renderStepContent = () => {

@@ -45,7 +45,7 @@ export function ReevaluationDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {step === 'initial' ? 'Score Already Exists' : step === 'enterNewId' ? 'Enter New Student ID' : 'Update Existing Score'}
+            {step === 'initial' ? 'Score Already Exists' : step === 'enterNewId' ? 'Enter Valid Student ID' : 'Update Existing Score'}
           </DialogTitle>
         </DialogHeader>
         <DialogDescription>
@@ -63,9 +63,9 @@ export function ReevaluationDialog({
           )}
           {step === 'enterNewId' && (
             <>
-              <p>Enter New Student ID:</p>
+              
               <Input
-                placeholder="Enter new student ID"
+                placeholder="Enter Valid Student ID"
                 value={newStudentId}
                 onChange={(e) => setNewStudentId(e.target.value)}
                 className="mb-6"
