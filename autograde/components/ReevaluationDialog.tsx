@@ -34,7 +34,6 @@ export function ReevaluationDialog({
   onUpdateScore,
   step,
   existingScore,
-
   newStudentId,
   setNewStudentId,
   onNewStudentIdSubmit,
@@ -50,20 +49,21 @@ export function ReevaluationDialog({
         </DialogHeader>
         <DialogDescription>
           {step === 'initial' && (
-            <>
-              <p>Score already exists for this student and course.</p>
-              <p>Previous Score Details:</p>
-              <p>Marks: {existingScore?.totalMarks}/{existingScore?.maxMarks}</p>
-              <p>Percentage: {existingScore?.percentage}%</p>
+            <div className="space-y-4">
+              <div>Score already exists for this student and course.</div>
+              <div className="space-y-2">
+                <div className="font-medium">Previous Score Details:</div>
+                <div>Marks: {existingScore?.totalMarks}/{existingScore?.maxMarks}</div>
+                <div>Percentage: {existingScore?.percentage}%</div>
+              </div>
               <div className="mt-6">
                 <Button onClick={onConfirmReeval} className="mr-4">Yes, this is a re-evaluation</Button>
                 <Button variant="outline" onClick={() => setReevalStep('enterNewId')}>No, enter a new student ID</Button>
               </div>
-            </>
+            </div>
           )}
           {step === 'enterNewId' && (
-            <>
-              
+            <div className="space-y-4">
               <Input
                 placeholder="Enter Valid Student ID"
                 value={newStudentId}
@@ -71,13 +71,13 @@ export function ReevaluationDialog({
                 className="mb-6"
               />
               <Button onClick={onNewStudentIdSubmit}>Submit New ID</Button>
-            </>
+            </div>
           )}
           {step === 'update' && (
-            <>
-              <p>Do you want to update this score?</p>
+            <div className="space-y-4">
+              <div>Do you want to update this score?</div>
               <Button onClick={onUpdateScore} className="mt-6">Yes, update the score</Button>
-            </>
+            </div>
           )}
         </DialogDescription>
       </DialogContent>
