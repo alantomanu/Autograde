@@ -2,35 +2,7 @@ import React, { useState } from 'react';
 import { Input } from './ui/input';
 import { Card } from './ui/card';
 import { Pencil } from 'lucide-react';
-
-interface EvaluationResult {
-  questionNumber: string;
-  mark: string;
-  adjustedMark: string;
-  reason: string;
-  maxMark: number;
-  justification: string;
-  hasDiagram: boolean;
-  evaluationMethod: string;
-  diagramMarks: number;
-  feedback: {
-    mark: number;
-    maxMark: number;
-    questionNumber: string;
-    reason: string;
-  };
-}
-
-interface EvaluationResponse {
-  success: boolean;
-  timestamp: string;
-  results: EvaluationResult[];
-  summary: {
-    totalQuestions: number;
-    totalMarks: string;
-    percentage: number;
-  };
-}
+import { EvaluationResponse, EvaluationResult } from '../types';
 
 interface ViewScoresStepProps {
   evaluationData: EvaluationResponse | null;
@@ -39,7 +11,11 @@ interface ViewScoresStepProps {
   isMarksSaved: boolean;
 }
 
-export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScoresStepProps) {
+export function ViewScoresStep({ 
+  evaluationData, 
+  setEvaluationData, 
+  setIsMarksSaved 
+}: ViewScoresStepProps) {
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [inputValues, setInputValues] = useState<{ [key: string]: string }>({});
 
@@ -83,7 +59,7 @@ export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScores
           feedback: {
             ...result.feedback,
             mark: received,
-            maxMark:total,
+            maxMark: total,
             questionNumber,
             reason: result.reason
           }
@@ -105,7 +81,7 @@ export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScores
 
     const newPercentage = (totalReceived / totalPossible) * 100;
 
-    setEvaluationData({
+    const updatedEvaluationData = {
       ...evaluationData,
       results: updatedResults,
       summary: {
@@ -113,7 +89,10 @@ export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScores
         totalMarks: `${totalReceived}/${totalPossible}`,
         percentage: Math.round(newPercentage),
       },
-    });
+    };
+
+    setEvaluationData(updatedEvaluationData);
+    setIsMarksSaved(false); // Mark as unsaved when changes are made
   };
 
   return (

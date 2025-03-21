@@ -9,7 +9,7 @@ import { AnswerSheetUploadStep } from './AnswerSheetUploadStep'
 import { AnswerSheetPreviewStep } from './AnswerSheetPreviewStep'
 import { AnswerKeyUploadStep } from './AnswerKeyUploadStep'
 import { ViewScoresStep } from './ViewScoresStep'
-import { AnswerKeyData } from '../types'
+import { AnswerKeyData, EvaluationResponse, EvaluationResult } from '../types'
 import { DownloadTemplateButton } from './ui/DownloadTemplateButton'
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -30,34 +30,6 @@ interface UploadedFile {
   size: number;
   type: string;
   lastModified: number;
-}
-
-interface EvaluationResult {
-  questionNumber: string;
-  mark: string;
-  adjustedMark: string;
-  reason: string;
-  justification: string;
-  hasDiagram: boolean;
-  evaluationMethod: string;
-  diagramMarks: number;
-  feedback: {
-    mark: number;
-    questionNumber: string;
-    reason: string;
-  };
-}
-
-interface EvaluationResponse {
-  success: boolean;
-  timestamp: string;
-  results: EvaluationResult[];
-  summary: {
-    totalQuestions: number;
-    totalMarks: string;
-    percentage: number;
-  };
-  cloudinaryUrl?: string;
 }
 
 // Define the interface for existing score
@@ -181,7 +153,7 @@ export default function ExamEvaluator() {
   };
   const handleExtractAgain = useCallback(async () => {
     if (uploadedAnswerSheet?.url) {
-      setIsProcessed(false); // Reset the processed state
+      setIsProcessed(false);
       await processAnswerSheet(uploadedAnswerSheet.url);
     }
   }, [uploadedAnswerSheet?.url, processAnswerSheet]);
