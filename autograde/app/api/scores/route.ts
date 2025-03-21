@@ -126,7 +126,14 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
   try {
     const body = await req.json();
-    const { studentId, courseId, totalMarks, maxMarks, percentage } = body;
+    const { 
+      studentId, 
+      courseId, 
+      totalMarks, 
+      maxMarks, 
+      percentage,
+      feedback
+    } = body;
 
     // First, get the course ID from courses table
     const course = await db.query.courses.findFirst({
@@ -156,12 +163,13 @@ export async function PUT(req: Request) {
       }, { status: 404 });
     }
 
-    // Update the score
+    // Update the score with feedback
     const [updatedScore] = await db.update(scores)
       .set({
         totalMarks,
         maxMarks,
-        percentage
+        percentage,
+        feedback
       })
       .where(
         and(

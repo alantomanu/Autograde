@@ -43,6 +43,8 @@ export interface EvaluationResult {
 export interface EvaluationResponse {
   success: boolean;
   timestamp: string;
+  studentId: string;
+  courseId: string;
   results: EvaluationResult[];
   summary: {
     totalQuestions: number;

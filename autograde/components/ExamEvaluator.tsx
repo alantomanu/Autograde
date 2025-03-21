@@ -157,7 +157,7 @@ export default function ExamEvaluator() {
       await processAnswerSheet(uploadedAnswerSheet.url);
     }
   }, [uploadedAnswerSheet?.url, processAnswerSheet]);
-  const evaluateAnswers = async () => { 
+  const handleEvaluate = async () => {
     if (!extractedText || !answerKeyData) return;
 
     try {
@@ -186,33 +186,30 @@ export default function ExamEvaluator() {
         return; // Stop further processing
       }
 
-      const updatedResults = data.results.map((result: EvaluationResult) => {
-        if (!result || typeof result !== 'object') {
-          console.error('Invalid result object:', result);
-          return result;
-        }
+      const evaluationResult = {
+        success: true,
+        timestamp: new Date().toISOString(),
+        studentId: studentId,
+        courseId: courseId,
+        results: data.results.map((result: EvaluationResult) => {
+          const [received, total] = result.mark.split('/').map(Number);
+          return {
+            ...result,
+            maxMark: total, // Explicitly set maxMark from total
+            feedback: {
+              ...result.feedback,
+              mark: received,
+              maxMark: total,
+              questionNumber: result.questionNumber,
+              reason: result.reason || ''
+            }
+          };
+        }),
+        summary: data.summary,
+        cloudinaryUrl: uploadedAnswerSheet?.url
+      };
 
-        const { mark, questionNumber, reason } = result;
-        if (!mark || !questionNumber) {
-          console.error('Missing mark or questionNumber in result:', result);
-          return result;
-        }
-
-        // Construct feedback from existing fields
-        return {
-          ...result,
-          feedback: {
-            mark: parseInt(mark.split('/')[0], 10), // Extract the received mark
-            questionNumber,
-            reason,
-          },
-        };
-      });
-
-      setEvaluationData({
-        ...data,
-        results: updatedResults,
-      });
+      setEvaluationData(evaluationResult);
     } catch (error) {
       console.error('Error evaluating answers:', error);
       setProcessingStep('An error occurred while evaluating the answers');
@@ -433,7 +430,7 @@ export default function ExamEvaluator() {
     } else {
       const nextStep = Math.min(currentStep + 1, steps.length - 1);
       if (currentStep === 3 && nextStep === 4) {
-        evaluateAnswers();
+        handleEvaluate();
       }
       setCurrentStep(nextStep);
       window.scrollTo(0, 0);
