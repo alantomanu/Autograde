@@ -29,7 +29,7 @@ export function AnswerSheetPreviewStep({
       {isProcessing ? (
         <div className="animate-pulse text-center p-4">
           <p className="text-lg font-medium">{processingStep}</p>
-          <Progress value={processingStep.includes('Stitching') ? 50 : 75} />
+          <Progress value={75} />
         </div>
       ) : (
         <>

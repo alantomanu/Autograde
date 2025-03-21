@@ -8,12 +8,14 @@ interface EvaluationResult {
   mark: string;
   adjustedMark: string;
   reason: string;
+  maxMark: number;
   justification: string;
   hasDiagram: boolean;
   evaluationMethod: string;
   diagramMarks: number;
   feedback: {
     mark: number;
+    maxMark: number;
     questionNumber: string;
     reason: string;
   };
@@ -81,6 +83,7 @@ export function ViewScoresStep({ evaluationData, setEvaluationData }: ViewScores
           feedback: {
             ...result.feedback,
             mark: received,
+            maxMark:total,
             questionNumber,
             reason: result.reason
           }

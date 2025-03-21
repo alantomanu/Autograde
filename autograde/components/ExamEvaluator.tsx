@@ -102,7 +102,6 @@ export default function ExamEvaluator() {
   const [continueChecked, setContinueChecked] = useState(false)
   const [extractedText, setExtractedText] = useState<{ marginNumber: string; answer: string }[]>([])
   const [isProcessed, setIsProcessed] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [answerKeyData, setAnswerKeyData] = useState<AnswerKeyData | null>(null);
   const [evaluationData, setEvaluationData] = useState<EvaluationResponse | null>(null);
   const [courseId, setCourseId] = useState('');
@@ -119,52 +118,27 @@ export default function ExamEvaluator() {
   const resetAnswerKeyUpload = () => setUploadedAnswerKey(null);
 
   /** ✅ API PROCESSING FUNCTION */
-  const processAnswerSheet = useCallback(async (pdfUrl: string, forceReprocess = false) => {
+  const processAnswerSheet = useCallback(async (pdfUrl: string) => {
     if (!pdfUrl) return;
 
     setIsProcessing(true);
     try {
-      let currentImageUrl = imageUrl;
+      console.log('Starting OCR processing');
+      setProcessingStep('Recognizing text...');
+      
+      const processResponse = await fetch('http://localhost:5000/perform-ocr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pdfUrl }),
+      });
 
-      if (!forceReprocess) {
-        console.log('Starting first API call - Stitch PDF');
-        setProcessingStep('Stitching PDF pages...');
-        
-        const stitchResponse = await fetch('http://localhost:5000/stitch', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pdfUrl }),
-        });
-
-        if (!stitchResponse.ok) {
-          setProcessingStep('Failed to stitch PDF');
-          return; // Stop further processing
-        }
-
-        const stitchData = await stitchResponse.json();
-        currentImageUrl = stitchData.imageUrl;
-        setImageUrl(currentImageUrl);
+      if (!processResponse.ok) {
+        setProcessingStep('Failed to process document');
+        return;
       }
 
-      if (forceReprocess || !isProcessed) {
-        console.log('Starting second API call - Process Image');
-        setProcessingStep('Recognizing text...');
-
-        const processResponse = await fetch('http://localhost:5000/process-image', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ imageUrl: currentImageUrl || imageUrl }),
-        });
-
-        if (!processResponse.ok) {
-          setProcessingStep('Failed to process image');
-          return; // Stop further processing
-        }
-
-        const processData = await processResponse.json();
-        setExtractedText(processData.answers);
-      }
-
+      const processData = await processResponse.json();
+      setExtractedText(processData.answers);
       setIsProcessed(true);
 
     } catch (error) {
@@ -174,7 +148,7 @@ export default function ExamEvaluator() {
       setIsProcessing(false);
       setProcessingStep('');
     }
-  }, [imageUrl, isProcessed]);
+  }, []);
 
   /** ✅ PREVENT MULTIPLE API CALLS */
   useEffect(() => {
@@ -205,11 +179,12 @@ export default function ExamEvaluator() {
       lastModified: file.lastModified
     });
   };
-  const handleExtractAgain = async () => {
-    if (imageUrl) {
-      await processAnswerSheet(imageUrl, true);
+  const handleExtractAgain = useCallback(async () => {
+    if (uploadedAnswerSheet?.url) {
+      setIsProcessed(false); // Reset the processed state
+      await processAnswerSheet(uploadedAnswerSheet.url);
     }
-  };
+  }, [uploadedAnswerSheet?.url, processAnswerSheet]);
   const evaluateAnswers = async () => { 
     if (!extractedText || !answerKeyData) return;
 
