@@ -62,11 +62,11 @@ export function LoginForm() {
   };
 
   return (
-    <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
-      <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
+    <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white">
+      <h2 className="font-bold text-xl text-neutral-800">
         Login
       </h2>
-      <p className="text-neutral-600 text-sm max-w-sm mt-2 dark:text-neutral-300">
+      <p className="text-neutral-600 text-sm max-w-sm mt-2">
         Welcome back! Please login to continue.
       </p>
 
@@ -74,12 +74,12 @@ export function LoginForm() {
         {/* OAuth Button at the top */}
         <div className="flex flex-col space-y-4 mb-8">
           <button
-            className="flex items-center space-x-2 justify-center w-full text-black rounded-md h-10 font-medium bg-gray-50 dark:bg-zinc-900 disabled:opacity-50"
+            className="flex items-center space-x-2 justify-center w-full text-black rounded-md h-10 font-medium bg-gray-50 disabled:opacity-50"
             type="button"
             onClick={handleGoogleLogin}
             disabled={isLoading}
           >
-            <IconBrandGoogle className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
+            <IconBrandGoogle className="h-4 w-4 text-neutral-800" />
             <span>Sign in with Google</span>
           </button>
         </div>
@@ -87,17 +87,17 @@ export function LoginForm() {
         {/* Divider */}
         <div className="relative mb-8">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full h-[1px] bg-neutral-300 dark:bg-neutral-700"></div>
+            <div className="w-full h-[1px] bg-neutral-300"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white dark:bg-black text-neutral-600 dark:text-neutral-400">
+            <span className="px-2 bg-white text-neutral-600">
               Or continue with
             </span>
           </div>
         </div>
 
         {error && (
-          <div className="mb-4 p-2 text-sm text-red-500 bg-red-50 dark:bg-red-900/10 rounded-md">
+          <div className="mb-4 p-2 text-sm text-red-500 bg-red-50 rounded-md">
             {error}
           </div>
         )}
@@ -128,7 +128,7 @@ export function LoginForm() {
 
         {/* Login Button */}
         <button
-          className="bg-black dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium disabled:opacity-50"
+          className="bg-black w-full text-white rounded-md h-10 font-medium disabled:opacity-50"
           type="submit"
           disabled={isLoading}
         >

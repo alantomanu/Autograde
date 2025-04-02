@@ -98,7 +98,7 @@ export default function ExamEvaluator() {
       console.log('Starting OCR processing');
       setProcessingStep('Recognizing text...');
       
-      const processResponse = await fetch('http://localhost:5000/perform-ocr', {
+      const processResponse = await fetch('https://autograde-server.onrender.com/perform-ocr', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pdfUrl }),
@@ -161,7 +161,7 @@ export default function ExamEvaluator() {
     if (!extractedText || !answerKeyData) return;
 
     try {
-      const response = await fetch('http://localhost:5000/evaluate', {
+      const response = await fetch('https://autograde-server.onrender.com/evaluate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -251,7 +251,7 @@ export default function ExamEvaluator() {
         return (
           <div className="relative">
             <DownloadTemplateButton 
-              templateUrl="https://res.cloudinary.com/dfivs4n49/raw/upload/v1741369572/answer_keys/Answer_Key_Template.docx"
+              templateUrl="https://res.cloudinary.com/dfivs4n49/raw/upload/v1742880576/answer_keys/ggp5o62ztwfngyasnu6g.docx"
               fileName="Answer_Key_Template.docx"
             />
             <AnswerKeyUploadStep

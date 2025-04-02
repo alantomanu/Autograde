@@ -25,7 +25,7 @@ export function AnswerSheetUploadStep({
         onFileUpload={handleFileUpload}
         existingFile={uploadedAnswerSheet}
         folderName="answer_sheets"
-        className="w-full max-w-4xl mx-auto min-h-96 border border-dashed bg-white dark:bg-black border-neutral-200 dark:border-neutral-800 rounded-lg"
+        className="w-full max-w-4xl mx-auto min-h-96 border border-dashed bg-white border-neutral-200  rounded-lg"
       />
       {uploadedAnswerSheet && (
         <div className="flex justify-end">

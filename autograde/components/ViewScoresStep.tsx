@@ -3,8 +3,8 @@ import { Input } from './ui/input';
 import { Card } from './ui/card';
 import { Pencil } from 'lucide-react';
 import { EvaluationResponse, EvaluationResult } from '../types';
-import { toast } from 'react-hot-toast';
-import { Button } from './ui/button';
+
+
 
 interface ViewScoresStepProps {
   evaluationData: EvaluationResponse | null;
@@ -98,62 +98,13 @@ export function ViewScoresStep({
     setIsMarksSaved(false); // Mark as unsaved when changes are made
   };
 
-  // Add function to prepare feedback for API
-  const prepareFeedback = (results: EvaluationResult[]) => {
-    return results.map(result => ({
-      questionNumber: result.questionNumber,
-      mark: result.feedback.mark,
-      maxMark: result.maxMark,
-      reason: result.feedback.reason,
-      adjustedMark: result.adjustedMark,
-      hasDiagram: result.hasDiagram,
-      diagramMarks: result.diagramMarks
-    }));
-  };
-
-  // Function to handle score update
-  const handleScoreUpdate = async () => {
-    if (!evaluationData) return;
-
-    try {
-      const response = await fetch('/api/scores', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          studentId: evaluationData.studentId,
-          courseId: evaluationData.courseId,
-          totalMarks: evaluationData.summary.totalMarks.split('/')[0],
-          maxMarks: evaluationData.summary.totalMarks.split('/')[1],
-          percentage: evaluationData.summary.percentage,
-          feedback: prepareFeedback(evaluationData.results)
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update score');
-      }
-
-      setIsMarksSaved(true);
-      toast.success('Score updated successfully');
-    } catch (error) {
-      console.error('Error updating score:', error);
-      toast.error('Failed to update score');
-    }
-  };
+  
+ 
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Evaluation Results</h2>
-        <Button 
-          onClick={handleScoreUpdate}
-          variant="outline"
-          className="ml-auto"
-        >
-          Save Changes
-        </Button>
       </div>
 
       <div className="space-y-4">
@@ -168,7 +119,7 @@ export function ViewScoresStep({
                     <span className="font-medium">Question {result.questionNumber}:</span>
                     <div className="flex items-center gap-2">
                       {result.diagramMarks > 0 ? (
-                        <div className="flex items-center gap-1 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-1">
+                        <div className="flex items-center gap-1 bg-blue-50  rounded-lg p-1">
                           <div className="flex items-center">
                             <Input
                               type="text"
@@ -182,7 +133,7 @@ export function ViewScoresStep({
                           <Pencil className="h-3 w-3 text-blue-500" />
                         </div>
                       ) : (
-                        <span className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm">
+                        <span className="bg-gray-100 px-2 py-1 rounded text-sm">
                           {result.mark}
                         </span>
                       )}

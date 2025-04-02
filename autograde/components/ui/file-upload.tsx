@@ -122,26 +122,24 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, label, cla
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold">{label}</h2>
+      <h2 className="text-lg font-semibold text-gray-900">{label}</h2>
       
-      {/* Add PDF Preview when existingFile is present */}
       {existingFile && (
         <div className="mb-4">
           <iframe
             src={existingFile.url}
-            className="w-full h-[500px] rounded-lg border border-gray-200 dark:border-gray-700"
+            className="w-full h-[500px] rounded-lg border border-gray-200"
             title="PDF Preview"
           />
         </div>
       )}
 
-      {/* Only show the drop zone if there's no existing file */}
       {!existingFile && (
         <div className={className} {...getRootProps()}>
           <motion.div
             onClick={handleClick}
             whileHover="animate"
-            className="p-10 group/file block rounded-lg cursor-pointer w-full relative overflow-hidden"
+            className="p-10 group/file block rounded-lg cursor-pointer w-full relative overflow-hidden bg-white"
           >
             <input
               ref={fileInputRef}
@@ -155,17 +153,17 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, label, cla
               <GridPattern />
             </div>
             <div className="flex flex-col items-center justify-center">
-              <p className="relative z-20 font-sans font-bold text-neutral-700 dark:text-neutral-300 text-base">
+              <p className="relative z-20 font-sans font-bold text-gray-700 text-base">
                 Upload file (PDF)
               </p>
-              <p className="relative z-20 font-sans font-normal text-neutral-400 dark:text-neutral-400 text-base mt-2">
+              <p className="relative z-20 font-sans font-normal text-gray-500 text-base mt-2">
                 Drag or drop your files here or click to upload
               </p>
 
               {uploading && (
                 <div className="w-full max-w-xs mx-auto mt-4">
                   <Progress value={uploadProgress} className="h-1" />
-                  <p className="text-sm text-center text-neutral-700 dark:text-neutral-300 mt-2">{uploadProgress}%</p>
+                  <p className="text-sm text-center text-gray-700 mt-2">{uploadProgress}%</p>
                 </div>
               )}
 
@@ -175,40 +173,22 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, label, cla
                     <motion.div
                       key={"file" + idx}
                       layoutId={idx === 0 ? "file-upload" : "file-upload-" + idx}
-                      className={cn(
-                        "relative overflow-hidden z-40 bg-white dark:bg-neutral-900 flex flex-col items-start justify-start md:h-24 p-4 mt-4 w-full mx-auto rounded-md",
-                        "shadow-sm"
-                      )}
+                      className="relative overflow-hidden z-40 bg-white flex flex-col items-start justify-start md:h-24 p-4 mt-4 w-full mx-auto rounded-md shadow-sm"
                     >
                       <div className="flex justify-between w-full items-center gap-4">
-                        <motion.p
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          layout
-                          className="text-base text-neutral-700 dark:text-neutral-300 truncate max-w-xs"
-                        >
+                        <motion.p className="text-base text-gray-700 truncate max-w-xs">
                           {file.name}
                         </motion.p>
-                        <motion.p
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          layout
-                          className="rounded-lg px-2 py-1 w-fit flex-shrink-0 text-sm text-neutral-600 dark:bg-neutral-800 dark:text-white shadow-input"
-                        >
+                        <motion.p className="rounded-lg px-2 py-1 w-fit flex-shrink-0 text-sm text-gray-600 bg-gray-50 shadow-input">
                           {(file.size / (1024 * 1024)).toFixed(2)} MB
                         </motion.p>
                       </div>
 
-                      <div className="flex text-sm md:flex-row flex-col items-start md:items-center w-full mt-2 justify-between text-neutral-600 dark:text-neutral-400">
-                        <motion.p
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          layout
-                          className="px-1 py-0.5 rounded-md bg-gray-100 dark:bg-neutral-800"
-                        >
+                      <div className="flex text-sm md:flex-row flex-col items-start md:items-center w-full mt-2 justify-between text-gray-600">
+                        <motion.p className="px-1 py-0.5 rounded-md bg-gray-50">
                           {file.type}
                         </motion.p>
-                        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} layout>
+                        <motion.p>
                           modified {new Date(file.lastModified).toLocaleDateString()}
                         </motion.p>
                       </div>
@@ -221,7 +201,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, label, cla
                       variants={mainVariant}
                       transition={{ type: "spring", stiffness: 300, damping: 20 }}
                       className={cn(
-                        "relative group-hover/file:shadow-2xl z-40 bg-white dark:bg-neutral-900 flex items-center justify-center h-32 mt-4 w-full max-w-[8rem] mx-auto rounded-md",
+                        "relative group-hover/file:shadow-2xl z-40 bg-white flex items-center justify-center h-32 mt-4 w-full max-w-[8rem] mx-auto rounded-md",
                         "shadow-[0px_10px_50px_rgba(0,0,0,0.1)]"
                       )}
                     >
@@ -229,13 +209,13 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, label, cla
                         <motion.p
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
-                          className="text-neutral-600 flex flex-col items-center"
+                          className="text-gray-600 flex flex-col items-center"
                         >
                           Drop it
-                          <IconUpload className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
+                          <IconUpload className="h-4 w-4 text-gray-600" />
                         </motion.p>
                       ) : (
-                        <IconUpload className="h-4 w-4 text-neutral-600 dark:text-neutral-300" />
+                        <IconUpload className="h-4 w-4 text-gray-600" />
                       )}
                     </motion.div>
                     <motion.div
@@ -257,7 +237,7 @@ export function GridPattern() {
   const columns = 41;
   const rows = 11;
   return (
-    <div className="flex bg-gray-100 dark:bg-neutral-900 flex-shrink-0 flex-wrap justify-center items-center gap-x-px gap-y-px scale-105">
+    <div className="flex bg-gray-50 flex-shrink-0 flex-wrap justify-center items-center gap-x-px gap-y-px scale-105">
       {Array.from({ length: rows }).map((_, row) =>
         Array.from({ length: columns }).map((_, col) => {
           const index = row * columns + col;
@@ -266,8 +246,8 @@ export function GridPattern() {
               key={`${col}-${row}`}
               className={`w-10 h-10 flex flex-shrink-0 rounded-[2px] ${
                 index % 2 === 0
-                  ? "bg-gray-50 dark:bg-neutral-950"
-                  : "bg-gray-50 dark:bg-neutral-950 shadow-[0px_0px_1px_3px_rgba(255,255,255,1)_inset] dark:shadow-[0px_0px_1px_3px_rgba(0,0,0,1)_inset]"
+                  ? "bg-white"
+                  : "bg-white shadow-[0px_0px_1px_3px_rgba(255,255,255,1)_inset]"
               }`}
             />
           );

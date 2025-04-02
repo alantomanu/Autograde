@@ -51,16 +51,27 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head />
-      <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${manrope.variable} ${poppins.variable} antialiased`}>
+      <body 
+        className={`
+          ${geistSans.variable} 
+          ${geistMono.variable} 
+          ${inter.variable} 
+          ${manrope.variable} 
+          ${poppins.variable} 
+          antialiased 
+          bg-white 
+          text-gray-900
+        `}
+      >
         <Providers session={session}>
-          <div className="flex min-h-screen flex-col">
+          <div className="flex min-h-screen flex-col bg-white">
             <NavbarComponent />
-            <main className="flex-grow">
+            <main className="flex-grow bg-white">
               {children}
             </main>
-            <Footer className="mt-6" />
+            <Footer className="mt-6 bg-white" />
           </div>
         </Providers>
       </body>

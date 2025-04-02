@@ -18,6 +18,7 @@ import { useSession } from "next-auth/react";
 import * as XLSX from 'xlsx';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
+
 // Register the necessary components
 ChartJS.register(
   CategoryScale, 
@@ -164,7 +165,7 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen bg-white">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
@@ -172,7 +173,7 @@ export default function AnalyticsPage() {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen bg-white">
         <div className="bg-red-50 p-4 rounded-md">
           <p className="text-red-500">{error}</p>
         </div>
@@ -182,7 +183,7 @@ export default function AnalyticsPage() {
 
   if (!analyticsData || Object.keys(analyticsData).length === 0) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen bg-white">
         <div className="bg-yellow-50 p-4 rounded-md">
           <p className="text-yellow-700">No data available. You haven&apos;t evaluated any courses yet.</p>
         </div>
@@ -217,29 +218,29 @@ export default function AnalyticsPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen p-6 bg-white dark:bg-black text-gray-900 dark:text-white">
+    <div className="flex flex-col min-h-screen p-6 bg-white">
       <div className="container mx-auto px-4 lg:px-16">
-        <h3 className="text-3xl font-bold mb-10 text-center">Teacher Analytics Dashboard</h3>
+        <h3 className="text-3xl font-bold mb-10 text-center text-gray-900">Teacher Analytics Dashboard</h3>
         
         {/* Overall Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg p-6 transition-all hover:shadow-lg">
-            <h2 className="text-xl font-semibold mb-2">Total Courses</h2>
+          <div className="bg-gray-100 shadow-md rounded-lg p-6 transition-all hover:shadow-lg">
+            <h2 className="text-xl font-semibold mb-2 text-gray-900">Total Courses</h2>
             <p className="text-3xl font-bold text-blue-600">{totalCourses}</p>
           </div>
-          <div className="bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg p-6 transition-all hover:shadow-lg">
-            <h2 className="text-xl font-semibold mb-2">Answer Sheets Checked</h2>
+          <div className="bg-gray-100 shadow-md rounded-lg p-6 transition-all hover:shadow-lg">
+            <h2 className="text-xl font-semibold mb-2 text-gray-900">Answer Sheets Checked</h2>
             <p className="text-3xl font-bold text-green-600">{totalSheets}</p>
           </div>
-          <div className="bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg p-6 transition-all hover:shadow-lg">
-            <h2 className="text-xl font-semibold mb-2">Average Score</h2>
+          <div className="bg-gray-100 shadow-md rounded-lg p-6 transition-all hover:shadow-lg">
+            <h2 className="text-xl font-semibold mb-2 text-gray-900">Average Score</h2>
             <p className="text-3xl font-bold text-purple-600">{averageScore}</p>
           </div>
         </div>
         
         {/* All Courses Overview Chart */}
-        <div className="bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg p-6 mb-8 transition-all hover:shadow-lg">
-          <h2 className="text-xl font-semibold mb-4">Course Overview</h2>
+        <div className="bg-gray-100 shadow-md rounded-lg p-6 mb-8 transition-all hover:shadow-lg">
+          <h2 className="text-xl font-semibold mb-4 text-gray-900">Course Overview</h2>
           <div className="h-64">
             <Bar 
               data={{
@@ -282,14 +283,14 @@ export default function AnalyticsPage() {
             };
             
             return (
-              <div key={courseId} className="bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg overflow-hidden transition-all hover:shadow-lg">
+              <div key={courseId} className="bg-gray-100 shadow-md rounded-lg overflow-hidden transition-all hover:shadow-lg">
                 {/* Course Header - Always Visible */}
                 <div className="p-6 border-b border-gray-200">
                   <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-semibold">{course.courseName}</h2>
+                    <h2 className="text-xl font-semibold text-gray-900">{course.courseName}</h2>
                     <button 
                       onClick={() => toggleCourseExpand(courseId)}
-                      className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
+                      className="p-2 rounded-full hover:bg-gray-200 "
                     >
                       {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                     </button>
@@ -297,16 +298,16 @@ export default function AnalyticsPage() {
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                     <div>
-                      <p className="text-gray-500">Evaluated Sheets</p>
-                      <p className="text-2xl font-bold">{course.evaluatedCount}</p>
+                      <p className="text-gray-600">Evaluated Sheets</p>
+                      <p className="text-2xl font-bold text-gray-900">{course.evaluatedCount}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500">Average Score</p>
-                      <p className="text-2xl font-bold">{course.averageScore.toFixed(1)}</p>
+                      <p className="text-gray-600">Average Score</p>
+                      <p className="text-2xl font-bold text-gray-900">{course.averageScore.toFixed(1)}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500">Max Score</p>
-                      <p className="text-2xl font-bold">{course.maxScore}</p>
+                      <p className="text-gray-600">Max Score</p>
+                      <p className="text-2xl font-bold text-gray-900">{course.maxScore}</p>
                     </div>
                   </div>
                 </div>
@@ -316,7 +317,7 @@ export default function AnalyticsPage() {
                   <div className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                       {/* Pass Percentage Input */}
-                      <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                      <div className="bg-gray-50  p-4 rounded-lg">
                         <h3 className="text-lg font-medium mb-3">Set Pass Percentage</h3>
                         <div className="flex items-center space-x-4">
                           <input
@@ -325,7 +326,7 @@ export default function AnalyticsPage() {
                             max="100"
                             value={passPercentages[courseId] || 40}
                             onChange={(e) => handlePassPercentageChange(courseId, e.target.value)}
-                            className="p-2 border rounded w-24 text-center bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                            className="p-2 border rounded w-24 text-center bg-white  text-gray-900 dark:text-gray-100"
                           />
                           <span className="text-lg font-semibold">%</span>
                         </div>
@@ -335,7 +336,7 @@ export default function AnalyticsPage() {
                       </div>
                       
                       {/* Pass/Fail Pie Chart */}
-                      <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg flex flex-col items-center">
+                      <div className="bg-gray-50 p-4 rounded-lg flex flex-col items-center">
                         <h3 className="text-lg font-medium mb-3">Pass/Fail Distribution</h3>
                         <div className="w-40 h-40">
                           <Pie 
@@ -378,34 +379,28 @@ export default function AnalyticsPage() {
                       
                       <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200">
-                          <thead className="bg-gray-50 dark:bg-gray-700">
+                          <thead className="bg-gray-50">
                             <tr>
-                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Student ID
                               </th>
-                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Total Marks
                               </th>
-                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Percentage
                               </th>
-                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Status
                               </th>
                             </tr>
                           </thead>
-                          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
+                          <tbody className="bg-white divide-y divide-gray-200">
                             {course.students.map((student, index) => (
-                              <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{student.studentId}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="text-sm text-gray-900 dark:text-gray-100">{student.totalMarks}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="text-sm text-gray-900 dark:text-gray-100">{student.percentage.toFixed(1)}%</div>
-                                </td>
+                              <tr key={index} className="hover:bg-gray-50">
+                                <td className="px-6 py-4 whitespace-nowrap text-gray-900">{student.studentId}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-gray-900">{student.totalMarks}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-gray-900">{student.percentage.toFixed(1)}%</td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                                     student.percentage >= (passPercentages[courseId] || 40)

@@ -28,7 +28,7 @@ export function AnswerKeyUploadStep({
     setProcessSuccess(false);
 
     try {
-      const response = await fetch('http://localhost:5000/convert-pdf', {
+      const response = await fetch('https://autograde-server.onrender.com/convert-pdf', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ export function AnswerKeyUploadStep({
         onFileUpload={handleFileUpload}
         existingFile={uploadedAnswerKey}
         folderName="answer_keys"
-        className="w-full max-w-4xl mx-auto min-h-96 border border-dashed bg-white dark:bg-black border-neutral-200 dark:border-neutral-800 rounded-lg"
+        className="w-full max-w-4xl mx-auto min-h-96 border border-dashed bg-white  border-neutral-200 rounded-lg"
       />
       {uploadedAnswerKey && (
         <div className="flex justify-end">

@@ -1,15 +1,12 @@
 "use client"
 import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem} from "@heroui/react";
-import { ModeToggle } from "@/components/ui/ModeToggle";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import Image from 'next/image';
-import { useTheme } from 'next-themes';
 
 export function App() {
   const pathname = usePathname();
   const { data: session, status } = useSession();
-  const { theme } = useTheme();
 
   const handleLogout = () => {
     signOut({ callbackUrl: '/login' });
@@ -20,7 +17,7 @@ export function App() {
       <NavbarBrand>
         <Link href="/" className="flex items-center">
           <Image
-            src={theme === 'dark' ? '/logowhite.png' : '/logoblack.png'}
+            src="/logoblack.png"
             alt="Logo"
             width={40}
             height={40}
@@ -75,9 +72,6 @@ export function App() {
             </NavbarItem>
           </>
         )}
-        <NavbarItem>
-          <ModeToggle />
-        </NavbarItem>
       </NavbarContent>
     </Navbar>
   );

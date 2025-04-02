@@ -1,40 +1,46 @@
 /* autograde/components/ui/DarkBanner.css */
 .banner {
-  padding: 20px;
+  padding: 40px 20px;
   text-align: center;
-  border-radius: 8px;
+  border-radius: 12px;
 
-  cursor: pointer; /* Change cursor to pointer for clickability */
-}
-
-.banner.light {
-  background-color: #f0f0f0; /* Light background */
-  color: #000; /* Dark text */
-}
-
-.banner.dark {
-  background-color: #1a1a1a; /* Dark background */
-  color: #ffffff; /* White text */
+  color: #111827;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin: 20px 0;
+  cursor: pointer;
 }
 
 .banner h1 {
-  font-size: 2rem;
+  font-size: 2.5rem;
+  font-weight: 700;
   margin: 0;
+  color: #111827;
+  line-height: 1.2;
 }
 
 .banner p {
-  font-size: 1.2rem;
-  margin: 10px 0;
+  font-size: 1.25rem;
+  margin: 16px 0;
+  color: #4B5563;
+  line-height: 1.6;
 }
 
 .features {
   display: flex;
   justify-content: center;
-  gap: 20px;
-  margin-top: 10px;
+  gap: 32px;
+  margin-top: 24px;
 }
 
 .features span {
-  font-size: 1rem;
-  color: #007bff; /* Blue color for feature text */
+  font-size: 1.1rem;
+  color: #2563EB;
+  font-weight: 500;
+}
+
+/* Add subtle hover effects */
+.banner:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
