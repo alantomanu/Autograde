@@ -10,7 +10,7 @@ const DarkBanner: React.FC = () => {
         <h1 className="text-4xl font-bold text-gray-900  mb-4">
           Automated Exam Evaluation System
         </h1>
-        <p className="text-gray-600 mb-8">
+        <p className="text-gray-600 mb-4">
           Streamline your grading process with our intelligent evaluation system
         </p>
         <div className="flex justify-center space-x-8">

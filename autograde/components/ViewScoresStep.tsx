@@ -140,7 +140,7 @@ export function ViewScoresStep({
                     </div>
                   </div>
                   {result.diagramMarks > 0 && (
-                    <div className="text-sm text-gray-600 dark:text-gray-400 ml-4">
+                    <div className="text-sm text-gray-600  ml-4">
                       <span className="font-medium">Diagram mark:</span> {result.diagramMarks} ( Evaluate the diagram and award the marks )
                     </div>
                   )}
@@ -160,15 +160,15 @@ export function ViewScoresStep({
         <h3 className="text-xl font-semibold mb-4">Summary</h3>
         <div className="space-y-2">
           <p className="flex justify-between">
-            <span className="text-gray-600 dark:text-gray-400">Total Questions:</span>
+            <span className="text-gray-600 ">Total Questions</span>
             <span className="font-medium">{evaluationData.summary.totalQuestions}</span>
           </p>
           <p className="flex justify-between">
-            <span className="text-gray-600 dark:text-gray-400">Total Marks:</span>
+            <span className="text-gray-600 ">Total Marks</span>
             <span className="font-medium">{evaluationData.summary.totalMarks}</span>
           </p>
           <p className="flex justify-between">
-            <span className="text-gray-600 dark:text-gray-400">Percentage:</span>
+            <span className="text-gray-600 ">Percentage</span>
             <span className="font-medium">{evaluationData.summary.percentage}%</span>
           </p>
         </div>
