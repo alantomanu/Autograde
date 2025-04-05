@@ -85,7 +85,7 @@ export const StudentIDStep: React.FC<StudentIDStepProps> = ({
   return (
     <div className="space-y-4">
       <div>
-        <label htmlFor="studentId" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="studentId" className="block text-sm font-medium text-gray-700 mb-1">
           Student ID
         </label>
         <Input
@@ -96,7 +96,7 @@ export const StudentIDStep: React.FC<StudentIDStepProps> = ({
         />
       </div>
       <div>
-        <label htmlFor="courseId" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="courseId" className="block text-sm font-medium text-gray-700 mb-1">
           Course ID
         </label>
         <Input
@@ -114,7 +114,7 @@ export const StudentIDStep: React.FC<StudentIDStepProps> = ({
         )}
       </div>
       <div>
-        <label htmlFor="courseName" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="courseName" className="block text-sm font-medium text-gray-700 mb-1">
           Course Name
         </label>
         <Input

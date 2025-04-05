@@ -125,10 +125,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, label, cla
       <h2 className="text-lg font-semibold text-gray-900">{label}</h2>
       
       {existingFile && (
-        <div className="mb-4">
+        <div className="mb-8">
           <iframe
             src={existingFile.url}
-            className="w-full h-[500px] rounded-lg border border-gray-200"
+            className="w-full h-[600px] rounded-lg border border-gray-200"
             title="PDF Preview"
           />
         </div>
@@ -237,7 +237,7 @@ export function GridPattern() {
   const columns = 41;
   const rows = 11;
   return (
-    <div className="flex bg-gray-50 flex-shrink-0 flex-wrap justify-center items-center gap-x-px gap-y-px scale-105">
+    <div className="flex bg-gray-100 flex-shrink-0 flex-wrap justify-center items-center gap-x-px gap-y-px scale-105">
       {Array.from({ length: rows }).map((_, row) =>
         Array.from({ length: columns }).map((_, col) => {
           const index = row * columns + col;
