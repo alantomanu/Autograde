@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { ReevaluationDialog } from './ReevaluationDialog'
 import { BorderBeam } from "@/components/magicui/border-beam";
+import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 
 const steps = [
   'Enter Student ID',
@@ -85,6 +86,7 @@ export default function ExamEvaluator() {
   const [existingScore, setExistingScore] = useState<ExistingScore | null>(null);
   const [newStudentId, setNewStudentId] = useState('');
   const router = useRouter();
+  const [showBackground, setShowBackground] = useState(true);
 
   /** ✅ RESET FUNCTIONS for Upload Components */
   const resetAnswerSheetUpload = () => setUploadedAnswerSheet(null);
@@ -97,7 +99,7 @@ export default function ExamEvaluator() {
     setIsProcessing(true);
     try {
       console.log('Starting OCR processing');
-      setProcessingStep('Recognizing text...');
+      setProcessingStep('');
       
       const processResponse = await fetch('https://autograde-server.onrender.com/perform-ocr', {
         method: 'POST',
@@ -133,6 +135,7 @@ export default function ExamEvaluator() {
   }, [currentStep, uploadedAnswerSheet?.url, isProcessed, processAnswerSheet]); // ✅ ADDED `processAnswerSheet`
 
   const handleAnswerSheetUpload = (url: string, file: File) => {
+    setShowBackground(false);
     setUploadedAnswerSheet({
       url,
       name: file.name,
@@ -141,8 +144,13 @@ export default function ExamEvaluator() {
       lastModified: file.lastModified,
     });
     setIsProcessed(false);
+    setTimeout(() => {
+      setShowBackground(true);
+    }, 5000);
   };
+
   const handleAnswerKeyUpload = (url: string, file: File) => {
+    setShowBackground(false);
     setEvaluationData(null);
     setUploadedAnswerKey({
       url,
@@ -151,13 +159,22 @@ export default function ExamEvaluator() {
       type: file.type,
       lastModified: file.lastModified
     });
+    setTimeout(() => {
+      setShowBackground(true);
+    }, 5000);
   };
+
   const handleExtractAgain = useCallback(async () => {
     if (uploadedAnswerSheet?.url) {
+      setShowBackground(false);
       setIsProcessed(false);
       await processAnswerSheet(uploadedAnswerSheet.url);
+      setTimeout(() => {
+        setShowBackground(true);
+      }, 5000);
     }
   }, [uploadedAnswerSheet?.url, processAnswerSheet]);
+
   const handleEvaluate = async () => {
     if (!extractedText || !answerKeyData) return;
 
@@ -241,7 +258,6 @@ export default function ExamEvaluator() {
         return (
           <AnswerSheetPreviewStep
             isProcessing={isProcessing}
-            processingStep={processingStep}
             extractedText={extractedText}
             continueChecked={continueChecked}
             setContinueChecked={setContinueChecked}
@@ -550,7 +566,7 @@ export default function ExamEvaluator() {
   return (
     <>
       <div className="max-w-4xl mx-auto p-6">
-        <div className="mb-6">
+        <div className="mb-3">
           <div className="flex flex-wrap justify-between">
             {steps.map((step, index) => (
               <div
@@ -564,54 +580,75 @@ export default function ExamEvaluator() {
           <Progress value={(currentStep / (steps.length - 1)) * 100} />
         </div>
         <Card className="relative p-6 overflow-hidden">
-          {renderStepContent()}
-          <div className="mt-6">
-            {processingStep && (
-              <div className={`mb-4 text-center ${
-                processingStep.includes('Please fill') || 
-                processingStep.includes('exists with name') || 
-                processingStep.includes('Reevaluation check required')
-                  ? 'text-amber-600 font-medium bg-amber-50 p-3 rounded-md border border-amber-200' 
-                  : 'text-blue-600'
-              }`}>
-                {processingStep}
-              </div>
-            )}
-            <div className="flex justify-between">
-              {currentStep > 0 && (
-                <Button 
-                  variant="secondary" 
-                  onClick={() => {
-                    setCurrentStep(prev => Math.max(prev - 1, 0));
-                    setProcessingStep('');
-                    window.scrollTo(0, 0);
-                  }} 
-                  disabled={isProcessing}
-                >
-                  Back
-                </Button>
+          <div className="relative z-10">
+            {renderStepContent()}
+            <div className="mt-6">
+              {processingStep && (
+                <div className={`mb-4 text-center ${
+                  processingStep.includes('Please fill') || 
+                  processingStep.includes('exists with name') || 
+                  processingStep.includes('Reevaluation check required')
+                    ? 'text-amber-600 font-medium bg-amber-50 p-3 rounded-md border border-amber-200' 
+                    : 'text-blue-600'
+                }`}>
+                  {processingStep}
+                </div>
               )}
-              <div className="flex justify-end w-full">
-                <Button 
-                  onClick={handleNextStep}
-                  disabled={isProcessing}
-                >
-                  {isProcessing ? 'Processing...' : currentStep === 4 ? 'Submit' : 'Next'}
-                </Button>
+              <div className="flex justify-between">
+                {currentStep > 0 && (
+                  <Button 
+                    variant="secondary" 
+                    onClick={() => {
+                      setShowBackground(false);
+                      setCurrentStep(prev => Math.max(prev - 1, 0));
+                      setProcessingStep('');
+                      window.scrollTo(0, 0);
+                      setTimeout(() => {
+                        setShowBackground(true);
+                      }, 5000);
+                    }} 
+                    disabled={isProcessing}
+                  >
+                    Back
+                  </Button>
+                )}
+                <div className="flex justify-end w-full">
+                  <Button 
+                    onClick={() => {
+                      setShowBackground(false);
+                      handleNextStep();
+                      setTimeout(() => {
+                        setShowBackground(true);
+                      }, 5000);
+                    }}
+                    disabled={isProcessing}
+                  >
+                    {isProcessing ? 'Processing...' : currentStep === 4 ? 'Submit' : 'Next'}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
-          <BorderBeam
-            duration={6}
-            size={400}
-            className="from-transparent via-blue-500 to-transparent"
-          />
-          <BorderBeam
-            duration={6}
-            delay={3}
-            size={400}
-            className="from-transparent via-purple-500 to-transparent"
-          />
+          {showBackground && (
+            <>
+              <div className="absolute inset-0">
+                <BackgroundBeamsWithCollision className="!h-full">
+                  <div aria-hidden="true" />
+                </BackgroundBeamsWithCollision>
+              </div>
+              <BorderBeam
+                duration={6}
+                size={400}
+                className="from-transparent via-blue-500 to-transparent"
+              />
+              <BorderBeam
+                duration={6}
+                delay={3}
+                size={400}
+                className="from-transparent via-purple-500 to-transparent"
+              />
+            </>
+          )}
         </Card>
       </div>
       <ReevaluationDialog
