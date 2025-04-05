@@ -7,10 +7,10 @@ const DarkBanner: React.FC = () => {
   return (
     <div className="banner bg-white  py-12">
       <div className="container mx-auto px-6 text-center">
-        <h1 className="text-4xl font-bold text-gray-900  mb-4">
+        <h1 className="text-4xl font-bold text-gray-900  mb-2">
           Automated Exam Evaluation System
         </h1>
-        <p className="text-gray-600 mb-4">
+        <p className="text-gray-600 mb-2">
           Streamline your grading process with our intelligent evaluation system
         </p>
         <div className="flex justify-center space-x-8">

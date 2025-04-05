@@ -15,6 +15,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { ReevaluationDialog } from './ReevaluationDialog'
+import { BorderBeam } from "@/components/magicui/border-beam";
 
 const steps = [
   'Enter Student ID',
@@ -548,13 +549,13 @@ export default function ExamEvaluator() {
 
   return (
     <>
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-5xl mx-auto p-6">
         <div className="mb-6">
           <div className="flex flex-wrap justify-between">
             {steps.map((step, index) => (
               <div
                 key={index}
-                className={` text-center py-2 whitespace-nowrap ${currentStep === index ? 'font-bold ' : 'text-gray-500 text-sm'}`}
+                className={`text-center py-2 whitespace-nowrap ${currentStep === index ? 'font-bold ' : 'text-gray-500 text-sm'}`}
               >
                 {step}
               </div>
@@ -562,7 +563,7 @@ export default function ExamEvaluator() {
           </div>
           <Progress value={(currentStep / (steps.length - 1)) * 100} />
         </div>
-        <Card className="p-6">
+        <Card className="relative p-6 overflow-hidden">
           {renderStepContent()}
           <div className="mt-6">
             {processingStep && (
@@ -600,6 +601,17 @@ export default function ExamEvaluator() {
               </div>
             </div>
           </div>
+          <BorderBeam
+            duration={6}
+            size={400}
+            className="from-transparent via-blue-500 to-transparent"
+          />
+          <BorderBeam
+            duration={6}
+            delay={3}
+            size={400}
+            className="from-transparent via-purple-500 to-transparent"
+          />
         </Card>
       </div>
       <ReevaluationDialog

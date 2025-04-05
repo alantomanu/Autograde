@@ -97,10 +97,6 @@ export function ViewScoresStep({
     setEvaluationData(updatedEvaluationData);
     setIsMarksSaved(false); // Mark as unsaved when changes are made
   };
-
-  
- 
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">

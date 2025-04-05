@@ -1,64 +1,60 @@
 "use client";
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { useMotionTemplate, useMotionValue, motion } from "motion/react";
 
-type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+}
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, ...props }, ref) => {
-    const radius = 100;
-    const [visible, setVisible] = React.useState(false);
-
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
-
-    function handleMouseMove({ currentTarget, clientX, clientY }: {
-      currentTarget: HTMLElement;
-      clientX: number;
-      clientY: number;
-    }) {
-      const { left, top } = currentTarget.getBoundingClientRect();
-      mouseX.set(clientX - left);
-      mouseY.set(clientY - top);
-    }
+  ({ className, type, label, ...props }, ref) => {
+    const [isFocused, setIsFocused] = React.useState(false);
+    const [hasValue, setHasValue] = React.useState(false);
 
     return (
-      <motion.div
-        style={{
-          background: useMotionTemplate`
-            radial-gradient(
-              ${visible ? radius + "px" : "0px"} circle at ${mouseX}px ${mouseY}px,
-              var(--blue-500),
-              transparent 80%
-            )
-          `,
-        }}
-        onMouseMove={handleMouseMove}
-        onMouseEnter={() => setVisible(true)}
-        onMouseLeave={() => setVisible(false)}
-        className="p-[2px] rounded-lg transition duration-300 group/input"
-      >
+      <div className="relative">
+        {label && (
+          <label
+            className={cn(
+              "absolute left-0 transition-all duration-300",
+              (isFocused || hasValue) 
+                ? "-top-6 text-sm text-primary" 
+                : "top-2 text-muted-foreground",
+            )}
+          >
+            {label}
+          </label>
+        )}
         <input
           type={type}
           className={cn(
-            `flex h-10 w-full border-none bg-white text-gray-900 shadow-input rounded-md px-3 py-2 text-sm 
-            file:border-0 file:bg-transparent 
-            file:text-sm file:font-medium 
-            placeholder:text-gray-400
-            focus-visible:outline-none focus-visible:ring-[2px] focus-visible:ring-blue-500
-            disabled:cursor-not-allowed disabled:opacity-50
-            shadow-[0px_0px_1px_1px_var(--gray-200)]
-            group-hover/input:shadow-none transition duration-400`,
+            "flex w-full border-0 border-b-2 border-muted bg-transparent px-0 py-2 text-sm",
+            "placeholder:text-transparent", // Hide placeholder when label is shown
+            "focus:border-primary focus:outline-none focus:ring-0",
+            "transition-all duration-300",
             className
           )}
           ref={ref}
+          onFocus={() => setIsFocused(true)}
+          onBlur={(e) => {
+            setIsFocused(false);
+            setHasValue(e.target.value.length > 0);
+          }}
+          onChange={(e) => setHasValue(e.target.value.length > 0)}
           {...props}
         />
-      </motion.div>
+        <div
+          className={cn(
+            "absolute bottom-0 left-0 h-0.5 w-0 bg-primary",
+            "transition-all duration-300",
+            isFocused ? "w-full" : "w-0"
+          )}
+        />
+      </div>
     );
   }
 );
+
 Input.displayName = "Input";
 
 export { Input };
