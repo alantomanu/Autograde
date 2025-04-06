@@ -146,7 +146,7 @@ export default function ExamEvaluator() {
     setIsProcessed(false);
     setTimeout(() => {
       setShowBackground(true);
-    }, 5000);
+    }, 8000);
   };
 
   const handleAnswerKeyUpload = (url: string, file: File) => {
@@ -161,7 +161,7 @@ export default function ExamEvaluator() {
     });
     setTimeout(() => {
       setShowBackground(true);
-    }, 5000);
+    }, 8000);
   };
 
   const handleExtractAgain = useCallback(async () => {
@@ -171,7 +171,7 @@ export default function ExamEvaluator() {
       await processAnswerSheet(uploadedAnswerSheet.url);
       setTimeout(() => {
         setShowBackground(true);
-      }, 5000);
+      }, 8000);
     }
   }, [uploadedAnswerSheet?.url, processAnswerSheet]);
 
@@ -233,71 +233,7 @@ export default function ExamEvaluator() {
       setProcessingStep('An error occurred while evaluating the answers');
     }
   };
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 0:
-        return (
-          <StudentIDStep 
-            studentId={studentId} 
-            setStudentId={setStudentId} 
-            courseId={courseId} 
-            setCourseId={setCourseId} 
-            courseName={courseName} 
-            setCourseName={setCourseName} 
-          />
-        );
-      case 1:
-        return (
-          <AnswerSheetUploadStep
-            uploadedAnswerSheet={uploadedAnswerSheet}
-            handleAnswerSheetUpload={handleAnswerSheetUpload}
-            resetUpload={resetAnswerSheetUpload} // ✅ FIXED: Added resetUpload
-          />
-        );
-      case 2:
-        return (
-          <AnswerSheetPreviewStep
-            isProcessing={isProcessing}
-            extractedText={extractedText}
-            continueChecked={continueChecked}
-            setContinueChecked={setContinueChecked}
-            handleExtractAgain={handleExtractAgain}
-          />
-        );
-      case 3:
-        return (
-          <div className="relative">
-            <DownloadTemplateButton 
-              templateUrl="https://res.cloudinary.com/dfivs4n49/raw/upload/v1742880576/answer_keys/ggp5o62ztwfngyasnu6g.docx"
-              fileName="Answer_Key_Template.docx"
-            />
-            <AnswerKeyUploadStep
-              uploadedAnswerKey={uploadedAnswerKey}
-              handleAnswerKeyUpload={handleAnswerKeyUpload}
-              resetUpload={() => {
-                resetAnswerKeyUpload();
-                setEvaluationData(null);
-              }}
-              onProcessingComplete={(data) => {
-                setAnswerKeyData(data);
-              }}
-            />
-          </div>
-        );
-      case 4:
-        return (
-          <ViewScoresStep 
-            evaluationData={evaluationData} 
-            setEvaluationData={setEvaluationData}
-            setIsMarksSaved={setIsMarksSaved}
-            isMarksSaved={isMarksSaved}
-            processingStep={processingStep}
-          />
-        );
-      default:
-        return null;
-    }
-  }
+
   const handleNextStep = async () => {
     if (currentStep === 0) {
       // Check if all fields are filled
@@ -424,7 +360,7 @@ export default function ExamEvaluator() {
         </Button>
         setTimeout(() => {
           setCurrentStep(0); // Move to case 0 after 5 seconds
-        }, 5000);
+        }, 8000);
 
         // Clear all saved states
         setStudentId('');
@@ -505,7 +441,7 @@ export default function ExamEvaluator() {
         setTimeout(() => {
           setCurrentStep(0);
           resetAllData();
-        }, 5000);
+        }, 8000);
       } else {
         const errorData = await response.json();
         setProcessingStep(errorData.message || 'Failed to update score');
@@ -551,7 +487,7 @@ export default function ExamEvaluator() {
         setTimeout(() => {
           setCurrentStep(0);
           resetAllData();
-        }, 5000);
+        }, 8000);
       } else {
         const errorData = await response.json();
         setProcessingStep(errorData.message || 'Failed to save new score');
@@ -563,6 +499,77 @@ export default function ExamEvaluator() {
       toast.error('Failed to save new score');
     }
   };
+
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 0:
+        return (
+          <StudentIDStep 
+            studentId={studentId} 
+            setStudentId={setStudentId} 
+            courseId={courseId} 
+            setCourseId={setCourseId} 
+            courseName={courseName} 
+            setCourseName={setCourseName} 
+          />
+        );
+      case 1:
+        return (
+          <AnswerSheetUploadStep
+            uploadedAnswerSheet={uploadedAnswerSheet}
+            handleAnswerSheetUpload={handleAnswerSheetUpload}
+            resetUpload={resetAnswerSheetUpload}
+          />
+        );
+      case 2:
+        return (
+          <AnswerSheetPreviewStep
+            isProcessing={isProcessing}
+            extractedText={extractedText}
+            continueChecked={continueChecked}
+            setContinueChecked={(checked: boolean) => {
+              setContinueChecked(checked);
+              if (checked) {
+                setProcessingStep(''); // Clear the message when checkbox is checked
+              }
+            }}
+            handleExtractAgain={handleExtractAgain}
+          />
+        );
+      case 3:
+        return (
+          <div className="relative">
+            <DownloadTemplateButton 
+              templateUrl="https://res.cloudinary.com/dfivs4n49/raw/upload/v1742880576/answer_keys/ggp5o62ztwfngyasnu6g.docx"
+              fileName="Answer_Key_Template.docx"
+            />
+            <AnswerKeyUploadStep
+              uploadedAnswerKey={uploadedAnswerKey}
+              handleAnswerKeyUpload={handleAnswerKeyUpload}
+              resetUpload={() => {
+                resetAnswerKeyUpload();
+                setEvaluationData(null);
+              }}
+              onProcessingComplete={(data) => {
+                setAnswerKeyData(data);
+              }}
+            />
+          </div>
+        );
+      case 4:
+        return (
+          <ViewScoresStep 
+            evaluationData={evaluationData} 
+            setEvaluationData={setEvaluationData}
+            setIsMarksSaved={setIsMarksSaved}
+            isMarksSaved={isMarksSaved}
+            processingStep={processingStep}
+          />
+        );
+      default:
+        return null;
+    }
+  }
 
   return (
     <>
@@ -590,9 +597,23 @@ export default function ExamEvaluator() {
                   processingStep.includes('exists with name') || 
                   processingStep.includes('Reevaluation check required')
                     ? 'text-amber-600 font-medium bg-amber-50 p-3 rounded-md border border-amber-200' 
-                    : 'text-blue-600'
+                    : 'p-4 rounded-lg bg-gradient-to-r from-blue-50 via-white to-blue-50 border border-blue-100 shadow-sm backdrop-blur-sm'
                 }`}>
-                  {processingStep}
+                  <div className="flex flex-col items-center justify-center">
+                    <span className={`font-medium ${
+                      processingStep.includes('verified successfully') ? 'text-green-600' :
+                      processingStep.includes('Verifying') ? 'text-blue-600' :
+                      processingStep.includes('Analytics') ? 'text-indigo-600' :
+                      'text-gray-600'
+                    }`}>
+                      {processingStep}
+                    </span>
+                    {processingStep.includes('Analytics') && (
+                      <div className="mt-1 text-sm text-gray-500">
+                        Click the button below to view your detailed report
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
               <div className="flex justify-between">
@@ -606,7 +627,7 @@ export default function ExamEvaluator() {
                       window.scrollTo(0, 0);
                       setTimeout(() => {
                         setShowBackground(true);
-                      }, 5000);
+                      }, 8000);
                     }} 
                     disabled={isProcessing}
                   >
@@ -620,7 +641,7 @@ export default function ExamEvaluator() {
                       handleNextStep();
                       setTimeout(() => {
                         setShowBackground(true);
-                      }, 5000);
+                      }, 8000);
                     }}
                     disabled={isProcessing}
                   >

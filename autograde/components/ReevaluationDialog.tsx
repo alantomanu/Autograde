@@ -68,7 +68,6 @@ export function ReevaluationDialog({
               placeholder="Enter Valid Student ID"
               value={newStudentId}
               onChange={(e) => setNewStudentId(e.target.value)}
-              className="mb-6"
             />
             <Button onClick={onNewStudentIdSubmit}>Submit New ID</Button>
           </>
