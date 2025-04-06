@@ -291,6 +291,7 @@ export default function ExamEvaluator() {
             setEvaluationData={setEvaluationData}
             setIsMarksSaved={setIsMarksSaved}
             isMarksSaved={isMarksSaved}
+            processingStep={processingStep}
           />
         );
       default:

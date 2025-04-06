@@ -3,25 +3,73 @@ import { Input } from './ui/input';
 import { Card } from './ui/card';
 import { Pencil } from 'lucide-react';
 import { EvaluationResponse, EvaluationResult } from '../types';
-
-
+import { FlipText } from "@/components/magicui/flip-text";
+import { Button } from './ui/button';
+import { useRouter } from 'next/navigation';
 
 interface ViewScoresStepProps {
   evaluationData: EvaluationResponse | null;
   setEvaluationData: React.Dispatch<React.SetStateAction<EvaluationResponse | null>>;
   setIsMarksSaved: React.Dispatch<React.SetStateAction<boolean>>;
   isMarksSaved: boolean;
+  processingStep?: string;
 }
 
 export function ViewScoresStep({ 
   evaluationData, 
   setEvaluationData, 
-  setIsMarksSaved 
+  setIsMarksSaved,
+  isMarksSaved,
+  processingStep 
 }: ViewScoresStepProps) {
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [inputValues, setInputValues] = useState<{ [key: string]: string }>({});
+  const router = useRouter();
 
-  if (!evaluationData) return <div>Loading evaluation results...</div>;
+  // Show loading state initially
+  if (!evaluationData && !isMarksSaved && processingStep !== 'You can view detailed analytics in Analytics') return (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-900">Evaluation Results</h2>
+      </div>
+      <div className="min-h-[400px] flex items-center justify-center">
+        <div className="p-8 rounded-lg bg-white/50 backdrop-blur-sm border-gray-100">
+          <FlipText 
+            duration={0.5} 
+            delayMultiple={0.1}
+            className="text-2xl font-bold text-gray-700 tracking-tighter"
+          >
+            Loading evaluation results...
+          </FlipText>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Show analytics message after successful save
+  if (processingStep === 'You can view detailed analytics in Analytics') return (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-900">Evaluation Results</h2>
+      </div>
+      <div className="min-h-[400px] flex items-center justify-center">
+        <div className="p-8 rounded-lg bg-white/50 backdrop-blur-sm border-gray-100">
+          <div className="text-center space-y-4">
+            <p className="text-xl font-semibold text-gray-700">You can view detailed analytics in Analytics</p>
+            <Button 
+              onClick={() => router.push('/analytics')} 
+              className="mt-2"
+            >
+              View Analytics
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // If we reach here, we have evaluationData and marks are not saved yet
+  if (!evaluationData) return null; // TypeScript safety check
 
   console.log("Question with diagram:", evaluationData.results.find(r => r.hasDiagram)); // Debug log
 
@@ -98,9 +146,9 @@ export function ViewScoresStep({
     setIsMarksSaved(false); // Mark as unsaved when changes are made
   };
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Evaluation Results</h2>
+        <h2 className="text-2xl font-bold text-gray-900">Evaluation Results</h2>
       </div>
 
       <div className="space-y-4">
