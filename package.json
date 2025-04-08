@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "vercel-build": "npm install && next build",
+    "vercel-build": "npm install --include=dev && next build",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
