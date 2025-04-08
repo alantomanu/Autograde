@@ -2,8 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+
 body {
-  font-family: var(--font-roboto), sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 @layer base {

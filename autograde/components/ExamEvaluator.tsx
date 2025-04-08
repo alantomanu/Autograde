@@ -573,7 +573,7 @@ export default function ExamEvaluator() {
 
   return (
     <>
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-5xl mx-auto p-6">
         <div className="mb-3">
           <div className="flex flex-wrap justify-between">
             {steps.map((step, index) => (
@@ -587,7 +587,7 @@ export default function ExamEvaluator() {
           </div>
           <Progress value={(currentStep / (steps.length - 1)) * 100} />
         </div>
-        <Card className="relative p-6 overflow-hidden">
+        <Card className="relative p-6 overflow-hidden ">
           <div className="relative z-10">
             {renderStepContent()}
             <div className="mt-6">
@@ -660,13 +660,13 @@ export default function ExamEvaluator() {
               </div>
               <BorderBeam
                 duration={6}
-                size={400}
+                size={700}
                 className="from-transparent via-blue-500 to-transparent"
               />
               <BorderBeam
                 duration={6}
                 delay={3}
-                size={400}
+                size={700}
                 className="from-transparent via-purple-500 to-transparent"
               />
             </>

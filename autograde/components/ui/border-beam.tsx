@@ -18,7 +18,7 @@ interface BorderBeamProps {
 
 export const BorderBeam = ({
   className,
-  size = 50,
+  size = 1000,
   delay = 0,
   duration = 6,
   colorFrom = "#ffaa40",
@@ -29,7 +29,7 @@ export const BorderBeam = ({
   initialOffset = 0,
 }: BorderBeamProps) => {
   return (
-    <div className="pointer-events-none absolute inset-0 rounded-[inherit] border border-transparent [mask-clip:padding-box,border-box] [mask-composite:intersect] [mask-image:linear-gradient(transparent,transparent),linear-gradient(#000,#000)]">
+    <div className="pointer-events-none absolute inset-0 rounded-[inherit] border-2 border-transparent [mask-clip:padding-box,border-box] [mask-composite:intersect] [mask-image:linear-gradient(transparent,transparent),linear-gradient(#000,#000)]">
       <motion.div
         className={cn(
           "absolute aspect-square",
