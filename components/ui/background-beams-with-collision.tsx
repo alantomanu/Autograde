@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "motion/react";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useImperativeHandle } from "react";
 
 export const BackgroundBeamsWithCollision = ({
   children,
@@ -119,7 +119,10 @@ const CollisionMechanism = React.forwardRef((
   },
   ref: React.ForwardedRef<HTMLDivElement>
 ) => {
-  const beamRef = useRef<HTMLDivElement>(null);
+  const localBeamRef = useRef<HTMLDivElement>(null);
+
+  useImperativeHandle(ref, () => localBeamRef.current as HTMLDivElement);
+
   const [collision, setCollision] = useState<{
     detected: boolean;
     coordinates: { x: number; y: number } | null;
@@ -133,12 +136,12 @@ const CollisionMechanism = React.forwardRef((
   useEffect(() => {
     const checkCollision = () => {
       if (
-        beamRef.current &&
+        localBeamRef.current &&
         containerRef.current &&
         parentRef.current &&
         !cycleCollisionDetected
       ) {
-        const beamRect = beamRef.current.getBoundingClientRect();
+        const beamRect = localBeamRef.current.getBoundingClientRect();
         const containerRect = containerRef.current.getBoundingClientRect();
         const parentRect = parentRef.current.getBoundingClientRect();
 
@@ -181,14 +184,7 @@ const CollisionMechanism = React.forwardRef((
     <>
       <motion.div
         key={beamKey}
-        ref={(el) => {
-          beamRef.current = el as HTMLDivElement;
-          if (typeof ref === 'function') {
-            ref(el);
-          } else if (ref) {
-            ref.current = el;
-          }
-        }}
+        ref={localBeamRef}
         animate="animate"
         initial={{
           translateY: beamOptions.initialY || "-200px",
