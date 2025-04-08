@@ -1,17 +1,18 @@
 import { SignupForm } from "@/components/signup-form";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "../api/auth/auth-options";
 import { redirect } from "next/navigation";
 
 export default async function SignupPage({
   searchParams,
 }: {
-  searchParams?: { oauth?: string }
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
+  const resolvedSearchParams = await searchParams;
   const session = await getServerSession(authOptions);
 
   // If user is already logged in and not in OAuth flow, redirect to home
-  if (session && !searchParams?.oauth) {
+  if (session && !resolvedSearchParams?.oauth) {
     redirect('/');
   }
 
