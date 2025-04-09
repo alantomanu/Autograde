@@ -28,7 +28,7 @@ export function AnswerKeyUploadStep({
     setProcessSuccess(false);
 
     try {
-      const response = await fetch('https://autograde-server.onrender.com/convert-pdf', {
+      const response = await fetch('https://autograde-server.koyeb.app/convert-pdf', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -101,7 +101,7 @@ export default function ExamEvaluator() {
       console.log('Starting OCR processing');
       setProcessingStep('');
       
-      const processResponse = await fetch('https://autograde-server.onrender.com/perform-ocr', {
+      const processResponse = await fetch('https://autograde-server.koyeb.app/perform-ocr', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pdfUrl }),
@@ -179,7 +179,7 @@ export default function ExamEvaluator() {
     if (!extractedText || !answerKeyData) return;
 
     try {
-      const response = await fetch('https://autograde-server.onrender.com/evaluate', {
+      const response = await fetch('https://autograde-server.koyeb.app/evaluate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -93,7 +93,7 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
             <h3 className="text-lg font-semibold text-gray-800 text-center sm:text-left">Our APIs</h3>
             <div className="space-y-3">
               <a 
-                href="https://autograde-server.onrender.com/perform-ocr"
+                href="https://autograde-server.koyeb.app"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block p-3 sm:p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
@@ -107,7 +107,7 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
                 </div>
               </a>
               <a 
-                href="https://autograde-server.onrender.com/evaluate"
+                href="https://autograde-server.koyeb.app/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block p-3 sm:p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"

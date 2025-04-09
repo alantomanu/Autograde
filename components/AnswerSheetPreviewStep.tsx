@@ -57,7 +57,7 @@ export function AnswerSheetPreviewStep({
       // Show final step 8 seconds after text generation is complete
       const finalStepTimer = setTimeout(() => {
         setShowFinalStep(true);
-      }, (generationTime + 8) * 1000);
+      }, (generationTime + 12) * 1000);
 
       return () => {
         clearTimeout(textGenerationTimer);
