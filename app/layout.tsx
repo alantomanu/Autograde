@@ -7,6 +7,7 @@ import Footer from "@/components/ui/Footer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/auth-options";
 import Providers from "@/components/providers/providers";
+import { Background } from "@/components/ui/Background";
 import localFont from 'next/font/local';
 
 const myFont = localFont({ src: './fonts/ClashDisplay-Variable.woff2' })
@@ -33,12 +34,14 @@ export default async function RootLayout({
       
       >
         <Providers session={session}>
-          <div className="flex min-h-screen flex-col bg-white">
+          <div className="flex min-h-screen flex-col">
             <NavbarComponent />
-            <main className="flex-grow bg-white">
-              {children}
-            </main>
-            <Footer className="mt-6 bg-white" />
+            <Background>
+              <main className="flex-grow">
+                {children}
+              </main>
+              <Footer className="mt-6" />
+            </Background>
           </div>
         </Providers>
       </body>
