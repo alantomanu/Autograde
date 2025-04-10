@@ -97,8 +97,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               ease: "easeInOut"
             }}
             className={cn(
-              "absolute bottom-0 left-0 h-0.5 w-full",
-              "bg-primary dark:bg-primary",
+              "absolute -bottom-[2px] left-[4px] h-0.5",
+              "w-[calc(100%-7px)] rounded-full",
+              "bg-primary/60 dark:bg-primary/60",
               "origin-left"
             )}
           />
