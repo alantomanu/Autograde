@@ -608,11 +608,7 @@ export default function ExamEvaluator() {
                     }`}>
                       {processingStep}
                     </span>
-                    {processingStep.includes('Analytics') && (
-                      <div className="mt-1 text-sm text-gray-500">
-                        Click the button below to view your detailed report
-                      </div>
-                    )}
+                    {processingStep.includes('Analytics')}
                   </div>
                 </div>
               )}

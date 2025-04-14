@@ -25,7 +25,7 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
                 className="object-contain"
                 priority
               />
-              <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-400 to-teal-400 bg-clip-text text-transparent">
+              <h2 className="text-xl sm:text-2xl font-bold  ">
                 AutoGrade
               </h2>
             </div>
