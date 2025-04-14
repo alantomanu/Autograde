@@ -36,7 +36,7 @@ export function RetroGrid({
   className,
   angle = 65,
   cellSize = 60,
-  opacity = 0.6,
+  opacity = 0.7,
   lightLineColor = "gray",
   darkLineColor = "gray",
   ...props

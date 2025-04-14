@@ -9,7 +9,7 @@ export function App() {
   const { data: session, status } = useSession();
 
   const handleLogout = () => {
-    signOut({ callbackUrl: '/login' });
+    signOut({ callbackUrl: '/' });
   };
 
   return (

@@ -1,8 +1,21 @@
+'use client';
+
 import React from 'react';
 import { Clock, Lock, FileText, BarChart2 } from 'lucide-react';
 import { RetroGrid } from "@/components/magicui/retro-grid";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 const ModernBanner: React.FC = () => {
+  const { data: session } = useSession();
+
+  const scrollToEvaluator = () => {
+    const evaluatorSection = document.getElementById('evaluator-section');
+    if (evaluatorSection) {
+      evaluatorSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="relative py-16 overflow-hidden bg-background">
       <RetroGrid className="absolute inset-0" />
@@ -41,9 +54,23 @@ const ModernBanner: React.FC = () => {
               </div>
             </div>
             
-            <button className="mt-8 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all font-medium">
-              Get Started
-            </button>
+            <div className="mt-4">
+              {session ? (
+                <button
+                  onClick={scrollToEvaluator}
+                  className="mt-8 inline-block bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all font-medium"
+                >
+                  Evaluate Now
+                </button>
+              ) : (
+                <Link
+                  href="/signup"
+                  className="mt-8 inline-block bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all font-medium"
+                >
+                  Get Started
+                </Link>
+              )}
+            </div>
           </div>
           
           {/* Right side animation */}

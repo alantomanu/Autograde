@@ -125,7 +125,7 @@ export default function ExamEvaluator() {
     }
   }, []);
 
-  /** ✅ PREVENT MULTIPLE API CALLS */
+
   useEffect(() => {
     if (currentStep === 2 && uploadedAnswerSheet?.url && !isProcessed) {
       console.log('Calling processAnswerSheet once...');
@@ -195,13 +195,13 @@ export default function ExamEvaluator() {
 
       if (!response.ok) {
         setProcessingStep('Failed to evaluate answers');
-        return; // Stop further processing
+        return; 
       }
 
-      // Validate the structure of data.results
+
       if (!Array.isArray(data.results)) {
         setProcessingStep('Invalid results format');
-        return; // Stop further processing
+        return; 
       }
 
       const evaluationResult = {
@@ -213,7 +213,7 @@ export default function ExamEvaluator() {
           const [received, total] = result.mark.split('/').map(Number);
           return {
             ...result,
-            maxMark: total, // Explicitly set maxMark from total
+            maxMark: total, 
             feedback: {
               ...result.feedback,
               mark: received,
@@ -235,8 +235,14 @@ export default function ExamEvaluator() {
   };
 
   const handleNextStep = async () => {
+    const scrollToTop = () => {
+      const evaluatorSection = document.getElementById('evaluator-section');
+      if (evaluatorSection) {
+        evaluatorSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
     if (currentStep === 0) {
-      // Check if all fields are filled
       if (!studentId || !courseId || !courseName) {
         setProcessingStep('Please fill in all required fields');
         return;
@@ -282,12 +288,11 @@ export default function ExamEvaluator() {
             setIsProcessing(false);
             const nextStep = Math.min(currentStep + 1, steps.length - 1);
             setCurrentStep(nextStep);
-            window.scrollTo(0, 0);
+            scrollToTop();
           }, 1000);
           return;
         }
 
-        // Handle any other status
         setProcessingStep(data.message || 'Verification failed. Please try again.');
         setIsProcessing(false);
 
@@ -314,7 +319,7 @@ export default function ExamEvaluator() {
           return;
         }
 
-        // Extract feedback from evaluationData
+   
         const feedback = evaluationData.results.map(result => result.feedback);
 
         const response = await fetch('/api/scores', {
@@ -387,7 +392,7 @@ export default function ExamEvaluator() {
         handleEvaluate();
       }
       setCurrentStep(nextStep);
-      window.scrollTo(0, 0);
+      scrollToTop();
     }
   };
 
@@ -572,7 +577,7 @@ export default function ExamEvaluator() {
   }
 
   return (
-    <>
+    <div id="evaluator-section" className="container mx-auto px-4 py-8">
       <div className="max-w-5xl mx-auto p-6">
         <div className="mb-3">
           <div className="flex flex-wrap justify-between">
@@ -620,7 +625,10 @@ export default function ExamEvaluator() {
                       setShowBackground(false);
                       setCurrentStep(prev => Math.max(prev - 1, 0));
                       setProcessingStep('');
-                      window.scrollTo(0, 0);
+                      const evaluatorSection = document.getElementById('evaluator-section');
+                      if (evaluatorSection) {
+                        evaluatorSection.scrollIntoView({ behavior: 'smooth' });
+                      }
                       setTimeout(() => {
                         setShowBackground(true);
                       }, 8000);
@@ -682,6 +690,6 @@ export default function ExamEvaluator() {
         onNewStudentIdSubmit={handleNewStudentIdSubmit}
         setReevalStep={setReevalStep}
       />
-    </>
+    </div>
   )
 }
