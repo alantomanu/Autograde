@@ -11,6 +11,26 @@ export default {
   ],
   theme: {
   	extend: {
+      keyframes: {
+        'gradient-xy': {
+          '0%, 100%': {
+            'background-size': '400% 400%',
+            'background-position': 'left center'
+          },
+          '50%': {
+            'background-size': '200% 200%',
+            'background-position': 'right center'
+          }
+        },
+        grid: {
+          '0%': { transform: 'translateY(-50%)' },
+          '100%': { transform: 'translateY(0)' }
+        }
+      },
+      animation: {
+        'gradient-xy': 'gradient-xy 15s ease infinite',
+        'grid': 'grid 15s linear infinite',
+      },
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',

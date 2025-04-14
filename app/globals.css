@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -34,7 +33,7 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
-    
+
     /* Slate color variables */
     --slate-50: #f8fafc;
     --slate-100: #f1f5f9;
@@ -48,8 +47,10 @@ body {
     --slate-900: #0f172a;
     --slate-950: #020617;
   }
-  
-  
+  .theme {
+    --animate-grid: grid 15s linear infinite;
+  }
+
 }
 
 @layer base {
@@ -77,4 +78,23 @@ input:focus {
   outline: none;
   /* Optional: if you want a different style when focused */
   box-shadow: 0 0 0 2px rgba(229, 231, 235, 0.5); /* This creates a subtle gray glow instead */
+}
+
+@theme inline {
+  @keyframes grid {
+  0% {
+    transform: translateY(-50%);
+    }
+  100% {
+    transform: translateY(0);
+    }
+  }
+  @keyframes grid {
+  0% {
+    transform: translateY(-50%);
+    }
+  100% {
+    transform: translateY(0);
+    }
+  }
 }

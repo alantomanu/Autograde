@@ -1,30 +1,73 @@
-// autograde/components/ui/DarkBanner.tsx
 import React from 'react';
-import { Clock, Lock, FileText } from 'lucide-react'; // Import Lucide icons
+import { Clock, Lock, FileText, BarChart2 } from 'lucide-react';
+import { RetroGrid } from "@/components/magicui/retro-grid";
 
-
-const DarkBanner: React.FC = () => {
+const ModernBanner: React.FC = () => {
   return (
-    <div className="banner bg-white  py-12">
-      <div className="container mx-auto px-6 text-center">
-        <h1 className="text-4xl font-bold text-gray-900  mb-2">
-          Automated Exam Evaluation System
-        </h1>
-        <p className="text-gray-600 mb-2">
-          Streamline your grading process with our intelligent evaluation system
-        </p>
-        <div className="flex justify-center space-x-8">
-          <div className="flex items-center text-gray-700 ">
-            <Clock className="w-6 h-6 mr-2 text-teal-500" /> {/* Teal accent color */}
-            <span>Fast Processing</span>
+    <div className="relative py-16 overflow-hidden bg-background">
+      <RetroGrid className="absolute inset-0" />
+      <div className="container mx-auto px-6 relative">
+        <div className="flex flex-col md:flex-row items-center justify-between">
+          {/* Left side content */}
+          <div className="w-full md:w-1/2 text-left mb-10 md:mb-0 mx-40">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-indigo-900 mb-4">
+              Automated Exam
+              <span className="block text-purple-700">Evaluation System</span>
+            </h1>
+            <p className="text-gray-600 mb-8 max-w-md">
+              Streamline your grading process with our intelligent Llama-powered evaluation system that saves time and improves accuracy.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="flex items-center group">
+                <div className="bg-purple-100 p-3 rounded-lg group-hover:bg-purple-200 transition-all">
+                  <Clock className="w-5 h-5 text-purple-700" />
+                </div>
+                <span className="ml-3 text-gray-700">Fast Processing</span>
+              </div>
+              
+              <div className="flex items-center group">
+                <div className="bg-purple-100 p-3 rounded-lg group-hover:bg-purple-200 transition-all">
+                  <Lock className="w-5 h-5 text-purple-700" />
+                </div>
+                <span className="ml-3 text-gray-700">Secure System</span>
+              </div>
+              
+              <div className="flex items-center group">
+                <div className="bg-purple-100 p-3 rounded-lg group-hover:bg-purple-200 transition-all">
+                  <FileText className="w-5 h-5 text-purple-700" />
+                </div>
+                <span className="ml-3 text-gray-700">Accurate Results</span>
+              </div>
+            </div>
+            
+            <button className="mt-8 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all font-medium">
+              Get Started
+            </button>
           </div>
-          <div className="flex items-center text-gray-700 ">
-            <Lock className="w-6 h-6 mr-2 text-teal-500" /> {/* Teal accent color */}
-            <span>Secure System</span>
-          </div>
-          <div className="flex items-center text-gray-700 ">
-            <FileText className="w-6 h-6 mr-2 text-teal-500" /> {/* Teal accent color */}
-            <span>Accurate Results</span>
+          
+          {/* Right side animation */}
+          <div className="w-full md:w-1/2 flex justify-center">
+            <div className="relative w-64 h-64 md:w-80 md:h-80">
+              {/* Animated rings */}
+              <div className="absolute inset-0 rounded-full border-4 border-indigo-200 animate-pulse"></div>
+              <div className="absolute inset-4 rounded-full border-4 border-purple-300 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+              <div className="absolute inset-8 rounded-full border-4 border-indigo-400 animate-pulse" style={{ animationDelay: '1s' }}></div>
+              
+              {/* Center circular content */}
+              <div className="absolute inset-12 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-full flex items-center justify-center shadow-xl">
+                <div className="text-center">
+                  <BarChart2 className="w-12 h-12 text-white mx-auto mb-2" />
+                  <div className="text-white font-bold text-lg">Llama Powered</div>
+                  <div className="text-purple-100 text-sm">Evaluation</div>
+                </div>
+              </div>
+              
+              {/* Floating elements */}
+              <div className="absolute top-4 right-0 w-12 h-12 bg-purple-500 rounded-lg animate-bounce opacity-80" style={{ animationDelay: '0.7s', animationDuration: '3s' }}></div>
+              <div className="absolute bottom-8 left-0 w-8 h-8 bg-indigo-500 rounded-lg animate-bounce opacity-80" style={{ animationDelay: '1.2s', animationDuration: '2.5s' }}></div>
+              <div className="absolute top-1/2 right-4 w-6 h-6 bg-purple-400 rounded-full animate-pulse opacity-80" style={{ animationDelay: '0.3s' }}></div>
+            </div>
           </div>
         </div>
       </div>
@@ -32,4 +75,4 @@ const DarkBanner: React.FC = () => {
   );
 };
 
-export default DarkBanner;
+export default ModernBanner;
