@@ -9,7 +9,7 @@ const ModernBanner: React.FC = () => {
       <div className="container mx-auto px-6 relative">
         <div className="flex flex-col md:flex-row items-center justify-between">
           {/* Left side content */}
-          <div className="w-full md:w-1/2 text-left mb-10 md:mb-0 mx-40">
+          <div className="w-full md:w-1/2 text-left mb-10 md:mb-0 mx-20">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-indigo-900 mb-4">
               Automated Exam
               <span className="block text-purple-700">Evaluation System</span>
