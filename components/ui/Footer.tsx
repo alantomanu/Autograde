@@ -11,18 +11,18 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ className }) => {
   return (
-    <footer className={`bg-white text-gray-800 py-6 sm:py-10 ${className}`}>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <footer className={`bg-white text-gray-800 py-6 sm:py-10 w-full ${className}`}>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Section */}
-          <div className="space-y-4 sm:space-y-6">
-            <div className="flex items-center space-x-3 justify-center sm:justify-start">
+          <div className="space-y-4 sm:space-y-6 flex flex-col items-center sm:items-start">
+            <div className="flex items-center space-x-3">
               <Image
                 src="/logoblack.png"
                 alt="Logo"
                 width={35}
                 height={35}
-                className="object-contain"
+                className="object-contain w-[35px] h-[35px]"
                 priority
               />
               <h2 className="text-xl sm:text-2xl font-bold  ">
@@ -46,7 +46,7 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
           </div>
 
           {/* Quick Links */}
-          <div className="space-y-4 text-center sm:text-left mx-10">
+          <div className="space-y-4 text-center sm:text-left sm:mx-0">
             <h3 className="text-lg font-semibold text-gray-800">Quick Links</h3>
             <ul className="space-y-3">
               <li>
@@ -68,7 +68,7 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
           </div>
 
           {/* Documentation */}
-          <div className="space-y-4">
+          <div className="space-y-4 w-full">
             <h3 className="text-lg font-semibold text-gray-800 text-center sm:text-left">Documentation</h3>
             <div className="space-y-3">
               <a 
@@ -89,7 +89,7 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
           </div>
 
           {/* API Section */}
-          <div className="space-y-4">
+          <div className="space-y-4 w-full">
             <h3 className="text-lg font-semibold text-gray-800 text-center sm:text-left">Our APIs</h3>
             <div className="space-y-3">
               <a 
@@ -125,7 +125,7 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-8 pt-6 border-t border-gray-200">
+        <div className="mt-8 pt-6 border-t border-gray-200 w-full">
           <div className="text-gray-600 text-xs sm:text-sm text-center">
             © {new Date().getFullYear()} AutoGrade. All rights reserved.
           </div>

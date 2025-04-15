@@ -17,12 +17,12 @@ const ModernBanner: React.FC = () => {
   };
 
   return (
-    <div className="relative py-16 overflow-hidden bg-background">
+    <div className="relative py-16 overflow-hidden bg-background w-full">
       <RetroGrid className="absolute inset-0" />
-      <div className="container mx-auto px-6 relative">
-        <div className="flex flex-col md:flex-row items-center justify-between">
+      <div className="container mx-auto px-4 md:px-8 lg:px-12 relative">
+        <div className="flex flex-col md:flex-row items-center max-w-6xl mx-auto gap-8">
           {/* Left side content */}
-          <div className="w-full md:w-1/2 text-left mb-10 md:mb-0 mx-20">
+          <div className="w-full md:w-1/2 text-left mb-10 md:mb-0 md:pl-8 lg:pl-12">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-indigo-900 mb-4">
               Automated Exam
               <span className="block text-purple-700">Evaluation System</span>
@@ -74,8 +74,8 @@ const ModernBanner: React.FC = () => {
           </div>
           
           {/* Right side animation */}
-          <div className="w-full md:w-1/2 flex justify-center">
-            <div className="relative w-64 h-64 md:w-80 md:h-80">
+          <div className="w-full md:w-1/2 flex justify-center items-center md:justify-end pr-0 md:pr-8">
+            <div className="relative w-[280px] h-[280px] md:w-[320px] md:h-[320px]">
               {/* Animated rings */}
               <div className="absolute inset-0 rounded-full border-4 border-indigo-200 animate-pulse"></div>
               <div className="absolute inset-4 rounded-full border-4 border-purple-300 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
