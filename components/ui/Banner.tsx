@@ -17,7 +17,7 @@ const ModernBanner: React.FC = () => {
   };
 
   return (
-    <div className="relative py-16 overflow-hidden bg-background w-full">
+    <div className="relative py-8 md:py-16 overflow-hidden bg-background w-full">
       <RetroGrid className="absolute inset-0" />
       <div className="container mx-auto px-4 md:px-8 lg:px-12 relative">
         <div className="flex flex-col md:flex-row items-center max-w-6xl mx-auto gap-8">
@@ -58,14 +58,14 @@ const ModernBanner: React.FC = () => {
               {session ? (
                 <button
                   onClick={scrollToEvaluator}
-                  className="mt-8 inline-block bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all font-medium"
+                  className="mt-8 inline-block bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-800 hover:to-indigo-800 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all font-medium"
                 >
                   Evaluate Now
                 </button>
               ) : (
                 <Link
                   href="/signup"
-                  className="mt-8 inline-block bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all font-medium"
+                  className="mt-8 inline-block bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-800 hover:to-indigo-800 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all font-medium"
                 >
                   Get Started
                 </Link>

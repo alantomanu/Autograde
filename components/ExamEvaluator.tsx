@@ -34,20 +34,20 @@ interface UploadedFile {
   lastModified: number;
 }
 
-// Define the interface for existing score
+
 interface ExistingScore {
   totalMarks: number;
   maxMarks: number;
   percentage: number;
 }
 
-// Define a custom type for the router
+
 type CustomRouter = {
   push: (url: string) => void;
-  // Add other methods you might need from the router
+
 };
 
-// Custom Toast Component
+
 const AnalyticsToast = ({ closeToast, router }: { closeToast: () => void, router: CustomRouter }) => (
   <div>
     New score saved successfully. You can view the detailed score report{' '}
@@ -88,11 +88,10 @@ export default function ExamEvaluator() {
   const router = useRouter();
   const [showBackground, setShowBackground] = useState(true);
 
-  /** ✅ RESET FUNCTIONS for Upload Components */
+ 
   const resetAnswerSheetUpload = () => setUploadedAnswerSheet(null);
   const resetAnswerKeyUpload = () => setUploadedAnswerKey(null);
 
-  /** ✅ API PROCESSING FUNCTION */
   const processAnswerSheet = useCallback(async (pdfUrl: string) => {
     if (!pdfUrl) return;
 
@@ -584,7 +583,7 @@ export default function ExamEvaluator() {
             {steps.map((step, index) => (
               <div
                 key={index}
-                className={`text-center py-2 whitespace-nowrap ${currentStep === index ? 'font-bold ' : 'text-gray-500 text-sm'}`}
+                className={`text-center py-2 whitespace-nowrap ${currentStep === index ? 'font-bold text-indigo-900' : 'text-indigo-900 text-sm'}`}
               >
                 {step}
               </div>
@@ -648,6 +647,7 @@ export default function ExamEvaluator() {
                       }, 8000);
                     }}
                     disabled={isProcessing}
+                    className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-800 hover:to-indigo-800"
                   >
                     {isProcessing ? 'Processing...' : currentStep === 4 ? 'Submit' : 'Next'}
                   </Button>

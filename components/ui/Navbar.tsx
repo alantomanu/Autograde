@@ -24,22 +24,22 @@ export function App() {
             className="object-contain"
             priority
           />
-          <p className="font-bold text-inherit">AutoGrade</p>
+          <p className="font-bold text-indigo-900">AutoGrade</p>
         </Link>
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
-          <Link color="foreground" href="/features">
+          <Link color="foreground" className="text-indigo-900" href="/features">
             Features
           </Link>
         </NavbarItem>
         <NavbarItem isActive={pathname === '/'}>
-          <Link aria-current="page" href="/">
+          <Link aria-current="page" className="text-indigo-900" href="/">
             Evaluator
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="/analytics">
+          <Link color="foreground" className="text-indigo-900" href="/analytics">
             Analytics
           </Link>
         </NavbarItem>
@@ -49,12 +49,12 @@ export function App() {
           <NavbarItem>
             <Dropdown>
               <DropdownTrigger>
-                <Button variant="light">
+                <Button variant="light" className="text-indigo-900">
                   {session.user.teacherId}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu aria-label="User actions">
-                <DropdownItem key="logout" onClick={handleLogout}>
+                <DropdownItem key="logout" onClick={handleLogout} className="text-indigo-900">
                   Logout
                 </DropdownItem>
               </DropdownMenu>
@@ -63,10 +63,10 @@ export function App() {
         ) : (
           <>
             <NavbarItem className="hidden lg:flex">
-              <Link href="/login">Login</Link>
+              <Link href="/login" className="text-indigo-900">Login</Link>
             </NavbarItem>
             <NavbarItem>
-              <Button as={Link} color="primary" href="/signup" variant="flat">
+              <Button as={Link} color="primary" href="/signup" variant="flat" className="text-indigo-900">
                 Sign Up
               </Button>
             </NavbarItem>
