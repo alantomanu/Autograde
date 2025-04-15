@@ -1,10 +1,124 @@
 'use client';
 
-import React from 'react';
-import { Clock, Lock, FileText, BarChart2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Clock, Lock, FileText, Sparkles, CheckCircle2, Scan, FileSearch } from 'lucide-react';
 import { RetroGrid } from "@/components/magicui/retro-grid";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+
+const AutoGradingAnimation = () => {
+  const [animationProgress, setAnimationProgress] = useState(0);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAnimationProgress(prev => (prev + 1) % 100);
+    }, 50);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="absolute inset-12 bg-gradient-to-br from-violet-500 to-indigo-800 rounded-full flex items-center justify-center shadow-2xl overflow-hidden">
+      {/* Background sparkles */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-0 left-0 w-full h-full flex flex-wrap">
+          {Array.from({ length: 15 }).map((_, i) => (
+            <div 
+              key={i}
+              className="text-white/10 font-mono text-xs"
+              style={{
+                position: 'absolute',
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                opacity: 0.07,
+                transform: `rotate(${Math.random() * 360}deg)`,
+              }}
+            >
+              {['✨', '⭐', '✓', '★', '✦'][i % 5]}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="text-center relative z-10">
+        <div className="relative mb-4">
+          {/* Outer rings */}
+          <div className="relative flex items-center justify-center">
+            <div className="absolute w-16 md:w-24 h-16 md:h-24 rounded-full bg-white/5 animate-pulse" />
+            <div className="absolute w-16 md:w-24 h-16 md:h-24 rounded-full border-2 border-white/20" style={{
+              transform: `rotate(${animationProgress * 3.6}deg)`,
+              transition: 'transform 0.1s linear'
+            }} />
+            
+            {/* Main icon container */}
+            <div className="relative group">
+              <div className="flex items-center justify-center">
+                <div className="relative transform transition-transform duration-500 hover:scale-110">
+                  {/* Scanning effect layers */}
+                  <div className="absolute inset-0 animate-scan-vertical">
+                    <div className="h-1 w-full bg-gradient-to-r from-transparent via-indigo-400/30 to-transparent" />
+                  </div>
+                  <div className="absolute inset-0 animate-scan-horizontal">
+                    <div className="w-1 h-full bg-gradient-to-b from-transparent via-indigo-400/30 to-transparent" />
+                  </div>
+             
+                  <FileSearch className="w-12 h-14 text-white animate-float relative z-10" />
+                  
+                  <div className="absolute -inset-3">
+                    <div className="w-full h-full rounded-full border-2 border-indigo-400/20 animate-scan-pulse" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+          <CheckCircle2 className="w-5 h-5 text-green-300 absolute -bottom-1 -left-1 md:-left-4 animate-bounce" />
+        </div>
+
+        <div className="text-white font-bold text-xl mt-2">LlaMa Powered</div>
+        <div className="text-purple-100 text-lg font-medium">Evaluation</div>
+        
+        {/* Loading dots */}
+        <div className="mt-3 flex items-center justify-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-purple-400/50 animate-ping" style={{ animationDelay: '0s' }} />
+          <div className="w-2 h-2 rounded-full bg-purple-400/50 animate-ping" style={{ animationDelay: '0.2s' }} />
+          <div className="w-2 h-2 rounded-full bg-purple-400/50 animate-ping" style={{ animationDelay: '0.4s' }} />
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-8px) rotate(2deg); }
+        }
+        @keyframes scan-vertical {
+          0% { transform: translateY(-100%); }
+          100% { transform: translateY(100%); }
+        }
+        @keyframes scan-horizontal {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        @keyframes scan-pulse {
+          0%, 100% { transform: scale(1); opacity: 0.2; }
+          50% { transform: scale(1.1); opacity: 0.4; }
+        }
+        .animate-float {
+          animation: float 3s ease-in-out infinite;
+        }
+        .animate-scan-vertical {
+          animation: scan-vertical 2s linear infinite;
+        }
+        .animate-scan-horizontal {
+          animation: scan-horizontal 2s linear infinite;
+        }
+        .animate-scan-pulse {
+          animation: scan-pulse 2s ease-in-out infinite;
+        }
+      `}</style>
+    </div>
+  );
+};
 
 const ModernBanner: React.FC = () => {
   const { data: session } = useSession();
@@ -82,13 +196,7 @@ const ModernBanner: React.FC = () => {
               <div className="absolute inset-8 rounded-full border-4 border-indigo-400 animate-pulse" style={{ animationDelay: '1s' }}></div>
               
               {/* Center circular content */}
-              <div className="absolute inset-12 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-full flex items-center justify-center shadow-xl">
-                <div className="text-center">
-                  <BarChart2 className="w-12 h-12 text-white mx-auto mb-2" />
-                  <div className="text-white font-bold text-lg">Llama Powered</div>
-                  <div className="text-purple-100 text-sm">Evaluation</div>
-                </div>
-              </div>
+              <AutoGradingAnimation />
               
               {/* Floating elements */}
               <div className="absolute top-4 right-0 w-12 h-12 bg-purple-500 rounded-lg animate-bounce opacity-80" style={{ animationDelay: '0.7s', animationDuration: '3s' }}></div>
