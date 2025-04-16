@@ -23,7 +23,7 @@ export function AnswerSheetPreviewStep({
   const [showFinalStep, setShowFinalStep] = useState(false);
   const [textGenerated, setTextGenerated] = useState(false);
 
-  // Check for duplicate margin numbers
+
   const hasDuplicateKeys = extractedText.length > 0 && 
     new Set(extractedText.map(item => item.marginNumber)).size !== extractedText.length;
 
@@ -42,19 +42,19 @@ export function AnswerSheetPreviewStep({
 
   useEffect(() => {
     if (isProcessing) {
-      // Reset states when processing starts
+   
       setShowFinalStep(false);
       setTextGenerated(false);
 
-      // Set text as generated after the animation duration (0.5s * number of words)
+      
       const words = processingSteps[0].description.split(" ").length;
-      const generationTime = words * 0.2 + 0.5; // 0.2s per word + 0.5s base duration
+      const generationTime = words * 0.2 + 0.5; 
       
       const textGenerationTimer = setTimeout(() => {
         setTextGenerated(true);
       }, generationTime * 1000);
 
-      // Show final step 8 seconds after text generation is complete
+     
       const finalStepTimer = setTimeout(() => {
         setShowFinalStep(true);
       }, (generationTime + 12) * 1000);

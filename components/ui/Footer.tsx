@@ -11,7 +11,7 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ className }) => {
   return (
-    <footer className={`bg-white text-indigo-900 py-6 sm:py-10 w-full ${className}`}>
+    <footer className={`bg-white  py-6 sm:py-10 w-full ${className}`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Section */}
@@ -25,21 +25,21 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
                 className="object-contain w-[35px] h-[35px]"
                 priority
               />
-              <h2 className="text-xl sm:text-2xl font-bold text-indigo-900 ">
+              <h2 className="text-xl sm:text-2xl font-bold  ">
                 AutoGrade
               </h2>
             </div>
-            <p className="text-sm sm:text-base text-indigo-900 leading-relaxed text-center sm:text-left">
+            <p className="text-sm sm:text-base  leading-relaxed text-center sm:text-left">
               Revolutionizing exam evaluation with AI-powered automation. Making assessment easier and more efficient for educators worldwide.
             </p>
             <div className="flex space-x-4 justify-center sm:justify-start">
-              <a href="https://github.com/alantomanu" target="_blank" rel="noopener noreferrer" className="text-indigo-900 hover:text-black transition-colors">
+              <a href="https://github.com/alantomanu" target="_blank" rel="noopener noreferrer" className=" hover:text-black transition-colors">
                 <FaGithub size={24} />
               </a>
-              <a href="https://linkedin.com/in/alanto-manu" target="_blank" rel="noopener noreferrer" className="text-indigo-900 hover:text-black transition-colors">
+              <a href="https://linkedin.com/in/alanto-manu" target="_blank" rel="noopener noreferrer" className=" hover:text-black transition-colors">
                 <FaLinkedin size={24} />
               </a>
-              <a href="https://mail.google.com/mail/?view=cm&fs=1&to=alantomanu501@gmail.com" target="_blank" rel="noopener noreferrer" className="text-indigo-900 hover:text-black transition-colors">
+              <a href="https://mail.google.com/mail/?view=cm&fs=1&to=alantomanu501@gmail.com" target="_blank" rel="noopener noreferrer" className=" hover:text-black transition-colors">
                 <FaEnvelope size={24} />
               </a>
             </div>
@@ -47,20 +47,20 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
 
           {/* Quick Links */}
           <div className="space-y-4 text-center sm:text-left sm:mx-0">
-            <h3 className="text-lg font-semibold text-indigo-900">Quick Links</h3>
+            <h3 className="text-lg font-semibold ">Quick Links</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/" className="text-indigo-900 hover:text-indigo-900 transition-colors">
+                <Link href="/" className=" hover: transition-colors">
                   Evaluvator
                 </Link>
               </li>
               <li>
-                <Link href="/" className="text-indigo-900 hover:text-indigo-900 transition-colors">
+                <Link href="/" className=" hover: transition-colors">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/analytics" className="text-indigo-900 hover:text-indigo-900 transition-colors">
+                <Link href="/analytics" className=" hover: transition-colors">
                   Analytics
                 </Link>
               </li>
@@ -69,7 +69,7 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
 
           {/* Documentation */}
           <div className="space-y-4 w-full">
-            <h3 className="text-lg font-semibold text-indigo-900 text-center sm:text-left">Documentation</h3>
+            <h3 className="text-lg font-semibold  text-center sm:text-left">Documentation</h3>
             <div className="space-y-3">
               <a 
                 href="https://drive.google.com/file/d/1lnIWA2PFKcqA4fMAuq1mPCYRl4wXiKbG/view?usp=sharing"
@@ -80,7 +80,7 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
                 <div className="flex items-center space-x-3">
                   <HiDocumentText size={20} className="text-blue-600" />
                   <div>
-                    <h4 className="font-medium text-indigo-900 text-sm sm:text-base">View Documentation</h4>
+                    <h4 className="font-medium  text-sm sm:text-base">View Documentation</h4>
                     <p className="text-xs sm:text-sm text-gray-600">Get started with AutoGrade</p>
                   </div>
                 </div>
@@ -90,7 +90,7 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
 
           {/* API Section */}
           <div className="space-y-4 w-full">
-            <h3 className="text-lg font-semibold text-indigo-900 text-center sm:text-left">Our APIs</h3>
+            <h3 className="text-lg font-semibold  text-center sm:text-left">Our APIs</h3>
             <div className="space-y-3">
               <a 
                 href="https://autograde-server.koyeb.app"
@@ -101,7 +101,7 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
                 <div className="flex items-center space-x-3">
                   <TbScan size={20} className="text-purple-600" />
                   <div>
-                    <h4 className="font-medium text-indigo-900 text-sm sm:text-base">OCR API</h4>
+                    <h4 className="font-medium  text-sm sm:text-base">OCR API</h4>
                     <p className="text-xs sm:text-sm text-gray-600">Convert pdf to text</p>
                   </div>
                 </div>
@@ -115,7 +115,7 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
                 <div className="flex items-center space-x-3">
                   <TbRobot size={20} className="text-green-600" />
                   <div>
-                    <h4 className="font-medium text-indigo-900 text-sm sm:text-base">Evaluation API</h4>
+                    <h4 className="font-medium  text-sm sm:text-base">Evaluation API</h4>
                     <p className="text-xs sm:text-sm text-gray-600">Grade answers</p>
                   </div>
                 </div>

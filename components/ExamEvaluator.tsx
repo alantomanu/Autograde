@@ -583,7 +583,7 @@ export default function ExamEvaluator() {
             {steps.map((step, index) => (
               <div
                 key={index}
-                className={`text-center py-2 whitespace-nowrap ${currentStep === index ? 'font-bold text-indigo-900' : 'text-indigo-900 text-sm'}`}
+                className={`text-center py-2 whitespace-nowrap ${currentStep === index ? 'font-bold text-gray-900' : 'text-gray-900 text-sm'}`}
               >
                 {step}
               </div>
@@ -647,7 +647,7 @@ export default function ExamEvaluator() {
                       }, 8000);
                     }}
                     disabled={isProcessing}
-                    className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-800 hover:to-indigo-800"
+                    className=" bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                   >
                     {isProcessing ? 'Processing...' : currentStep === 4 ? 'Submit' : 'Next'}
                   </Button>

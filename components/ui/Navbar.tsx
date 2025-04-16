@@ -14,7 +14,7 @@ export function App() {
 
   return (
     <Navbar shouldHideOnScroll>
-      <NavbarBrand>
+                  <NavbarBrand className="ml-1 lg:ml-[-80px]">
         <Link href="/" className="flex items-center">
           <Image
             src="/logoblack.png"
@@ -24,37 +24,37 @@ export function App() {
             className="object-contain"
             priority
           />
-          <p className="font-bold text-indigo-900">AutoGrade</p>
+          <p className="font-normal text-xl">AutoGrade</p>
         </Link>
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
-          <Link color="foreground" className="text-indigo-900" href="/features">
+          <Link color="foreground" className=" font-light text-lg" href="/features">
             Features
           </Link>
         </NavbarItem>
         <NavbarItem isActive={pathname === '/'}>
-          <Link aria-current="page" className="text-indigo-900" href="/">
+          <Link aria-current="page"   className=" font-normal text-lg" href="/">
             Evaluator
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" className="text-indigo-900" href="/analytics">
+          <Link color="foreground" className=" font-light text-lg" href="/analytics">
             Analytics
           </Link>
         </NavbarItem>
       </NavbarContent>
-      <NavbarContent justify="end">
+      <NavbarContent justify="end" className="mr-1 lg:mr-[-80px]">
         {status === "authenticated" && session?.user?.teacherId ? (
           <NavbarItem>
             <Dropdown>
               <DropdownTrigger>
-                <Button variant="light" className="text-indigo-900">
+                <Button variant="light" className=" font-light text-lg"  >
                   {session.user.teacherId}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu aria-label="User actions">
-                <DropdownItem key="logout" onClick={handleLogout} className="text-indigo-900">
+                <DropdownItem key="logout" onClick={handleLogout} >
                   Logout
                 </DropdownItem>
               </DropdownMenu>
@@ -63,10 +63,10 @@ export function App() {
         ) : (
           <>
             <NavbarItem className="hidden lg:flex">
-              <Link href="/login" className="text-indigo-900">Login</Link>
+              <Link href="/login" className=" font-light text-lg" >Login</Link>
             </NavbarItem>
             <NavbarItem>
-              <Button as={Link} color="primary" href="/signup" variant="flat" className="text-indigo-900">
+              <Button as={Link} color="primary" href="/signup" variant="flat" className=" font-light text-lg" >
                 Sign Up
               </Button>
             </NavbarItem>

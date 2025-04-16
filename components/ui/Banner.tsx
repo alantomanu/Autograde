@@ -17,7 +17,7 @@ const AutoGradingAnimation = () => {
   }, []);
 
   return (
-    <div className="absolute inset-12 bg-gradient-to-br from-violet-500 to-indigo-800 rounded-full flex items-center justify-center shadow-2xl overflow-hidden">
+    <div className="absolute inset-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center shadow-2xl overflow-hidden">
       {/* Background sparkles */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-0 left-0 w-full h-full flex flex-wrap">
@@ -137,11 +137,11 @@ const ModernBanner: React.FC = () => {
         <div className="flex flex-col md:flex-row items-center max-w-6xl mx-auto gap-8">
           {/* Left side content */}
           <div className="w-full md:w-1/2 text-left mb-10 md:mb-0 md:pl-8 lg:pl-12">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-indigo-900 mb-4">
+            <h1 className="text-5xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-4">
               Automated Exam
-              <span className="block text-purple-700">Evaluation System</span>
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Evaluation System</span>
             </h1>
-            <p className="text-gray-600 mb-8 max-w-md">
+            <p className="text-gray-600 mb-8 max-w-md text-lg">
               Streamline your grading process with our intelligent Llama-powered evaluation system that saves time and improves accuracy.
             </p>
             
@@ -172,14 +172,14 @@ const ModernBanner: React.FC = () => {
               {session ? (
                 <button
                   onClick={scrollToEvaluator}
-                  className="mt-8 inline-block bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-800 hover:to-indigo-800 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all font-medium"
+                  className="mt-8 inline-block bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all font-medium"
                 >
                   Evaluate Now
                 </button>
               ) : (
                 <Link
                   href="/signup"
-                  className="mt-8 inline-block bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-800 hover:to-indigo-800 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all font-medium"
+                  className="mt-8 inline-block bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all font-medium"
                 >
                   Get Started
                 </Link>
