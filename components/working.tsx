@@ -14,7 +14,7 @@ const ProgressiveTextReveal = ({ text, isActive, progress }: ProgressiveTextReve
   const words = text.split(" ");
   
   return (
-    <div className="flex flex-wrap items-center text-base sm:text-lg md:text-xl lg:text-2xl font-medium leading-relaxed">
+    <div className="flex flex-wrap items-center text-base sm:text-lg md:text-xl lg:text-2xl font-normal leading-relaxed">
       {words.map((word: string, index: number) => {
         const wordProgress = isActive ? Math.min(1, Math.pow(progress * 6 - index * 0.05, 0.8)) : 0;
         const opacity = Math.max(0.3, wordProgress);
@@ -157,7 +157,7 @@ export default function SystemWorkflow() {
 
         <div className="space-y-8 sm:space-y-12 relative">
           {/* Vertical connecting line */}
-          <div className="absolute left-[1.5rem] sm:left-[2.35rem] top-[3rem] w-1 sm:w-1.5 h-[calc(100%-13rem)] sm:h-[calc(100%-12rem)] bg-gray-200 rounded-full">
+          <div className="absolute left-[1.5rem] sm:left-[2.35rem] top-[3rem] w-1 sm:w-1.5 h-[calc(100%-20rem)] sm:h-[calc(100%-12rem)] bg-gray-200 rounded-full">
             <div 
               className="absolute top-0 w-full bg-gradient-to-b from-blue-500 via-purple-500 to-emerald-500 rounded-full transition-all duration-700 ease-out"
               style={{ height: `${scrollProgress}%` }}
