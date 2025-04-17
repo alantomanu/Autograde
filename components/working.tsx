@@ -157,7 +157,7 @@ export default function SystemWorkflow() {
 
         <div className="space-y-8 sm:space-y-12 relative">
           {/* Vertical connecting line */}
-          <div className="absolute left-[1.5rem] sm:left-[2.35rem] top-[3rem] w-1 sm:w-1.5 h-[calc(100%-20rem)] sm:h-[calc(100%-14rem)] bg-gray-200 rounded-full">
+          <div className="absolute left-[1.5rem] sm:left-[2.35rem] top-[3rem] w-1 sm:w-1.5 h-[calc(100%-20rem)] sm:h-[calc(100%-15rem)] bg-gray-200 rounded-full">
             <div 
               className="absolute top-0 w-full bg-gradient-to-b from-blue-500 via-purple-500 to-emerald-500 rounded-full transition-all duration-700 ease-out"
               style={{ height: `${scrollProgress}%` }}
@@ -211,7 +211,7 @@ export default function SystemWorkflow() {
             <div>
               <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3">Instant Results</h3>
               <ProgressiveTextReveal 
-                text="Get immediate results with clear explanations of where and why marks were lost delivered right after the teacher submits the evaluation, empowering students with actionable feedback for improvement." 
+                text="Get immediate results with detailed explanations highlighting where and why marks were lost provided right after the teacher submits the evaluation, empowering students with actionable feedback for continuous improvement" 
                 isActive={activeSection !== null && activeSection >= 2} 
                 progress={sectionProgress[2]} 
               />
