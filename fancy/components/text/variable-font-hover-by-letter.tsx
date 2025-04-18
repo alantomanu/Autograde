@@ -6,7 +6,7 @@ import {
   AnimationOptions,
   stagger,
   useAnimate,
-} from "motion/react"
+} from "framer-motion"
 import { debounce } from "lodash"
 
 interface VariableFontHoverByLetterProps {

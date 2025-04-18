@@ -3,6 +3,7 @@ import EvaluationSection from "@/components/ui/Why-autograde";
 import ExamEvaluator from "@/components/ExamEvaluator";
 import WarmupPing from "@/components/WarmupPing";
 import SystemWorkflow from "@/components/working";
+import AutoGradeInstructions from "@/components/usage";
 
 const HomePage: React.FC = () => {
   return (
@@ -10,11 +11,14 @@ const HomePage: React.FC = () => {
       <WarmupPing />
       <DarkBanner />
       
-      <div className="my-8">
+      <div className="my-4">
         <SystemWorkflow />
       </div>
+      <div className="my-4">
+        <AutoGradeInstructions />
+      </div>
       
-      <div className="my-8">
+      <div className="my-4">
         <ExamEvaluator />
       </div>
       <EvaluationSection />
