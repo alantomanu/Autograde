@@ -112,20 +112,15 @@ export default function AutoGradeInstructions() {
               >
                 Evaluator Section
               </CustomLink>{" "}
-              and provide your student ID and course details. Upload the answer sheet and verify the digital answer sheet. Download the{" "}
+              and provide the student ID and course details. Upload and validate the digital version of the answer sheet. Download{" "}
               <CustomLink 
                 onClick={downloadSampleAnswerSheet}
                 className="text-blue-700 font-medium"
               >
                 Sample Answer Sheet
               </CustomLink>,{" "}
-              check the{" "}
-              <CustomLink 
-                onClick={downloadAnswerKeyFormat}
-                className="text-blue-700 font-medium"
-              >
-                Answer Key Format
-              </CustomLink>,{" "}
+              
+              
               and use the{" "}
               <CustomLink 
                 onClick={downloadSampleAnswerKey}
@@ -133,7 +128,13 @@ export default function AutoGradeInstructions() {
               >
                 Sample Answer Key
               </CustomLink>{" "}
-              to test the AutoGrade system. Upload your answer key, which uses pattern matching and must strictly follow the specified format. Once all answers are evaluated, you can view the results. For diagram-based questions, you will need to manually award marks. Access detailed analytics in the Analytics Page for comprehensive insights into performance.
+              to test the AutoGrade system. Upload your answer key, which uses pattern matching and must strictly follow the specified format{" "}
+              <CustomLink 
+                onClick={downloadAnswerKeyFormat}
+                className="text-blue-700 font-medium"
+              >
+                Answer Key Format
+              </CustomLink>{" "}. Once all answers are evaluated, you can view the results. For diagram-based questions, you will need to manually award marks. Access detailed analytics in the Analytics Page for comprehensive insights into performance.
             </div>
           </motion.div>
         </motion.div>

@@ -14,11 +14,11 @@ const HomePage: React.FC = () => {
       <div className="my-4">
         <SystemWorkflow />
       </div>
-      <div className="my-4">
+      <div className="my-2">
         <AutoGradeInstructions />
       </div>
       
-      <div className="my-4">
+      <div className="my-2">
         <ExamEvaluator />
       </div>
       <EvaluationSection />
