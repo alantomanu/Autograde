@@ -1,6 +1,6 @@
 import { FileUpload } from './ui/file-upload';
 import { Button } from './ui/button';
-import { UploadedFile } from '../types'; // Adjust the path as necessary
+import { UploadedFile } from '../types'; 
 
 interface AnswerSheetUploadStepProps {
   uploadedAnswerSheet: UploadedFile | null;
@@ -14,7 +14,7 @@ export function AnswerSheetUploadStep({
   resetUpload,
 }: AnswerSheetUploadStepProps) {
   const handleFileUpload = (url: string, file: File) => {
-    // Call the handler with the URL and file
+   
     handleAnswerSheetUpload(url, file);
   };
 

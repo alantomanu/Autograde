@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 import CenterUnderline from "@/fancy/components/text/underline-center"
 import ComesInGoesOutUnderline from "@/fancy/components/text/underline-comes-in-goes-out"
 import GoesOutComesInUnderline from "@/fancy/components/text/underline-goes-out-comes-in"
-import { saveAs } from 'file-saver'; // Ensure this is imported
+import { saveAs } from 'file-saver'; 
 
 export default function AutoGradeInstructions() {
   const [isVisible, setIsVisible] = useState(false)
@@ -40,6 +40,13 @@ export default function AutoGradeInstructions() {
     saveAs(url, "Sample_Answer_Key.pdf"); 
   }
   
+  const scrollToEvaluator = () => {
+    const evaluatorSection = document.getElementById('evaluator-section');
+    if (evaluatorSection) {
+      evaluatorSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+  
   return (
     <div className="w-full py-8 sm:py-12 px-4 sm:px-6 md:px-8 relative" ref={containerRef}>
       <div className="max-w-5xl mx-auto">
@@ -63,12 +70,13 @@ export default function AutoGradeInstructions() {
               <GoesOutComesInUnderline 
                 label="Evaluator Section" 
                 direction="right" 
-                className="text-blue-700 font-medium inline-block" 
+                className="text-blue-700 font-medium inline-block cursor-pointer" 
+                onClick={scrollToEvaluator}
               />{" "}
               and provide your student ID and course details. Upload the answer sheet and verify the digital answer sheet. Download the{" "}
               <CenterUnderline 
                 label="Sample Answer Sheet" 
-                className="text-blue-600 font-medium inline-block" 
+                className="text-purple-600 font-medium inline-block" 
                 onClick={downloadSampleAnswerSheet} 
               />,{" "}
               check the{" "}
@@ -82,7 +90,7 @@ export default function AutoGradeInstructions() {
               <ComesInGoesOutUnderline 
                 label="Sample Answer Key" 
                 direction="right" 
-                className="text-indigo-600 font-medium inline-block" 
+                className="text-purple-600 font-medium inline-block" 
                 onClick={downloadSampleAnswerKey} 
               />{" "}
               to test the AutoGrade system. Upload your answer key, which uses pattern matching and must strictly follow the specified format. Once all answers are evaluated, you can view the results. For diagram-based questions, you will need to manually award marks. Access detailed analytics in the Analytics Page for comprehensive insights into performance.

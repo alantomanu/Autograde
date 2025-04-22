@@ -10,7 +10,7 @@ interface DownloadTemplateButtonProps {
     return (
       <motion.a 
         href={templateUrl}
-        className="absolute top-[-.5rem] right-2 inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-medium rounded-lg shadow-lg transition-all duration-300 hover:shadow-indigo-500/25 hover:scale-105 group"
+        className="absolute top-[-.25rem] right-0 sm:right-3 inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs sm:text-sm font-medium rounded-lg shadow-lg transition-all duration-300 hover:shadow-indigo-500/25 hover:scale-105 group"
         download={fileName}
         whileHover={{ y: -2 }}
         whileTap={{ scale: 0.98 }}
@@ -19,7 +19,7 @@ interface DownloadTemplateButtonProps {
         transition={{ duration: 0.3 }}
       >
         <motion.svg 
-          className="w-4 h-4 mr-2 transition-transform duration-300 group-hover:translate-y-0.5" 
+          className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-4 transition-transform duration-300 group-hover:translate-y-0.5" 
           fill="none" 
           stroke="currentColor" 
           viewBox="0 0 24 24"

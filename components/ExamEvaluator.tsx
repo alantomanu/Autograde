@@ -17,6 +17,8 @@ import { toast } from "react-hot-toast";
 import { ReevaluationDialog } from './ReevaluationDialog'
 import { BorderBeam } from "@/components/magicui/border-beam";
 import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
+import { RecentAnswerKeys } from './RecentAnswerKeys'
+import { AnswerKeyHistory } from './AnswerKeyHistory'
 
 const steps = [
   'Enter Student ID',
@@ -158,6 +160,42 @@ export default function ExamEvaluator() {
       type: file.type,
       lastModified: file.lastModified
     });
+    setTimeout(() => {
+      setShowBackground(true);
+    }, 8000);
+  };
+
+  const handleAnswerKeySelect = async (url: string) => {
+    setShowBackground(false);
+    setEvaluationData(null);
+    
+    // Create a mock file object for the selected answer key
+    const mockFile = {
+      name: 'Previous Answer Key',
+      size: 0,
+      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      lastModified: Date.now()
+    };
+
+    setUploadedAnswerKey({
+      url,
+      ...mockFile
+    });
+
+    // Cache the reused answer key
+    try {
+      await fetch('/api/answer-keys', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          teacherId: session?.user?.teacherId,
+          answerKeyUrl: url
+        })
+      });
+    } catch (error) {
+      console.error('Error caching reused answer key:', error);
+    }
+
     setTimeout(() => {
       setShowBackground(true);
     }, 8000);
@@ -542,14 +580,30 @@ export default function ExamEvaluator() {
         );
       case 3:
         return (
-          <div className="relative">
+          <div className="relative space-y-6">
             <DownloadTemplateButton 
               templateUrl="https://res.cloudinary.com/dfivs4n49/raw/upload/v1742880576/answer_keys/ggp5o62ztwfngyasnu6g.docx"
               fileName="Answer_Key_Template.docx"
             />
             <AnswerKeyUploadStep
               uploadedAnswerKey={uploadedAnswerKey}
-              handleAnswerKeyUpload={handleAnswerKeyUpload}
+              handleAnswerKeyUpload={async (url: string, file: File) => {
+                handleAnswerKeyUpload(url, file);
+                
+                // Cache the newly uploaded answer key
+                try {
+                  await fetch('/api/answer-keys', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      teacherId: session?.user?.teacherId,
+                      answerKeyUrl: url
+                    })
+                  });
+                } catch (error) {
+                  console.error('Error caching answer key:', error);
+                }
+              }}
               resetUpload={() => {
                 resetAnswerKeyUpload();
                 setEvaluationData(null);
@@ -558,6 +612,13 @@ export default function ExamEvaluator() {
                 setAnswerKeyData(data);
               }}
             />
+            {session?.user?.teacherId && (
+              <AnswerKeyHistory
+                teacherId={session.user.teacherId}
+                onSelect={handleAnswerKeySelect}
+                currentUrl={uploadedAnswerKey?.url}
+              />
+            )}
           </div>
         );
       case 4:
