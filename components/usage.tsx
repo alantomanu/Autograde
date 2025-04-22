@@ -2,10 +2,48 @@
 
 import { useEffect, useState, useRef } from "react"
 import { motion } from "framer-motion"
-import CenterUnderline from "@/fancy/components/text/underline-center"
-import ComesInGoesOutUnderline from "@/fancy/components/text/underline-comes-in-goes-out"
-import GoesOutComesInUnderline from "@/fancy/components/text/underline-goes-out-comes-in"
-import { saveAs } from 'file-saver'; 
+import { saveAs } from 'file-saver'
+
+interface CustomLinkProps {
+  onClick: () => void;
+  children: React.ReactNode;
+  className?: string;
+  isPermanentUnderline?: boolean;
+}
+
+const CustomLink: React.FC<CustomLinkProps> = ({ onClick, children, className = "", isPermanentUnderline = false }) => (
+  <motion.span
+    className={`relative inline-block cursor-pointer ${className}`}
+    onClick={onClick}
+    whileHover="hover"
+  >
+    {children}
+    {isPermanentUnderline && (
+      <motion.span 
+        className="absolute bottom-0 left-0 w-full h-[2.5px] bg-current"
+        initial={{ scaleX: 1 }}
+        whileHover={{ 
+          height: "2.5px",
+          transition: { duration: 0.2 }
+        }}
+      />
+    )}
+    <motion.span
+      className="absolute bottom-0 left-0 w-full h-[2.5px] bg-current transform origin-left"
+      initial={{ scaleX: 0 }}
+      variants={{
+        hover: {
+          scaleX: 1,
+          height: "2.5px",
+          transition: { duration: 0.3, ease: "easeInOut" }
+        }
+      }}
+      style={{
+        opacity: isPermanentUnderline ? 0 : 1
+      }}
+    />
+  </motion.span>
+)
 
 export default function AutoGradeInstructions() {
   const [isVisible, setIsVisible] = useState(false)
@@ -46,7 +84,7 @@ export default function AutoGradeInstructions() {
       evaluatorSection.scrollIntoView({ behavior: 'smooth' });
     }
   }
-  
+
   return (
     <div className="w-full py-8 sm:py-12 px-4 sm:px-6 md:px-8 relative" ref={containerRef}>
       <div className="max-w-5xl mx-auto">
@@ -67,32 +105,34 @@ export default function AutoGradeInstructions() {
           >
             <div className="text-base sm:text-lg md:text-xl lg:text-2xl font-normal leading-relaxed whitespace-normal">
               Navigate to the{" "}
-              <GoesOutComesInUnderline 
-                label="Evaluator Section" 
-                direction="right" 
-                className="text-blue-700 font-medium inline-block cursor-pointer" 
+              <CustomLink 
                 onClick={scrollToEvaluator}
-              />{" "}
+                className="text-purple-600 font-medium"
+                isPermanentUnderline={true}
+              >
+                Evaluator Section
+              </CustomLink>{" "}
               and provide your student ID and course details. Upload the answer sheet and verify the digital answer sheet. Download the{" "}
-              <CenterUnderline 
-                label="Sample Answer Sheet" 
-                className="text-purple-600 font-medium inline-block" 
-                onClick={downloadSampleAnswerSheet} 
-              />,{" "}
+              <CustomLink 
+                onClick={downloadSampleAnswerSheet}
+                className="text-blue-700 font-medium"
+              >
+                Sample Answer Sheet
+              </CustomLink>,{" "}
               check the{" "}
-              <ComesInGoesOutUnderline 
-                label="Answer Key Format" 
-                direction="left" 
-                className="text-purple-600 font-medium inline-block" 
-                onClick={downloadAnswerKeyFormat} 
-              />,{" "}
+              <CustomLink 
+                onClick={downloadAnswerKeyFormat}
+                className="text-blue-700 font-medium"
+              >
+                Answer Key Format
+              </CustomLink>,{" "}
               and use the{" "}
-              <ComesInGoesOutUnderline 
-                label="Sample Answer Key" 
-                direction="right" 
-                className="text-purple-600 font-medium inline-block" 
-                onClick={downloadSampleAnswerKey} 
-              />{" "}
+              <CustomLink 
+                onClick={downloadSampleAnswerKey}
+                className="text-blue-700 font-medium"
+              >
+                Sample Answer Key
+              </CustomLink>{" "}
               to test the AutoGrade system. Upload your answer key, which uses pattern matching and must strictly follow the specified format. Once all answers are evaluated, you can view the results. For diagram-based questions, you will need to manually award marks. Access detailed analytics in the Analytics Page for comprehensive insights into performance.
             </div>
           </motion.div>

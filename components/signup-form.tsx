@@ -10,7 +10,7 @@ import { IconBrandGoogle } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
-// Add this function outside the component
+
 const checkPasswordStrength = (password: string): { strength: number; message: string } => {
   let strength = 0;
   
