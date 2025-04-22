@@ -33,7 +33,7 @@ interface FileUploadProps {
 export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, label, className, folderName, existingFile }) => {
   const [files, setFiles] = useState<File[]>(() => {
     if (existingFile) {
-      // Create a File object from the existing file data
+    
       return [new File([], existingFile.name, {
         type: existingFile.type,
         lastModified: existingFile.lastModified
@@ -62,7 +62,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, label, cla
     setUploadProgress(0);
   
     try {
-      // ✅ Use XMLHttpRequest (XHR) for upload progress tracking
+      
       const xhr = new XMLHttpRequest();
       xhr.open("POST", "https://api.cloudinary.com/v1_1/dfivs4n49/raw/upload", true);
 
@@ -237,18 +237,28 @@ export function GridPattern() {
   const columns = 41;
   const rows = 25;
   return (
-    <div className="flex  bg-gray-50 flex-shrink-0 flex-wrap justify-center items-center gap-x-[0px] gap-y-[0px] scale-105">
+    <div className="flex bg-gradient-to-br from-gray-50 to-gray-100 flex-shrink-0 flex-wrap justify-center items-center gap-x-[1px] gap-y-[1px] p-1 rounded-lg">
       {Array.from({ length: rows }).map((_, row) =>
         Array.from({ length: columns }).map((_, col) => {
           const index = row * columns + col;
           return (
             <div
               key={`${col}-${row}`}
-              className={`w-10 h-10 flex flex-shrink-0 rounded-[2px] ${
-                index % 2 === 0
-                  ? "bg-white shadow-[0px_0px_1px_rgba(0,0,0,0.1)]"
-                  : "bg-gray-50 shadow-[0px_0px_2px_rgba(0,0,0,0.15)_inset]"
-              }`}
+              className={`w-10 h-10 flex flex-shrink-0 rounded-md transition-all duration-300 hover:scale-105 
+                ${
+                  index % 2 === 0
+                    ? "bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md hover:bg-white"
+                    : "bg-gray-50/90 backdrop-blur-sm shadow-inner hover:bg-gray-50"
+                }
+                ${row === 0 ? "rounded-t-md" : ""}
+                ${row === rows - 1 ? "rounded-b-md" : ""}
+                ${col === 0 ? "rounded-l-md" : ""}
+                ${col === columns - 1 ? "rounded-r-md" : ""}
+              `}
+              style={{
+                transform: `perspective(1000px) rotateX(${Math.sin(row * 0.1)}deg) rotateY(${Math.sin(col * 0.1)}deg)`,
+                transition: 'all 0.3s ease-in-out'
+              }}
             />
           );
         })

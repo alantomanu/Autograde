@@ -169,7 +169,7 @@ export default function ExamEvaluator() {
     setShowBackground(false);
     setEvaluationData(null);
     
-    // Create a mock file object for the selected answer key
+    
     const mockFile = {
       name: 'Previous Answer Key',
       size: 0,
@@ -182,7 +182,7 @@ export default function ExamEvaluator() {
       ...mockFile
     });
 
-    // Cache the reused answer key
+   
     try {
       await fetch('/api/answer-keys', {
         method: 'POST',
@@ -317,7 +317,7 @@ export default function ExamEvaluator() {
           return;
         }
 
-        // If status is success or exists, proceed to next step
+        
         if (data.status === 'success' || data.status === 'exists') {
           setProcessingStep('Course verified successfully!');
           setTimeout(() => {
@@ -372,7 +372,7 @@ export default function ExamEvaluator() {
             percentage: evaluationData.summary.percentage,
             answerSheetUrl: uploadedAnswerSheet?.url,
             checkedByTeacherId: teacherId,
-            feedback, // Include feedback in the request body
+            feedback, 
           })
         });
 
@@ -401,10 +401,10 @@ export default function ExamEvaluator() {
            Here
         </Button>
         setTimeout(() => {
-          setCurrentStep(0); // Move to case 0 after 5 seconds
+          setCurrentStep(0); 
         }, 8000);
 
-        // Clear all saved states
+        
         setStudentId('');
         setCourseId('');
         setCourseName('');
@@ -637,8 +637,11 @@ export default function ExamEvaluator() {
   }
 
   return (
+    
     <div id="evaluator-section" className="container mx-auto px-4 py-8">
+       
       <div className="max-w-5xl mx-auto p-6">
+      
         <div className="mb-3">
           <div className="flex flex-wrap justify-between">
             {steps.map((step, index) => (
