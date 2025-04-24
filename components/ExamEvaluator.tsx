@@ -67,6 +67,20 @@ const AnalyticsToast = ({ closeToast, router }: { closeToast: () => void, router
   </div>
 );
 
+interface ReevaluationDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirmReeval: () => void;
+  onUpdateScore: () => void;
+  step: 'initial' | 'update' | 'enterNewId';
+  existingScore: ExistingScore | null;
+  message: string;
+  newStudentId: string;
+  setNewStudentId: (id: string) => void;
+  onNewStudentIdSubmit: () => void;
+  setReevalStep: (step: 'initial' | 'update' | 'enterNewId') => void;
+}
+
 export default function ExamEvaluator() {
   const { data: session } = useSession();
   const [currentStep, setCurrentStep] = useState(0)
@@ -75,6 +89,7 @@ export default function ExamEvaluator() {
   const [uploadedAnswerKey, setUploadedAnswerKey] = useState<UploadedFile | null>(null);
   const [isProcessing, setIsProcessing] = useState(false)
   const [processingStep, setProcessingStep] = useState<string>('')
+  const [showAnalyticsButton, setShowAnalyticsButton] = useState(false)
   const [continueChecked, setContinueChecked] = useState(false)
   const [extractedText, setExtractedText] = useState<{ marginNumber: string; answer: string }[]>([])
   const [isProcessed, setIsProcessed] = useState(false);
@@ -390,33 +405,23 @@ export default function ExamEvaluator() {
         setProcessingStep('New score saved successfully.');
         toast((t) => <AnalyticsToast closeToast={() => toast.dismiss(t.id)} router={router} />);
         setIsProcessing(false);
-        router.push('/');
         
-        setProcessingStep('You can view detailed analytics in Analytics');
-        <Button 
-          onClick={() => router.push('/analytics')} 
-          size="sm"
-          style={{ marginLeft: '5px' }}
-        >
-           Here
-        </Button>
+        // Keep the view in the evaluation section
+        const evaluatorSection = document.getElementById('evaluator-section');
+        if (evaluatorSection) {
+          evaluatorSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        setProcessingStep('Score submitted successfully! You can view detailed analytics in Analytics');
+        setShowAnalyticsButton(true);
+        
+        
         setTimeout(() => {
-          setCurrentStep(0); 
-        }, 8000);
-
-        
-        setStudentId('');
-        setCourseId('');
-        setCourseName('');
-        setUploadedAnswerSheet(null);
-        setUploadedAnswerKey(null);
-        setExtractedText([]);
-        setEvaluationData(null);
-        setIsMarksSaved(false);
-        setIsProcessed(false);
-        setContinueChecked(false);
-        setExistingScore(null);
-        setNewStudentId('');
+          setCurrentStep(0);
+          resetAllData();
+          setProcessingStep('');
+          setShowAnalyticsButton(false);
+        }, 9000);
 
       } catch {
         setIsProcessing(false);
@@ -540,6 +545,10 @@ export default function ExamEvaluator() {
       setProcessingStep('Error saving new score');
       toast.error('Failed to save new score');
     }
+  };
+
+  const isStringProcessingStep = (step: string | React.ReactElement): step is string => {
+    return typeof step === 'string';
   };
 
   const renderStepContent = () => {
@@ -676,7 +685,17 @@ export default function ExamEvaluator() {
                     }`}>
                       {processingStep}
                     </span>
-                    {processingStep.includes('Analytics')}
+                    {showAnalyticsButton && (
+                      <div className="text-center mt-4">
+                        <Button 
+                          onClick={() => router.push('/analytics')} 
+                          size="sm"
+                          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                        >
+                          View Analytics
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
