@@ -44,7 +44,7 @@ export function SignupForm() {
   const [passwordStrength, setPasswordStrength] = useState({ strength: 0, message: '' });
   const [passwordMatch, setPasswordMatch] = useState(true);
 
-  // Add password strength check effect
+
   useEffect(() => {
     if (formData.password) {
       setPasswordStrength(checkPasswordStrength(formData.password));
@@ -53,7 +53,7 @@ export function SignupForm() {
     }
   }, [formData.password]);
 
-  // Add password match check effect
+  
   useEffect(() => {
     if (formData.confirmPassword) {
       setPasswordMatch(formData.password === formData.confirmPassword);
@@ -62,11 +62,11 @@ export function SignupForm() {
     }
   }, [formData.password, formData.confirmPassword]);
 
-  // Add useEffect for session handling
+  
   useEffect(() => {
     if (status === 'authenticated' && session?.user?.teacherId) {
       router.push('/');
-      router.refresh(); // Refresh to update the navbar with teacher ID
+      router.refresh(); 
     }
   }, [status, session, router]);
 
@@ -74,7 +74,7 @@ export function SignupForm() {
     e.preventDefault();
     setError(null);
     
-    // Check password strength and match before setting loading state
+    
     if (!isOAuth && passwordStrength.strength < 2) {
       setError('Please use a stronger password');
       return;
@@ -108,7 +108,7 @@ export function SignupForm() {
           return;
         }
 
-        // After successful OAuth registration, refresh the session
+        
         await signIn('google', { 
           redirect: false,
           callbackUrl: '/'
@@ -133,7 +133,7 @@ export function SignupForm() {
           return;
         }
 
-        // After successful manual registration, sign in the user
+       
         const signInResult = await signIn('credentials', {
           identifier: formData.email,
           password: formData.password,
@@ -146,7 +146,7 @@ export function SignupForm() {
         }
       }
 
-      // The useEffect will handle the redirect once the session is updated
+      
     } catch {
       setError('Unable to complete registration. Please try again later.');
     } finally {

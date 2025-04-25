@@ -11,7 +11,7 @@ export default async function SignupPage({
   const resolvedSearchParams = await searchParams;
   const session = await getServerSession(authOptions);
 
-  // If user is already logged in and not in OAuth flow, redirect to home
+ 
   if (session && !resolvedSearchParams?.oauth) {
     redirect('/');
   }

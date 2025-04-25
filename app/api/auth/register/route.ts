@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { email, teacherId, password, oauthId } = body;
 
-    // Check if teacher already exists
+   
     const existingTeacher = await db.query.teachers.findFirst({
       where: eq(teachers.teacherId, teacherId),
     });
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Check if email already exists
+    
     const existingUser = await db.query.teachers.findFirst({
       where: eq(teachers.email, email),
     });
@@ -33,10 +33,10 @@ export async function POST(req: Request) {
       );
     }
 
-    // Hash password if provided
+    
     const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
 
-    // Create new teacher
+   
     const newTeacher = await db.insert(teachers).values({
       email,
       teacherId,
