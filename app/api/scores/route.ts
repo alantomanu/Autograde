@@ -12,10 +12,10 @@ export async function POST(req: Request) {
 
     const { studentId, courseId, totalMarks, maxMarks, percentage, answerSheetUrl, checkedByTeacherId, feedback } = body;
 
-    // Ensure studentId is a string
+   
     const studentIdStr = studentId.toString();
 
-    // Log each field to ensure they are present
+    
     console.log('studentId:', studentId);
     console.log('courseId:', courseId);
     console.log('totalMarks:', totalMarks);
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     console.log('checkedByTeacherId:', checkedByTeacherId);
     console.log('feedback:', feedback);
 
-    // Debug logging
+    
     console.log('Field validation:', {
       studentId: Boolean(studentId),
       courseId: Boolean(courseId),
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
       percentage: Boolean(percentage)
     });
 
-    // First, get the course ID from courses table
+    
     const course = await db.query.courses.findFirst({
       where: (courses, { eq }) => eq(courses.courseCode, courseId)
     });
@@ -47,7 +47,7 @@ export async function POST(req: Request) {
       }, { status: 404 });
     }
 
-    // Check if a score already exists for this student and course
+   
     const existingScore = await db.query.scores.findFirst({
       where: (scores, { eq, and }) => 
         and(
@@ -69,7 +69,7 @@ export async function POST(req: Request) {
       }, { status: 200 });
     }
 
-    // Assuming you have a function to get the teacher's ID
+ 
     const teacher = await db.query.teachers.findFirst({
       where: (teachers, { eq }) => eq(teachers.teacherId, checkedByTeacherId)
     });
@@ -82,7 +82,7 @@ export async function POST(req: Request) {
       }, { status: 404 });
     }
 
-    // Use the teacher's numeric ID
+    
     const [newScore] = await db.insert(scores)
       .values({
         studentId: studentIdStr,
@@ -122,7 +122,7 @@ export async function POST(req: Request) {
   }
 }
 
-// Add PUT endpoint for updating scores
+
 export async function PUT(req: Request) {
   try {
     const body = await req.json();
@@ -135,7 +135,7 @@ export async function PUT(req: Request) {
       feedback
     } = body;
 
-    // First, get the course ID from courses table
+   
     const course = await db.query.courses.findFirst({
       where: (courses, { eq }) => eq(courses.courseCode, courseId)
     });
@@ -147,7 +147,7 @@ export async function PUT(req: Request) {
       }, { status: 404 });
     }
 
-    // Verify the score exists before updating
+  
     const existingScore = await db.query.scores.findFirst({
       where: (scores, { eq, and }) => 
         and(
@@ -163,7 +163,7 @@ export async function PUT(req: Request) {
       }, { status: 404 });
     }
 
-    // Update the score with feedback
+
     const [updatedScore] = await db.update(scores)
       .set({
         totalMarks,

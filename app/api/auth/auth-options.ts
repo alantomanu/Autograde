@@ -6,7 +6,7 @@ import { teachers } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
-// Extend the built-in types
+
 declare module "next-auth" {
   interface Session {
     user: {
@@ -40,7 +40,7 @@ export const authOptions: NextAuthOptions = {
             return null;
           }
 
-          // Try to find teacher by either email or teacherId
+          
           const teacher = await db.query.teachers.findFirst({
             where: (teachers, { or, eq }) => or(
               eq(teachers.email, credentials.identifier.toLowerCase()),
@@ -91,7 +91,7 @@ export const authOptions: NextAuthOptions = {
           return `/signup?oauth=google&email=${user.email}&oauthId=${user.id}`;
         }
 
-        // Update oauthId if not set
+        
         if (!existingTeacher.oauthId) {
           await db.update(teachers)
             .set({ oauthId: user.id })
@@ -102,11 +102,11 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, user, account }) {
       if (user) {
-        // For credentials provider
+      
         if (user.teacherId) {
           token.teacherId = user.teacherId;
         }
-        // For OAuth provider
+        
         else if (account?.provider === "google" && token.email) {
           const teacher = await db.query.teachers.findFirst({
             where: eq(teachers.email, token.email),
