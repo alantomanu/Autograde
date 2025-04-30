@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     console.log('Request body:', body);
     const { courseId, courseName, teacherId } = body;
 
-    // Validate required fields
+    
     if (!courseId || !courseName || !teacherId) {
       console.log('Missing required fields:', { courseId, courseName, teacherId });
       return NextResponse.json({
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
       }, { status: 400 });
     }
 
-    // First, get the teacher's database ID using their teacherId
+   
     console.log('Looking up teacher with teacherId:', teacherId);
     const teacher = await db.query.teachers.findFirst({
       where: (teachers, { eq }) => eq(teachers.teacherId, teacherId)
@@ -33,12 +33,12 @@ export async function POST(req: Request) {
       }, { status: 404 });
     }
 
-    // Check if course exists
+   
     const existingCourse = await db.query.courses.findFirst({
       where: (courses, { eq }) => eq(courses.courseCode, courseId)
     });
 
-    // If course exists, check for name mismatch
+   
     if (existingCourse) {
       if (existingCourse.courseName !== courseName) {
         return NextResponse.json({
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
         }, { status: 200 });
       }
 
-      // Check for existing teacher-course relationship
+      
       const existingTeacherCourse = await db.query.teacherCourses.findFirst({
         where: (tc, { eq, and }) => and(
           eq(tc.teacherId, teacher.id),
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
         }, { status: 200 });
       }
 
-      // Create new teacher-course relationship for existing course
+      
       await db.insert(teacherCourses).values({
         teacherId: teacher.id,
         courseId: existingCourse.id
@@ -79,7 +79,7 @@ export async function POST(req: Request) {
       }, { status: 201 });
     }
 
-    // Create new course if it doesn't exist
+   
     const [newCourse] = await db.insert(courses)
       .values({
         courseCode: courseId,
@@ -87,7 +87,7 @@ export async function POST(req: Request) {
       })
       .returning();
 
-    // Create teacher-course relationship for new course
+    
     await db.insert(teacherCourses).values({
       teacherId: teacher.id,
       courseId: newCourse.id

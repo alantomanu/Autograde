@@ -75,21 +75,21 @@ body {
   }
 }
 
-/* Add these styles to your globals.css */
+
 ::placeholder {
-  color: #9CA3AF !important; /* Light gray color for placeholders */
+  color: #9CA3AF !important; 
   opacity: 1;
 }
 
 input {
   background-color: white !important;
-  color: #111827 !important; /* Dark gray for text */
-  border: 1px solid #E5E7EB !important; /* Light gray border */
+  color: #111827 !important; 
+  border: 1px solid #E5E7EB !important; 
 }
 
 input:focus {
   outline: none;
-  /* Optional: if you want a different style when focused */
-  box-shadow: 0 0 0 2px rgba(229, 231, 235, 0.5); /* This creates a subtle gray glow instead */
+  
+  box-shadow: 0 0 0 2px rgba(229, 231, 235, 0.5); 
 }
 
