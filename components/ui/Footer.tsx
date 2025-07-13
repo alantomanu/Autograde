@@ -4,6 +4,7 @@ import { HiDocumentText } from 'react-icons/hi';
 import {  TbScan, TbRobot } from 'react-icons/tb';
 import Image from 'next/image';
 import Link from 'next/link';
+import { config } from '../../config';
 
 interface FooterProps {
   className?: string;
@@ -93,7 +94,7 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
             <h3 className="text-lg font-semibold  text-center sm:text-left">Our APIs</h3>
             <div className="space-y-3">
               <a 
-                href="https://autograde-server.koyeb.app"
+                href={config.api.baseUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block p-3 sm:p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
@@ -107,7 +108,7 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
                 </div>
               </a>
               <a 
-                href="https://autograde-server.koyeb.app/"
+                href={config.api.baseUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block p-3 sm:p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"

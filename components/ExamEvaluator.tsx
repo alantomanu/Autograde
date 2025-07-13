@@ -19,6 +19,7 @@ import { BorderBeam } from "@/components/magicui/border-beam";
 import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 import { RecentAnswerKeys } from './RecentAnswerKeys'
 import { AnswerKeyHistory } from './AnswerKeyHistory'
+import { config } from '../config'
 
 const steps = [
   'Enter Student ID',
@@ -117,7 +118,7 @@ export default function ExamEvaluator() {
       console.log('Starting OCR processing');
       setProcessingStep('');
       
-      const processResponse = await fetch('https://autograde-server.koyeb.app/perform-ocr', {
+      const processResponse = await fetch(`${config.api.baseUrl}/perform-ocr`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pdfUrl }),
@@ -231,7 +232,7 @@ export default function ExamEvaluator() {
     if (!extractedText || !answerKeyData) return;
 
     try {
-      const response = await fetch('https://autograde-server.koyeb.app/evaluate', {
+      const response = await fetch(`${config.api.baseUrl}/evaluate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

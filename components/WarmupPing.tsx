@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect } from 'react';
+import { config } from '../config';
 
 export default function WarmupPing() {
   useEffect(() => {
-    fetch('https://autograde-server.koyeb.app/ping')
+    fetch(`${config.api.baseUrl}/ping`)
       .then(res => res.text())
       .then(data => console.log('Backend pinged:', data))
       .catch(err => console.error('Error pinging backend:', err));

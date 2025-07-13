@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { UploadedFile, AnswerKeyData } from '../types';
 import { useState } from 'react';
 import { Loader2, CheckCircle2,  } from 'lucide-react';
+import { config } from '../config';
 
 interface AnswerKeyUploadStepProps {
   uploadedAnswerKey: UploadedFile | null;
@@ -28,7 +29,7 @@ export function AnswerKeyUploadStep({
     setProcessSuccess(false);
 
     try {
-      const response = await fetch('https://autograde-server.koyeb.app/convert-pdf', {
+      const response = await fetch(`${config.api.baseUrl}/convert-pdf`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
