@@ -1,0 +1,15 @@
+name: Keep Upstash Alive
+
+on:
+  workflow_dispatch: 
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Curl Upstash Redis PING
+        run: |
+          curl -u "default:${{ secrets.UPSTASH_REDIS_REST_TOKEN }}" \
+          "${{ secrets.UPSTASH_REDIS_REST_URL }}/PING"
