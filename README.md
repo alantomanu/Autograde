@@ -64,6 +64,31 @@ Save hours of manual work and boost grading accuracy.
 
 <div align="center">
 
+
+## 🛠️ Tech Stack
+
+
+| Category       | Technology | Purpose |
+|----------------|------------|---------|
+| **Framework**  | ![Next.js](https://img.icons8.com/?size=20&id=MWiBjkuHeMVq&format=png) **Next.js 14** | Full-stack React framework |
+| **Backend**    | ![Node.js](https://img.icons8.com/?size=20&id=54087&format=png) **Node.js 20+** | Server-side APIs & processing |
+| **LLM**  | 🧠 **Meta-LLaMA 3.2 Vision, 3.3 Instruct** | Handwriting recognition & semantic answer evaluation |
+| **Styling**    | ![Tailwind](https://img.icons8.com/?size=20&id=4PiNHtUJVbLs&format=png) **Tailwind CSS**, **shadcn/ui** | Modern responsive UI |
+| **Database**   | ![PostgreSQL](https://img.icons8.com/?size=20&id=38561&format=png) **PostgreSQL (Neon Serverless)** | Store results & users |
+| **ORM**        | ![Drizzle](https://img.icons8.com/?size=20&id=13014&format=png) **Drizzle ORM** | Type-safe DB queries |
+| **Caching**      | ![Redis](https://img.icons8.com/?size=20&id=33039&format=png) **Upstash Redis** | Cache uploaded Answer keys for fast reuse |
+| **Storage**    | ![Cloudinary](https://img.icons8.com/ios-filled/20/FFFFFF/cloud.png) **Cloudinary** | Store scanned answer sheets & keys securely |
+| **Hosting**    | ![Vercel](https://img.icons8.com/ios-filled/20/FFFFFF/vercel.png) **Vercel**, 🚉 **Railway**, ☁️ **Koyeb**, 🚀 **Render** | Deploy frontend & backend |
+| **DevOps**     | ![Docker](https://img.icons8.com/?size=20&id=38555&format=png) **Docker**,**GitHub Actions** | CI/CD pipeline & containerization |
+
+</div>
+
+---
+
+
+
+<div align="center">
+
 ## 📸 Project Screenshots
 
 </div>
@@ -86,29 +111,6 @@ Save hours of manual work and boost grading accuracy.
 ### 📊 Reports & Analytics  
 <img width="1920" height="1080" alt="Screenshot 2025-06-25 104054" src="https://github.com/user-attachments/assets/771cdf43-e03e-4366-99aa-7733d986dd33" />
 
-
----
-
-<div align="center">
-
-
-## 🛠️ Tech Stack
-
-
-| Category       | Technology | Purpose |
-|----------------|------------|---------|
-| **Framework**  | ![Next.js](https://img.icons8.com/?size=20&id=MWiBjkuHeMVq&format=png) **Next.js 14** | Full-stack React framework |
-| **Backend**    | ![Node.js](https://img.icons8.com/?size=20&id=54087&format=png) **Node.js 20+** | Server-side APIs & processing |
-| **LLM**  | 🧠 **Meta-LLaMA 3.2 Vision, 3.3 Instruct** | Handwriting recognition & semantic answer evaluation |
-| **Styling**    | ![Tailwind](https://img.icons8.com/?size=20&id=4PiNHtUJVbLs&format=png) **Tailwind CSS**, **shadcn/ui** | Modern responsive UI |
-| **Database**   | ![PostgreSQL](https://img.icons8.com/?size=20&id=38561&format=png) **PostgreSQL (Neon Serverless)** | Store results & users |
-| **ORM**        | ![Drizzle](https://img.icons8.com/?size=20&id=13014&format=png) **Drizzle ORM** | Type-safe DB queries |
-| **Caching**      | ![Redis](https://img.icons8.com/?size=20&id=33039&format=png) **Upstash Redis** | Cache uploaded Answer keys for fast reuse |
-| **Storage**    | ![Cloudinary](https://img.icons8.com/ios-filled/20/FFFFFF/cloud.png) **Cloudinary** | Store scanned answer sheets & keys securely |
-| **Hosting**    | ![Vercel](https://img.icons8.com/ios-filled/20/FFFFFF/vercel.png) **Vercel**, 🚉 **Railway**, ☁️ **Koyeb**, 🚀 **Render** | Deploy frontend & backend |
-| **DevOps**     | ![Docker](https://img.icons8.com/?size=20&id=38555&format=png) **Docker**,**GitHub Actions** | CI/CD pipeline & containerization |
-
-</div>
 
 ---
 
