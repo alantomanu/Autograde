@@ -149,7 +149,10 @@ UPSTASH_REDIS_REST_URL=https://your_upstash_url
 UPSTASH_REDIS_REST_TOKEN=your_upstash_token
 
 #API Base URL (for connecting frontend to backend services)
-NEXT_PUBLIC_API_BASE_URL=https://your_api_base_url
+NEXT_PUBLIC_API_BASE_URL=https://autograde-server.koyeb.app
+# 👉 Server code: https://github.com/alantomanu/autograde-server.git
+
+
 
 ```
 
