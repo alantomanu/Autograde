@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1 align="center">📚 Autograde Teacher Dashboard </h1>
+<h1 align="center">📚 Autograde </h1>
 
 <br>
 
@@ -38,7 +38,7 @@ Save hours of manual work and boost grading accuracy.
 <table>
   <tr>
     <td>📤</td>
-    <td><strong>Bulk Answer Sheet Upload</strong><br>Upload student PDFs and answer keys easily</td>
+    <td><strong>Answer Sheet Upload</strong><br>Upload student PDFs and answer keys easily</td>
   </tr>
   <tr>
     <td>🧠</td>
@@ -68,38 +68,45 @@ Save hours of manual work and boost grading accuracy.
 
 </div>
 
-### 🏠 Teacher Dashboard  
+### 🏠 Home Page 
 <!-- Add your actual screenshots below -->
-<img src="https://github.com/user-attachments/assets/teacher-dashboard-sample.png" alt="Teacher Dashboard" width="800"/>
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/c2e23c14-aaa9-41d0-895d-41f1ef447596" />
 
 ---
 
 ### 📤 Answer Sheet Upload & Processing  
-<img src="https://github.com/user-attachments/assets/teacher-upload-sample.png" alt="Upload Answer Sheets" width="800"/>
+<img width="1920" height="1080" alt="Screenshot 2025-06-25 100941" src="https://github.com/user-attachments/assets/3d991b90-a47a-4cd7-aa40-b03cb6ebe8c4" />
+<img width="1920" height="1080" alt="Screenshot 2025-06-25 103942" src="https://github.com/user-attachments/assets/8a0b1de0-8344-4af4-be05-3e7ec571de5c" />
+
+<img width="1920" height="1080" alt="Screenshot 2025-06-25 103952" src="https://github.com/user-attachments/assets/2ecca3f9-05db-4513-b211-a309e535c095" />
+
 
 ---
 
 ### 📊 Reports & Analytics  
-<img src="https://github.com/user-attachments/assets/teacher-reports-sample.png" alt="Reports and Analytics" width="800"/>
+<img width="1920" height="1080" alt="Screenshot 2025-06-25 104054" src="https://github.com/user-attachments/assets/771cdf43-e03e-4366-99aa-7733d986dd33" />
+
 
 ---
 
+<div align="center">
+
+
 ## 🛠️ Tech Stack
 
-<div align="center">
 
 | Category       | Technology | Purpose |
 |----------------|------------|---------|
 | **Framework**  | ![Next.js](https://img.icons8.com/?size=20&id=MWiBjkuHeMVq&format=png) **Next.js 14** | Full-stack React framework |
 | **Backend**    | ![Node.js](https://img.icons8.com/?size=20&id=54087&format=png) **Node.js 20+** | Server-side APIs & processing |
-| **OCR & NLP**  | 🧠 **Meta-LLaMA 3.2 Vision, 3.3 Instruct** | Handwriting recognition & semantic answer evaluation |
+| **LLM**  | 🧠 **Meta-LLaMA 3.2 Vision, 3.3 Instruct** | Handwriting recognition & semantic answer evaluation |
 | **Styling**    | ![Tailwind](https://img.icons8.com/?size=20&id=4PiNHtUJVbLs&format=png) **Tailwind CSS**, **shadcn/ui** | Modern responsive UI |
-| **Database**   | ![PostgreSQL](https://img.icons8.com/?size=20&id=38561&format=png) **Neon (PostgreSQL)** | Store answer keys, results & users |
+| **Database**   | ![PostgreSQL](https://img.icons8.com/?size=20&id=38561&format=png) **PostgreSQL (Neon Serverless)** | Store results & users |
 | **ORM**        | ![Drizzle](https://img.icons8.com/?size=20&id=13014&format=png) **Drizzle ORM** | Type-safe DB queries |
-| **Cache**      | ![Redis](https://img.icons8.com/?size=20&id=33039&format=png) **Upstash Redis** | Cache uploaded keys for fast reuse |
-| **Storage**    | ![Cloudinary](https://img.icons8.com/?size=20&id=23268&format=png) **Cloudinary** | Store scanned images securely |
-| **Hosting**    | ![Vercel](https://img.icons8.com/?size=20&id=38272&format=png) **Vercel**, **Railway**, **Koyeb**, **Render** | Deploy frontend & backend |
-| **DevOps**     | ![Docker](https://img.icons8.com/?size=20&id=38555&format=png) **Docker**, ![GitHub](https://img.icons8.com/?size=20&id=62856&format=png) **GitHub Actions** | CI/CD pipeline & containerization |
+| **Caching**      | ![Redis](https://img.icons8.com/?size=20&id=33039&format=png) **Upstash Redis** | Cache uploaded Answer keys for fast reuse |
+| **Storage**    | ![Cloudinary](https://img.icons8.com/ios-filled/20/FFFFFF/cloud.png) **Cloudinary** | Store scanned answer sheets & keys securely |
+| **Hosting**    | ![Vercel](https://img.icons8.com/ios-filled/20/FFFFFF/vercel.png) **Vercel**, 🚉 **Railway**, ☁️ **Koyeb**, 🚀 **Render** | Deploy frontend & backend |
+| **DevOps**     | ![Docker](https://img.icons8.com/?size=20&id=38555&format=png) **Docker**,**GitHub Actions** | CI/CD pipeline & containerization |
 
 </div>
 
@@ -120,11 +127,30 @@ npm install
 Create `.env.local` and add:
 
 ```env
-DATABASE_URL="your_neon_connection_url"
-CLOUDINARY_URL="your_cloudinary_credentials"
-REDIS_URL="your_upstash_redis_url"
-LLAMA_API_KEY="your_llm_api_key"
-NEXTAUTH_SECRET="your_secure_random_string"
+#Cloudinary (for storing answer sheet images)
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
+NEXT_PUBLIC_CLOUDINARY_API_KEY=your_api_key
+NEXT_PUBLIC_CLOUDINARY_API_SECRET=your_api_secret
+NEXT_PUBLIC_CLOUDINARY_URL=cloudinary://your_api_key:your_api_secret@your_cloud_name
+
+#Google OAuth (for teacher login)
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+#NextAuth (for secure authentication)
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your_secure_nextauth_secret
+
+#Neon Serverless PostgreSQL (for storing user & results data)
+DATABASE_URL="postgresql://your_db_user:your_db_password@your_neon_host/your_db_name?sslmode=require"
+
+#Upstash Redis (for caching answer keys & sessions)
+UPSTASH_REDIS_REST_URL=https://your_upstash_url
+UPSTASH_REDIS_REST_TOKEN=your_upstash_token
+
+#API Base URL (for connecting frontend to backend services)
+NEXT_PUBLIC_API_BASE_URL=https://your_api_base_url
+
 ```
 
 ### 3. Run Development Server
@@ -157,10 +183,4 @@ Questions or ideas? Reach out anytime:
 <div align="center">
   <sub>Built with ❤️ by the AutoGrade Team | © 2025 AutoGrade</sub>
 </div>
-```
 
----
-
-**✅ Copy-paste ready!**
-Replace the **`img` src links** with your **actual teacher dashboard screenshots** if you want.
-If you’d like, I can generate nice **badges**, **custom shield icons**, or a **banner image** too — just say **“Yes!”** 🚀
