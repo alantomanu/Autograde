@@ -149,7 +149,7 @@ export default function ExamEvaluator() {
       processAnswerSheet(uploadedAnswerSheet.url);
       setIsProcessed(true);
     }
-  }, [currentStep, uploadedAnswerSheet?.url, isProcessed, processAnswerSheet]); // ✅ ADDED `processAnswerSheet`
+  }, [currentStep, uploadedAnswerSheet?.url, isProcessed, processAnswerSheet]); 
 
   const handleAnswerSheetUpload = (url: string, file: File) => {
     setShowBackground(false);

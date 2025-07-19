@@ -11,6 +11,18 @@ export function App() {
   const handleLogout = () => {
     signOut({ callbackUrl: '/' });
   };
+  const scrollToEvaluator = () => {
+    const evaluatorSection = document.getElementById('evaluator-section');
+    if (evaluatorSection) {
+      evaluatorSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  const scrollToFeatures = () => {
+    const featuresection = document.getElementById('features-section');
+    if (featuresection) {
+      featuresection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <Navbar shouldHideOnScroll>
@@ -28,13 +40,27 @@ export function App() {
         </Link>
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem>
-          <Link color="foreground" className=" font-light text-lg" href="/features">
+      <NavbarItem isActive={pathname === '/'}>
+          <Link
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToFeatures();
+            }}
+            className="font-normal text-lg"
+          >
             Features
           </Link>
         </NavbarItem>
         <NavbarItem isActive={pathname === '/'}>
-          <Link aria-current="page"   className=" font-normal text-lg" href="/">
+          <Link
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToEvaluator();
+            }}
+            className="font-normal text-lg"
+          >
             Evaluator
           </Link>
         </NavbarItem>

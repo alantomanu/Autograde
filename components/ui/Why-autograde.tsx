@@ -5,7 +5,7 @@ import { Gauge, BarChart2, FileSpreadsheet } from "lucide-react"; // Importing L
 
 const EvaluationSection: React.FC = () => {
   return (
-    <div className="evaluation-section mb-10">
+    <div id="features-section" className="evaluation-section mb-10">
       <h2 className="text-xl font-bold text-center mb-10 ">Why Choose Our Evaluation System?</h2>
       <div className="cards flex flex-wrap justify-center gap-4 sm:gap-6 px-4 sm:px-0">
         
