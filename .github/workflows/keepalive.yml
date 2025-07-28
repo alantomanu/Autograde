@@ -3,17 +3,21 @@ name: Keep Upstash Alive
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * 1" 
+    - cron: "0 0 * * 1"  
 
 jobs:
   keepalive:
     runs-on: ubuntu-latest
     steps:
-      - name: Simulate Redis Usage with SET & GET
+      - name: Set current date and time in Redis
         run: |
+          timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           curl -X POST "${{ secrets.UPSTASH_REDIS_REST_URL }}/set/keepalive" \
             -H "Authorization: Bearer ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}" \
-            -d "\"true\""
-          
+            -d "\"$timestamp\""
+
+      - name: Get and print Redis value
+        run: |
           curl -X POST "${{ secrets.UPSTASH_REDIS_REST_URL }}/get/keepalive" \
             -H "Authorization: Bearer ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}"
+
