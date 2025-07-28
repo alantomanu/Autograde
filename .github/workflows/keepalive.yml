@@ -1,15 +1,18 @@
 name: Keep Upstash Alive
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 0 * * 1"  
 
 jobs:
   keepalive:
     runs-on: ubuntu-latest
     steps:
-      - name: Curl Upstash Redis PING
+      - name: Simulate Redis Usage with SET & GET
         run: |
-          curl -u "default:${{ secrets.UPSTASH_REDIS_REST_TOKEN }}" \
-          "${{ secrets.UPSTASH_REDIS_REST_URL }}/PING"
+          curl -s -u "default:${{ secrets.UPSTASH_REDIS_REST_TOKEN }}" \
+            "${{ secrets.UPSTASH_REDIS_REST_URL }}/SET/keepalive/true"
+          
+          curl -s -u "default:${{ secrets.UPSTASH_REDIS_REST_TOKEN }}" \
+            "${{ secrets.UPSTASH_REDIS_REST_URL }}/GET/keepalive"
