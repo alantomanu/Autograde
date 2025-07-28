@@ -3,7 +3,7 @@ name: Keep Upstash Alive
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * 1"  
+    - cron: "0 0 * * 1" 
 
 jobs:
   keepalive:
@@ -11,8 +11,9 @@ jobs:
     steps:
       - name: Simulate Redis Usage with SET & GET
         run: |
-          curl -s -u "default:${{ secrets.UPSTASH_REDIS_REST_TOKEN }}" \
-            "${{ secrets.UPSTASH_REDIS_REST_URL }}/SET/keepalive/true"
+          curl -X POST "${{ secrets.UPSTASH_REDIS_REST_URL }}/set/keepalive" \
+            -H "Authorization: Bearer ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}" \
+            -d "\"true\""
           
-          curl -s -u "default:${{ secrets.UPSTASH_REDIS_REST_TOKEN }}" \
-            "${{ secrets.UPSTASH_REDIS_REST_URL }}/GET/keepalive"
+          curl -X POST "${{ secrets.UPSTASH_REDIS_REST_URL }}/get/keepalive" \
+            -H "Authorization: Bearer ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}"
