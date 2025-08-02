@@ -62,20 +62,20 @@ export function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen pt-6 flex items-center justify-center p-4">
+    <div className="min-h-screen pt-3 flex items-center justify-center p-4">
       <div className="w-full max-w-4xl flex bg-white rounded-3xl shadow-2xl overflow-hidden">
         {/* Left Panel */}
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-600 via-purple-700 to-blue-600 p-12 flex-col justify-center text-white relative overflow-hidden">
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 to-purple-600 p-12 flex-col justify-center text-white relative overflow-hidden">
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="relative z-10">
             <div className="flex items-center mb-8">
-              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mr-4">
+              {/* <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mr-4">
                 <IconUser className="w-6 h-6" />
-              </div>
-              <h1 className="text-2xl font-bold">AutoGrade</h1>
+              </div> */}
+              <h1 className="text-4xl font-bold">AutoGrade</h1>
             </div>
             
-            <h2 className="text-4xl font-bold mb-6 leading-tight">
+            <h2 className="text-2xl font-bold mb-6 leading-tight">
               Welcome Back!
             </h2>
             
@@ -124,7 +124,7 @@ export function LoginForm() {
           <div className="max-w-md mx-auto">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">Sign In</h2>
-              <p className="text-gray-600">Welcome back! Please sign in to continue</p>
+              <p className="text-gray-600">Welcome back sign in to continue</p>
             </div>
 
             {error && (
@@ -142,51 +142,51 @@ export function LoginForm() {
               Continue with Google
             </button>
 
-            <div className="relative mb-6">
+            {/* <div className="relative mb-6">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300"></div>
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-4 bg-white text-gray-500">Or continue with</span>
               </div>
-            </div>
+            </div> */}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <Label htmlFor="identifier" className="block text-sm font-medium text-gray-700 mb-2">
+                <Label htmlFor="identifier" className="block text-sm font-medium !text-black mb-2">
                   Email or Teacher ID
                 </Label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <IconId className="h-5 w-5 text-gray-400" />
-                  </div>
+                  {/* <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <IconId className="h-5 w-5" style={{ color: 'black' }} />
+                  </div> */}
                   <Input
                     id="identifier"
                     type="text"
                     placeholder="Enter your Email or Teacher ID"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    className="pl-10 h-12 rounded-xl border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                    className="h-12 rounded-xl border-gray-300 focus:border-purple-500 focus:ring-purple-500"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="password" className="block text-sm font-medium text-gray-900 mb-2">
+                <Label htmlFor="password" className="block text-sm font-medium !text-black mb-2">
                   Password
                 </Label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <IconLock className="h-5 w-5 text-gray-400" />
-                  </div>
+                  {/* <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <IconLock className="h-5 w-5" style={{ color: 'black' }} />
+                  </div> */}
                   <Input
                     id="password"
                     type="password"
-                    placeholder="••••••••"
+                    placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 h-12 rounded-xl border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                    className=" h-12 rounded-xl border-gray-300 focus:border-purple-500 focus:ring-purple-500"
                     required
                   />
                 </div>
@@ -215,7 +215,7 @@ export function LoginForm() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-4 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <>

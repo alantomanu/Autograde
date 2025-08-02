@@ -156,20 +156,20 @@ export function SignupForm() {
   };
 
   return (
-    <div className="min-h-screen pt-8 flex items-center justify-center p-4">
+    <div className="min-h-screen pt-14 flex items-center justify-center p-4">
       <div className="w-full max-w-4xl flex bg-white rounded-3xl shadow-2xl overflow-hidden">
         {/* Left Panel */}
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-600 via-purple-700 to-blue-600 p-12 flex-col justify-center text-white relative overflow-hidden">
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 to-purple-600 p-12 flex-col justify-center text-white relative overflow-hidden">
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="relative z-10">
             <div className="flex items-center mb-8">
-              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mr-4">
+              {/* <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mr-4">
                 <IconUser className="w-6 h-6" />
-              </div>
-              <h1 className="text-2xl font-bold">AutoGrade</h1>
+              </div> */}
+              <h1 className="text-4xl font-bold">AutoGrade</h1>
             </div>
             
-            <h2 className="text-4xl font-bold mb-6 leading-tight">
+            <h2 className="text-2xl font-bold mb-6 leading-tight">
               Join Us!
             </h2>
             
@@ -251,40 +251,40 @@ export function SignupForm() {
               {!isOAuth && (
                 <>
                   <div>
-                    <Label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    <Label htmlFor="email" className="block text-sm font-medium !text-black mb-2">
                       Email Address
                     </Label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <IconMail className="h-5 w-5 text-gray-400" />
-                      </div>
+                      {/* <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <IconMail className="h-5 w-5" style={{ color: 'black' }} />
+                      </div> */}
                       <Input
                         id="email"
                         type="email"
                         placeholder="Enter your email"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="pl-10 h-12 rounded-xl border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                        className=" h-12 rounded-xl border-gray-300 focus:border-purple-500 focus:ring-purple-500"
                         required
                       />
                     </div>
                   </div>
 
                   <div>
-                    <Label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                    <Label htmlFor="password" className="block text-sm font-medium !text-black mb-2">
                       Password
                     </Label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <IconLock className="h-5 w-5 text-gray-400" />
-                      </div>
+                      {/* <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <IconLock className="h-5 w-5" style={{ color: 'black' }} />
+                      </div> */}
                       <Input
                         id="password"
                         type="password"
                         placeholder="Create a password"
                         value={formData.password}
                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        className="pl-10 h-12 rounded-xl border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                        className="h-12 rounded-xl border-gray-300 focus:border-purple-500 focus:ring-purple-500"
                         required
                       />
                     </div>
@@ -310,20 +310,20 @@ export function SignupForm() {
                   </div>
 
                   <div>
-                    <Label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                    <Label htmlFor="confirmPassword" className="block text-sm font-medium !text-black mb-2">
                       Confirm Password
                     </Label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <IconLock className="h-5 w-5 text-gray-400" />
-                      </div>
+                      {/* <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <IconLock className="h-5 w-5" style={{ color: 'black' }} />
+                      </div> */}
                       <Input
                         id="confirmPassword"
                         type="password"
                         placeholder="Confirm your password"
                         value={formData.confirmPassword}
                         onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                        className="pl-10 h-12 rounded-xl border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                        className=" h-12 rounded-xl border-gray-300 focus:border-purple-500 focus:ring-purple-500"
                         required
                       />
                     </div>
@@ -337,20 +337,20 @@ export function SignupForm() {
               )}
 
               <div>
-                <Label htmlFor="teacherId" className="block text-sm font-medium text-gray-700 mb-2">
+                <Label htmlFor="teacherId" className="block text-sm font-medium !text-black mb-2">
                   Teacher ID
                 </Label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <IconId className="h-5 w-5 text-gray-400" />
-                  </div>
+                  {/* <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <IconId className="h-5 w-5" style={{ color: 'black' }} />
+                  </div> */}
                   <Input
                     id="teacherId"
                     type="text"
                     placeholder="Enter your Teacher ID"
                     value={formData.teacherId}
                     onChange={(e) => setFormData({ ...formData, teacherId: e.target.value })}
-                    className="pl-10 h-12 rounded-xl border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                    className="h-12 rounded-xl border-gray-300 focus:border-purple-500 focus:ring-purple-500"
                     required
                   />
                 </div>
@@ -359,7 +359,7 @@ export function SignupForm() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-4 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>
