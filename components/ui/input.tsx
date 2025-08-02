@@ -85,24 +85,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             )}
           </AnimatePresence>
 
-          {/* Active Input Highlight */}
-          <motion.div
-            initial={false}
-            animate={{
-              scaleX: isFocused ? 1 : 0,
-              opacity: isFocused ? 1 : 0
-            }}
-            transition={{
-              duration: 0.2,
-              ease: "easeInOut"
-            }}
-            className={cn(
-              "absolute -bottom-[2px] left-[4px] h-0.5",
-              "w-[calc(100%-7px)] rounded-full",
-              "bg-primary/60 dark:bg-primary/60",
-              "origin-left"
-            )}
-          />
+         
         </div>
 
         {/* Background Highlight Effect */}
