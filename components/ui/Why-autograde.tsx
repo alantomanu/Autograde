@@ -3,21 +3,13 @@ import React from "react";
 import { BackgroundGradient } from "../ui/background-gradient";
 import { Gauge, BarChart2, FileSpreadsheet } from "lucide-react";
 
-const EvaluationSection: React.FC = () => {
+const FeatureSection: React.FC = () => {
   return (
     <div
       id="features-section"
-      className="evaluation-section mb-10 px-4 sm:px-6 md:px-8"
+      className="evaluation-section mb-10 px-4 sm:px-6 md:px-8 py-8 sm:py-12"
     >
       <div className="max-w-6xl mx-auto">
-      <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-10 leading-tight text-center">
-        Why to choose{" "}
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-          AutoGrade.
-        </span>
-      </h2>
-
-
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[ 
@@ -58,4 +50,4 @@ const EvaluationSection: React.FC = () => {
   );
 };
 
-export default EvaluationSection;
+export default FeatureSection;
