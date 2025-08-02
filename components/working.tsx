@@ -141,7 +141,7 @@ export default function SystemWorkflow() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [sectionRefs]);
 
   return (
     <div  id="working-section" className="w-full py-8 sm:py-12 px-4 sm:px-6 md:px-8 relative" ref={containerRef}>
