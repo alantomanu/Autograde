@@ -6,10 +6,9 @@ import { Input } from "./ui/input";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "./ui/button";
-import { IconBrandGoogle } from "@tabler/icons-react";
+import { IconBrandGoogle, IconUser, IconMail, IconLock, IconId } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-
 
 const checkPasswordStrength = (password: string): { strength: number; message: string } => {
   let strength = 0;
@@ -44,7 +43,6 @@ export function SignupForm() {
   const [passwordStrength, setPasswordStrength] = useState({ strength: 0, message: '' });
   const [passwordMatch, setPasswordMatch] = useState(true);
 
-
   useEffect(() => {
     if (formData.password) {
       setPasswordStrength(checkPasswordStrength(formData.password));
@@ -53,7 +51,6 @@ export function SignupForm() {
     }
   }, [formData.password]);
 
-  
   useEffect(() => {
     if (formData.confirmPassword) {
       setPasswordMatch(formData.password === formData.confirmPassword);
@@ -62,7 +59,6 @@ export function SignupForm() {
     }
   }, [formData.password, formData.confirmPassword]);
 
-  
   useEffect(() => {
     if (status === 'authenticated' && session?.user?.teacherId) {
       router.push('/');
@@ -73,7 +69,6 @@ export function SignupForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
-    
     
     if (!isOAuth && passwordStrength.strength < 2) {
       setError('Please use a stronger password');
@@ -108,7 +103,6 @@ export function SignupForm() {
           return;
         }
 
-        
         await signIn('google', { 
           redirect: false,
           callbackUrl: '/'
@@ -133,7 +127,6 @@ export function SignupForm() {
           return;
         }
 
-       
         const signInResult = await signIn('credentials', {
           identifier: formData.email,
           password: formData.password,
@@ -145,8 +138,6 @@ export function SignupForm() {
           return;
         }
       }
-
-      
     } catch {
       setError('Unable to complete registration. Please try again later.');
     } finally {
@@ -165,110 +156,223 @@ export function SignupForm() {
   };
 
   return (
-    <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white">
-      <h2 className="font-bold text-xl text-neutral-800">
-        {isOAuth ? "Complete Your Registration" : "Create an Account"}
-      </h2>
-
-      {error && (
-        <div className="mt-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-600">
-          {error}
-        </div>
-      )}
-
-      {!isOAuth && (
-        <Button
-          className="mt-4 w-full"
-          type="button"
-          onClick={handleGoogleSignIn}
-          variant="outline"
-        >
-          <IconBrandGoogle className="mr-2" />
-          Continue with Google
-        </Button>
-      )}
-
-      <form className="my-8" onSubmit={handleSubmit}>
-        <div className="flex flex-col md:flex-col gap-4">
-          {!isOAuth && (
-            <>
-              <div>
-                <Label htmlFor="email">Email Address</Label>
-                <Input
-                  id="email"
-                  placeholder="Enter your email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                />
+    <div className="min-h-screen pt-14 flex items-center justify-center p-4">
+      <div className="w-full max-w-4xl flex bg-white rounded-3xl shadow-2xl overflow-hidden">
+        {/* Left Panel */}
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 to-purple-600 p-12 flex-col justify-center text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="relative z-10">
+            <div className="flex items-center mb-8">
+              {/* <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mr-4">
+                <IconUser className="w-6 h-6" />
+              </div> */}
+              <h1 className="text-4xl font-bold">AutoGrade</h1>
+            </div>
+            
+            <h2 className="text-2xl font-bold mb-6 leading-tight">
+              Join Us!
+            </h2>
+            
+            <p className="text-lg mb-8 text-purple-100 leading-relaxed">
+              Create an account to start using our AI-powered answer evaluation system.
+            </p>
+            
+            <div className="space-y-4">
+              <div className="flex items-center text-purple-100">
+                <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                <span>AI-powered grading system</span>
               </div>
-              <div>
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  placeholder="Enter your password"
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                />
-                {formData.password && (
-                  <div className="mt-1">
-                    <div className="h-1 w-full bg-gray-200 rounded-full overflow-hidden">
-                      <div 
-                        className={`h-full transition-all duration-300 ${getStrengthColor()}`}
-                        style={{ 
-                          width: `${(passwordStrength.strength / 5) * 100}%`
-                        }}
+              <div className="flex items-center text-purple-100">
+                <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                <span>Instant feedback and analytics</span>
+              </div>
+              <div className="flex items-center text-purple-100">
+                <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                <span>Streamlined workflow</span>
+              </div>
+            </div>
+            
+            <div className="mt-12">
+              <p className="text-sm text-purple-200">
+                AutoGrade — Revolutionizing answer paper evaluation with AI
+              </p>
+            </div>
+            
+            <div className="mt-8">
+              <button
+                onClick={() => router.push('/login')}
+                className="px-8 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white font-medium hover:bg-white/20 transition-all duration-200"
+              >
+                SIGN IN
+              </button>
+            </div>
+          </div>
+          
+          {/* Decorative elements */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-32 translate-x-32"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
+        </div>
+
+        {/* Right Panel */}
+        <div className="w-full lg:w-1/2 p-8 lg:p-12">
+          <div className="max-w-md mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                {isOAuth ? "Complete Your Registration" : "Create Account"}
+              </h2>
+              <p className="text-gray-600">
+                {isOAuth ? "Just one more step to get started" : "Get started with your evaluator account"}
+              </p>
+            </div>
+
+            {error && (
+              <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-600 text-center">
+                {error}
+              </div>
+            )}
+
+            {!isOAuth && (
+              <button
+                onClick={handleGoogleSignIn}
+                className="w-full mb-6 flex items-center justify-center px-4 py-3 border border-gray-300 rounded-xl shadow-sm bg-white text-gray-700 hover:bg-gray-50 transition-colors font-medium"
+              >
+                <IconBrandGoogle className="w-5 h-5 mr-3" />
+                Continue with Google
+              </button>
+            )}
+
+            {!isOAuth && (
+              <div className="relative mb-6">
+                
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {!isOAuth && (
+                <>
+                  <div>
+                    <Label htmlFor="email" className="block text-sm font-medium !text-black mb-2">
+                      Email Address
+                    </Label>
+                    <div className="relative">
+                      {/* <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <IconMail className="h-5 w-5" style={{ color: 'black' }} />
+                      </div> */}
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className=" h-12 rounded-xl border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                        required
                       />
                     </div>
-                    <p className={`text-xs mt-0.5 ${
-                      passwordStrength.strength < 2 ? 'text-red-500' : 
-                      passwordStrength.strength < 4 ? 'text-yellow-500' : 
-                      'text-green-500'
-                    }`}>
-                      Password Strength: {passwordStrength.message}
-                    </p>
                   </div>
-                )}
-              </div>
+
+                  <div>
+                    <Label htmlFor="password" className="block text-sm font-medium !text-black mb-2">
+                      Password
+                    </Label>
+                    <div className="relative ">
+                      {formData.password && (
+                        <div className="absolute -top-7 right-0">
+                          <span className={`text-xs px-2 py-1 rounded-full ${
+                            passwordStrength.strength < 2 ? 'bg-red-100 text-red-600' : 
+                            passwordStrength.strength < 4 ? 'bg-yellow-100 text-yellow-600' : 
+                            'bg-green-100 text-green-600'
+                          }`}>
+                            Password Strength: {passwordStrength.message}
+                          </span>
+                        </div>
+                      )}
+                      {/* <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <IconLock className="h-5 w-5" style={{ color: 'black' }} />
+                      </div> */}
+                      <Input
+                        id="password"
+                        type="password"
+                        placeholder="Create a password"
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        className="h-12 rounded-xl border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <Label htmlFor="confirmPassword" className="block text-sm font-medium !text-black mb-2">
+                      Confirm Password
+                    </Label>
+                    <div className="relative">
+                      {/* <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <IconLock className="h-5 w-5" style={{ color: 'black' }} />
+                      </div> */}
+                      <Input
+                        id="confirmPassword"
+                        type="password"
+                        placeholder="Confirm your password"
+                        value={formData.confirmPassword}
+                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                        className=" h-12 rounded-xl border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                        required
+                      />
+                    </div>
+                    {formData.confirmPassword && !passwordMatch && (
+                      <p className="text-xs mt-1 text-red-500">
+                        Passwords do not match
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
+
               <div>
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input
-                  id="confirmPassword"
-                  placeholder="Confirm your password"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                />
-                {formData.confirmPassword && !passwordMatch && (
-                  <p className="text-xs mt-0.5 text-red-500">
-                    Passwords do not match
-                  </p>
-                )}
+                <Label htmlFor="teacherId" className="block text-sm font-medium !text-black mb-2">
+                  Teacher ID
+                </Label>
+                <div className="relative">
+                  {/* <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <IconId className="h-5 w-5" style={{ color: 'black' }} />
+                  </div> */}
+                  <Input
+                    id="teacherId"
+                    type="text"
+                    placeholder="Enter your Teacher ID"
+                    value={formData.teacherId}
+                    onChange={(e) => setFormData({ ...formData, teacherId: e.target.value })}
+                    className="h-12 rounded-xl border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                    required
+                  />
+                </div>
               </div>
-            </>
-          )}
-          
-          <div>
-            <Label htmlFor="teacherId">Teacher ID</Label>
-            <Input
-              id="teacherId"
-              placeholder="Enter your Teacher ID"
-              value={formData.teacherId}
-              onChange={(e) => setFormData({ ...formData, teacherId: e.target.value })}
-              required
-            />
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2 inline-block"></div>
+                    Creating account...
+                  </>
+                ) : (
+                  "SIGN UP"
+                )}
+              </button>
+            </form>
+
+            <p className="mt-6 text-center text-sm text-gray-600">
+              Already have an account?{" "}
+              <a href="/login" className="font-medium text-purple-600 hover:text-purple-500">
+                Sign in
+              </a>
+            </p>
           </div>
         </div>
-
-        <Button
-          className="mt-4 w-full"
-          type="submit"
-          disabled={loading}
-        >
-          {loading ? "Signing up..." : "Sign Up"}
-        </Button>
-      </form>
+      </div>
     </div>
   );
 }
