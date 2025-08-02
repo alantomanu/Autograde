@@ -23,15 +23,15 @@ export function App() {
 
   const [scrollTarget, setScrollTarget] = useState<string | null>(null);
 
-  // Handle scroll after routing to home
+
   useEffect(() => {
     if (pathname === "/" && scrollTarget) {
       const el = document.getElementById(scrollTarget);
       if (el) {
         setTimeout(() => {
           el.scrollIntoView({ behavior: "smooth" });
-          setScrollTarget(null); // reset scroll target
-        }, 100); // Delay ensures DOM is rendered
+          setScrollTarget(null); 
+        }, 100); 
       }
     }
   }, [pathname, scrollTarget]);
