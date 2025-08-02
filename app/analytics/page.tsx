@@ -53,6 +53,74 @@ type CourseAnalytics = {
 
 type AnalyticsData = Record<string, CourseAnalytics>;
 
+
+const AnalyticsSkeleton = () => {
+  return (
+    <div className="flex flex-col min-h-screen p-6">
+      <div className="container mx-auto px-4 lg:px-16">
+      
+        <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-800 mb-10 leading-tight pt-8 sm:pt-12">
+        Analytics{" "}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+          Dashboard.
+          </span>
+        </h2>
+        
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-gray-100 shadow-md rounded-lg p-6 transition-all hover:shadow-lg">
+            <h2 className="text-xl font-semibold mb-2 text-gray-800">Total Courses</h2>
+            <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
+          </div>
+          <div className="bg-gray-100 shadow-md rounded-lg p-6 transition-all hover:shadow-lg">
+            <h2 className="text-xl font-semibold mb-2 text-gray-800">Answer Sheets Checked</h2>
+            <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
+          </div>
+          <div className="bg-gray-100 shadow-md rounded-lg p-6 transition-all hover:shadow-lg">
+            <h2 className="text-xl font-semibold mb-2 text-gray-800">Average Score</h2>
+            <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
+          </div>
+        </div>
+        
+        {/* Overview Chart Skeleton */}
+        <div className="bg-gray-100 shadow-md rounded-lg p-6 mb-8 transition-all hover:shadow-lg">
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">Course Overview</h2>
+          <div className="h-64 bg-gray-200 rounded animate-pulse"></div>
+        </div>
+        
+        {/* Course Cards Skeleton */}
+        <div className="space-y-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-gray-100 shadow-md rounded-lg overflow-hidden transition-all hover:shadow-lg">
+              <div className="p-6 border-b border-gray-200">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-semibold text-gray-800">Course {i}</h2>
+                  <div className="h-6 w-6 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                  <div>
+                    <p className="text-gray-600">Evaluated Sheets</p>
+                    <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Average Score</p>
+                    <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Max Score</p>
+                    <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function AnalyticsPage() {
   const { data: session } = useSession();
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
@@ -61,7 +129,7 @@ export default function AnalyticsPage() {
   const [passPercentages, setPassPercentages] = useState<Record<string, number>>({});
   const [expandedCourses, setExpandedCourses] = useState<Record<string, boolean>>({});
   
-  // Retrieve the teacher ID from the session
+  
   const teacherId = session?.user?.teacherId;
 
   useEffect(() => {
@@ -164,16 +232,12 @@ export default function AnalyticsPage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-white">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
+    return <AnalyticsSkeleton />;
   }
 
   if (error) {
     return (
-      <div className="flex justify-center items-center h-screen bg-white">
+      <div className="flex justify-center items-center h-screen ">
         <div className="bg-red-50 p-4 rounded-md">
           <p className="text-red-500">{error}</p>
         </div>
@@ -183,7 +247,7 @@ export default function AnalyticsPage() {
 
   if (!analyticsData || Object.keys(analyticsData).length === 0) {
     return (
-      <div className="flex justify-center items-center h-screen bg-white">
+      <div className="flex justify-center items-center h-screen ">
         <div className="bg-yellow-50 p-4 rounded-md">
           <p className="text-yellow-700">No data available. You haven&apos;t evaluated any courses yet.</p>
         </div>
@@ -202,54 +266,62 @@ export default function AnalyticsPage() {
       {
         label: 'Evaluated Answer Sheets',
         data: Object.values(analyticsData).map(course => course.evaluatedCount),
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        backgroundColor: 'rgba(59, 130, 246, 0.8)',
       },
       {
         label: 'Average Score',
         data: Object.values(analyticsData).map(course => course.averageScore),
-        backgroundColor: 'rgba(153, 102, 255, 0.6)',
+        backgroundColor: 'rgba(104, 116, 245, 0.8)',
       },
       {
         label: 'Maximum Score',
         data: Object.values(analyticsData).map(course => course.maxScore),
-        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+        backgroundColor: 'rgba(139, 92, 246, 0.8)',
       },
     ],
   };
 
   return (
-    <div className="flex flex-col min-h-screen p-6 bg-white">
-      <div className="container mx-auto px-4 lg:px-16">
-        <h3 className="text-3xl font-bold mb-10 text-center text-gray-900">Teacher Analytics Dashboard</h3>
+    <div className="flex flex-col min-h-screen p-6">
+      <div className="container mx-auto px-4 lg:px-16 pb-5">
+       
+        <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-800 mb-10 leading-tight pt-8 sm:pt-12">
+        Analytics{" "}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+          Dashboard.
+          </span>
+        </h2>
+
+
         
         {/* Overall Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-gray-100 shadow-md rounded-lg p-6 transition-all hover:shadow-lg">
-            <h2 className="text-xl font-semibold mb-2 text-gray-900">Total Courses</h2>
+            <h2 className="text-xl font-semibold mb-2 text-gray-800">Total Courses</h2>
             <p className="text-3xl font-bold text-blue-600">{totalCourses}</p>
           </div>
           <div className="bg-gray-100 shadow-md rounded-lg p-6 transition-all hover:shadow-lg">
-            <h2 className="text-xl font-semibold mb-2 text-gray-900">Answer Sheets Checked</h2>
-            <p className="text-3xl font-bold text-green-600">{totalSheets}</p>
+            <h2 className="text-xl font-semibold mb-2 text-gray-800">Answer Sheets Checked</h2>
+            <p className="text-3xl font-bold text-indigo-600">{totalSheets}</p>
           </div>
           <div className="bg-gray-100 shadow-md rounded-lg p-6 transition-all hover:shadow-lg">
-            <h2 className="text-xl font-semibold mb-2 text-gray-900">Average Score</h2>
+            <h2 className="text-xl font-semibold mb-2 text-gray-800">Average Score</h2>
             <p className="text-3xl font-bold text-purple-600">{averageScore}</p>
           </div>
         </div>
         
         {/* All Courses Overview Chart */}
         <div className="bg-gray-100 shadow-md rounded-lg p-6 mb-8 transition-all hover:shadow-lg">
-          <h2 className="text-xl font-semibold mb-4 text-gray-900">Course Overview</h2>
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">Course Overview</h2>
           <div className="h-64">
             <Bar 
               data={{
                 ...overviewChartData,
                 datasets: overviewChartData.datasets.map(dataset => ({
                   ...dataset,
-                  backgroundColor: dataset.label === 'Evaluated Answer Sheets' ? 'rgba(75, 192, 192, 0.6)' : 
-                                   dataset.label === 'Average Score' ? 'rgba(153, 102, 255, 0.6)' : 
-                                   'rgba(255, 99, 132, 0.6)',
+                  backgroundColor: dataset.label === 'Evaluated Answer Sheets' ? 'rgba(59, 130, 246, 0.8)' : 
+                                   dataset.label === 'Average Score' ? 'rgba(104, 116, 245, 0.8)' : 
+                                   'rgba(139, 92, 246, 0.8)',
                 })),
               }} 
               options={{ 
@@ -287,7 +359,7 @@ export default function AnalyticsPage() {
                 {/* Course Header - Always Visible */}
                 <div className="p-6 border-b border-gray-200">
                   <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-semibold text-gray-900">{course.courseName}</h2>
+                    <h2 className="text-xl font-semibold text-gray-800">{course.courseName}</h2>
                     <button 
                       onClick={() => toggleCourseExpand(courseId)}
                       className="p-2 rounded-full hover:bg-gray-200 "
@@ -299,15 +371,15 @@ export default function AnalyticsPage() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                     <div>
                       <p className="text-gray-600">Evaluated Sheets</p>
-                      <p className="text-2xl font-bold text-gray-900">{course.evaluatedCount}</p>
+                      <p className="text-2xl font-bold text-gray-800">{course.evaluatedCount}</p>
                     </div>
                     <div>
                       <p className="text-gray-600">Average Score</p>
-                      <p className="text-2xl font-bold text-gray-900">{course.averageScore.toFixed(1)}</p>
+                      <p className="text-2xl font-bold text-gray-800">{course.averageScore.toFixed(1)}</p>
                     </div>
                     <div>
                       <p className="text-gray-600">Max Score</p>
-                      <p className="text-2xl font-bold text-gray-900">{course.maxScore}</p>
+                      <p className="text-2xl font-bold text-gray-800">{course.maxScore}</p>
                     </div>
                   </div>
                 </div>
@@ -326,7 +398,7 @@ export default function AnalyticsPage() {
                             max="100"
                             value={passPercentages[courseId] || 40}
                             onChange={(e) => handlePassPercentageChange(courseId, e.target.value)}
-                            className="p-2 border rounded w-24 text-center bg-white  text-gray-900 dark:text-gray-100"
+                            className="p-2 border rounded w-24 text-center bg-white  text-gray-800 dark:text-gray-100"
                           />
                           <span className="text-lg font-semibold">%</span>
                         </div>
@@ -398,9 +470,9 @@ export default function AnalyticsPage() {
                           <tbody className="bg-white divide-y divide-gray-200">
                             {course.students.map((student, index) => (
                               <tr key={index} className="hover:bg-gray-50">
-                                <td className="px-6 py-4 whitespace-nowrap text-gray-900">{student.studentId}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-gray-900">{student.totalMarks}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-gray-900">{student.percentage.toFixed(1)}%</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-gray-800">{student.studentId}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-gray-800">{student.totalMarks}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-gray-800">{student.percentage.toFixed(1)}%</td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                                     student.percentage >= (passPercentages[courseId] || 40)
