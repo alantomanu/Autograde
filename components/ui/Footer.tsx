@@ -1,3 +1,4 @@
+"use client"
 import React from 'react';
 import { FaGithub, FaLinkedin, FaEnvelope } from 'react-icons/fa';
 import { HiDocumentText } from 'react-icons/hi';
@@ -5,12 +6,27 @@ import {  TbScan, TbRobot } from 'react-icons/tb';
 import Image from 'next/image';
 import Link from 'next/link';
 import { config } from '../../config';
-
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from 'react';
 interface FooterProps {
   className?: string;
 }
 
 const Footer: React.FC<FooterProps> = ({ className }) => {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [scrollTarget, setScrollTarget] = useState<string | null>(null);
+  const handleNavigateAndScroll = (sectionId: string) => {
+    if (pathname === "/") {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      setScrollTarget(sectionId);
+      router.push("/");
+    }
+  };
   return (
     <footer className={`bg-white  py-6 sm:py-10 w-full ${className}`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
@@ -51,17 +67,31 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
             <h3 className="text-lg font-semibold ">Quick Links</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/" className=" hover: transition-colors">
-                  Evaluvator
-                </Link>
+              <Link
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavigateAndScroll("evaluator-section");
+            }}
+            className="font-normal text-lg"
+          >
+            Evaluator
+          </Link>
+              </li>
+            <li>
+              <Link
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavigateAndScroll("working-section");
+            }}
+            className="font-normal text-lg"
+          >
+            Working
+          </Link>
               </li>
               <li>
-                <Link href="/" className=" hover: transition-colors">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/analytics" className=" hover: transition-colors">
+                <Link href="/analytics" className="font-normal text-lg hover: transition-colors">
                   Analytics
                 </Link>
               </li>

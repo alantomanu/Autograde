@@ -1,5 +1,5 @@
 import DarkBanner from "@/components/ui/Banner";
-import EvaluationSection from "@/components/ui/Why-autograde";
+import FeatureSection from "@/components/ui/Why-autograde";
 import ExamEvaluator from "@/components/ExamEvaluator";
 import WarmupPing from "@/components/WarmupPing";
 import SystemWorkflow from "@/components/working";
@@ -21,8 +21,9 @@ const HomePage: React.FC = () => {
       <div className="my-2">
         <ExamEvaluator />
       </div>
-      <EvaluationSection />
-      {/* Other components */}
+      <div className="my-2">
+      <FeatureSection />
+      </div>
     </div>
   );
 };

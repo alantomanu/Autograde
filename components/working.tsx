@@ -144,7 +144,7 @@ export default function SystemWorkflow() {
   }, []);
 
   return (
-    <div className="w-full py-8 sm:py-12 px-4 sm:px-6 md:px-8 relative" ref={containerRef}>
+    <div  id="working-section" className="w-full py-8 sm:py-12 px-4 sm:px-6 md:px-8 relative" ref={containerRef}>
       <div className="max-w-5xl mx-auto">
         <div className="mb-8 sm:mb-12">
           <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-800 mb-3 sm:mb-4 leading-tight">

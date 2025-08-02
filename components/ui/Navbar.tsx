@@ -1,32 +1,60 @@
-"use client"
-import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem} from "@heroui/react";
-import { usePathname } from "next/navigation";
+"use client";
+import {
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  Link,
+  Button,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@heroui/react";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import Image from 'next/image';
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export function App() {
   const pathname = usePathname();
+  const router = useRouter();
   const { data: session, status } = useSession();
 
-  const handleLogout = () => {
-    signOut({ callbackUrl: '/' });
-  };
-  const scrollToEvaluator = () => {
-    const evaluatorSection = document.getElementById('evaluator-section');
-    if (evaluatorSection) {
-      evaluatorSection.scrollIntoView({ behavior: 'smooth' });
+  const [scrollTarget, setScrollTarget] = useState<string | null>(null);
+
+
+  useEffect(() => {
+    if (pathname === "/" && scrollTarget) {
+      const el = document.getElementById(scrollTarget);
+      if (el) {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: "smooth" });
+          setScrollTarget(null); 
+        }, 100); 
+      }
     }
+  }, [pathname, scrollTarget]);
+
+  const handleLogout = () => {
+    signOut({ callbackUrl: "/" });
   };
-  const scrollToFeatures = () => {
-    const featuresection = document.getElementById('features-section');
-    if (featuresection) {
-      featuresection.scrollIntoView({ behavior: 'smooth' });
+
+  const handleNavigateAndScroll = (sectionId: string) => {
+    if (pathname === "/") {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      setScrollTarget(sectionId);
+      router.push("/");
     }
   };
 
   return (
     <Navbar shouldHideOnScroll>
-                  <NavbarBrand className="ml-1 lg:ml-[-80px]">
+      <NavbarBrand className="ml-1 lg:ml-[-80px]">
         <Link href="/" className="flex items-center">
           <Image
             src="/logoblack.png"
@@ -39,25 +67,26 @@ export function App() {
           <p className="font-normal text-xl">AutoGrade</p>
         </Link>
       </NavbarBrand>
+
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-      <NavbarItem isActive={pathname === '/'}>
+        <NavbarItem isActive={pathname === "/"}>
           <Link
-            href="#"
+            href="/"
             onClick={(e) => {
               e.preventDefault();
-              scrollToFeatures();
+              handleNavigateAndScroll("features-section");
             }}
             className="font-normal text-lg"
           >
             Features
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={pathname === '/'}>
+        <NavbarItem isActive={pathname === "/"}>
           <Link
-            href="#"
+            href="/"
             onClick={(e) => {
               e.preventDefault();
-              scrollToEvaluator();
+              handleNavigateAndScroll("evaluator-section");
             }}
             className="font-normal text-lg"
           >
@@ -65,22 +94,23 @@ export function App() {
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" className=" font-light text-lg" href="/analytics">
+          <Link color="foreground" className="font-light text-lg" href="/analytics">
             Analytics
           </Link>
         </NavbarItem>
       </NavbarContent>
+
       <NavbarContent justify="end" className="mr-1 lg:mr-[-80px]">
         {status === "authenticated" && session?.user?.teacherId ? (
           <NavbarItem>
             <Dropdown>
               <DropdownTrigger>
-                <Button variant="light" className=" font-light text-lg"  >
+                <Button variant="light" className="font-light text-lg">
                   {session.user.teacherId}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu aria-label="User actions">
-                <DropdownItem key="logout" onClick={handleLogout} >
+                <DropdownItem key="logout" onClick={handleLogout}>
                   Logout
                 </DropdownItem>
               </DropdownMenu>
@@ -89,10 +119,18 @@ export function App() {
         ) : (
           <>
             <NavbarItem className="hidden lg:flex">
-              <Link href="/login" className=" font-light text-lg" >Login</Link>
+              <Link href="/login" className="font-light text-lg">
+                Login
+              </Link>
             </NavbarItem>
             <NavbarItem>
-              <Button as={Link} color="primary" href="/signup" variant="flat" className=" font-light text-lg" >
+              <Button
+                as={Link}
+                color="primary"
+                href="/signup"
+                variant="flat"
+                className="font-light text-lg"
+              >
                 Sign Up
               </Button>
             </NavbarItem>
