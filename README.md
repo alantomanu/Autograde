@@ -109,7 +109,9 @@ Save hours of manual work and boost grading accuracy.
 ---
 
 ### 📊 Reports & Analytics  
-<img width="1920" height="1080" alt="Screenshot 2025-06-25 104054" src="https://github.com/user-attachments/assets/771cdf43-e03e-4366-99aa-7733d986dd33" />
+<img width="1777" height="915" alt="image" src="https://github.com/user-attachments/assets/436b51fd-5744-4702-965f-16f7cb60bd8c" />
+
+
 
 
 ---
