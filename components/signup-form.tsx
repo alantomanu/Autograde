@@ -274,7 +274,18 @@ export function SignupForm() {
                     <Label htmlFor="password" className="block text-sm font-medium !text-black mb-2">
                       Password
                     </Label>
-                    <div className="relative">
+                    <div className="relative ">
+                      {formData.password && (
+                        <div className="absolute -top-7 right-0">
+                          <span className={`text-xs px-2 py-1 rounded-full ${
+                            passwordStrength.strength < 2 ? 'bg-red-100 text-red-600' : 
+                            passwordStrength.strength < 4 ? 'bg-yellow-100 text-yellow-600' : 
+                            'bg-green-100 text-green-600'
+                          }`}>
+                            Password Strength: {passwordStrength.message}
+                          </span>
+                        </div>
+                      )}
                       {/* <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <IconLock className="h-5 w-5" style={{ color: 'black' }} />
                       </div> */}
@@ -288,28 +299,9 @@ export function SignupForm() {
                         required
                       />
                     </div>
-                    {formData.password && (
-                      <div className="mt-2">
-                        <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                          <div 
-                            className={`h-full transition-all duration-300 ${getStrengthColor()}`}
-                            style={{ 
-                              width: `${(passwordStrength.strength / 5) * 100}%`
-                            }}
-                          />
-                        </div>
-                        <p className={`text-xs mt-1 ${
-                          passwordStrength.strength < 2 ? 'text-red-500' : 
-                          passwordStrength.strength < 4 ? 'text-yellow-600' : 
-                          'text-green-600'
-                        }`}>
-                          Password Strength: {passwordStrength.message}
-                        </p>
-                      </div>
-                    )}
                   </div>
 
-                  <div>
+                  <div className="mt-6">
                     <Label htmlFor="confirmPassword" className="block text-sm font-medium !text-black mb-2">
                       Confirm Password
                     </Label>
