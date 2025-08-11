@@ -1,6 +1,7 @@
 "use client"
-import { useRef, useState, useEffect } from "react";
-import { Brain, FileText, CheckCircle } from "lucide-react";
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { CheckCircle, FileText, Brain, TrendingUp, Zap, Shield, Users, BarChart3 } from 'lucide-react';
 
 interface ProgressiveTextRevealProps {
   text: string;
@@ -8,60 +9,23 @@ interface ProgressiveTextRevealProps {
   progress: number;
 }
 
-
 const ProgressiveTextReveal = ({ text, isActive, progress }: ProgressiveTextRevealProps) => {
-  const isInstantResultsSection = text.includes("Get immediate results");
-  const words = text.split(" ");
-  
+  const words = text.split(' ');
+  const visibleWords = Math.floor(words.length * progress);
+
   return (
-    <div className="flex flex-wrap items-center text-base sm:text-lg md:text-xl lg:text-2xl font-normal leading-relaxed">
-      {words.map((word: string, index: number) => {
-        const wordProgress = isActive ? Math.min(1, Math.pow(progress * 6 - index * 0.05, 0.8)) : 0;
-        const opacity = Math.max(0.3, wordProgress);
-        
-        return (
-          <span 
-            key={index} 
-            className="transition-colors duration-700 mr-[0.25em]"
-            style={{ 
-              color: opacity >= 0.9 ? '#000' : 
-                     opacity >= 0.6 ? '#333' : 
-                     opacity >= 0.45 ? '#777' : '#aaa'
-            }}
-          >
-            {word}
-          </span>
-        );
-      })}
-      {isInstantResultsSection && (
-        <a
-          href="https://autograde-student.vercel.app/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center font-medium group ml-1"
-          style={{
-            color: isActive && progress > 0.3 ? '#2563eb' : '#aaa',
-            transition: 'all 0.7s ease'
-          }}
+    <div className="text-gray-600 leading-relaxed">
+      {words.map((word, index) => (
+        <span
+          key={index}
+          className={`transition-all duration-300 ${
+            index < visibleWords ? 'opacity-100' : 'opacity-0'
+          }`}
         >
-          <span className="border-b-2 border-dotted border-current">
-            Autograde-student
-          </span>
-          <svg
-            className="w-5 h-5 ml-1 transform translate-x-0 group-hover:translate-x-1 transition-transform duration-200"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M13 7l5 5m0 0l-5 5m5-5H6"
-            />
-          </svg>
-        </a>
-      )}
+          {word}
+          {index < words.length - 1 && ' '}
+        </span>
+      ))}
     </div>
   );
 };
@@ -141,7 +105,7 @@ export default function SystemWorkflow() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [sectionRefs]);
+  }, []); // Remove sectionRefs from dependencies since refs are stable
 
   return (
     <div  id="working-section" className="w-full py-8 sm:py-12 px-4 sm:px-6 md:px-8 relative" ref={containerRef}>
