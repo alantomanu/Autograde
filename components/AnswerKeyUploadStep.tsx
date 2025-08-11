@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import { FileUpload } from './ui/file-upload';
 import { Button } from './ui/button';
 import { UploadedFile, AnswerKeyData } from '../types';
@@ -13,12 +13,16 @@ interface AnswerKeyUploadStepProps {
   onProcessingComplete: (data: AnswerKeyData) => void;
 }
 
-export function AnswerKeyUploadStep({
+export interface AnswerKeyUploadStepRef {
+  processAnswerKey: (url: string) => Promise<void>;
+}
+
+export const AnswerKeyUploadStep = forwardRef<AnswerKeyUploadStepRef, AnswerKeyUploadStepProps>(({
   uploadedAnswerKey,
   handleAnswerKeyUpload,
   resetUpload,
   onProcessingComplete,
-}: AnswerKeyUploadStepProps) {
+}, ref) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [processError, setProcessError] = useState<string | null>(null);
   const [processSuccess, setProcessSuccess] = useState(false);
@@ -51,6 +55,11 @@ export function AnswerKeyUploadStep({
       setIsProcessing(false);
     }
   };
+
+  // Expose the processAnswerKey function through the ref
+  useImperativeHandle(ref, () => ({
+    processAnswerKey
+  }));
 
   const handleFileUpload = async (url: string, file: File) => {
     handleAnswerKeyUpload(url, file);
@@ -104,4 +113,6 @@ export function AnswerKeyUploadStep({
       </div>
     </div>
   );
-}
+});
+
+AnswerKeyUploadStep.displayName = 'AnswerKeyUploadStep';

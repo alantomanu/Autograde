@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Button } from './ui/button'
 import { Card } from './ui/card'
 import { Progress } from './ui/progress'
 import { StudentIDStep } from './StudentIDStep'
 import { AnswerSheetUploadStep } from './AnswerSheetUploadStep'
 import { AnswerSheetPreviewStep } from './AnswerSheetPreviewStep'
-import { AnswerKeyUploadStep } from './AnswerKeyUploadStep'
+import { AnswerKeyUploadStep, AnswerKeyUploadStepRef } from './AnswerKeyUploadStep'
 import { ViewScoresStep } from './ViewScoresStep'
 import { AnswerKeyData, EvaluationResponse, EvaluationResult } from '../types'
 import { DownloadTemplateButton } from './ui/DownloadTemplateButton'
@@ -105,6 +105,7 @@ export default function ExamEvaluator() {
   const [newStudentId, setNewStudentId] = useState('');
   const router = useRouter();
   const [showBackground, setShowBackground] = useState(true);
+  const answerKeyUploadRef = useRef<AnswerKeyUploadStepRef>(null);
 
  
   const resetAnswerSheetUpload = () => setUploadedAnswerSheet(null);
@@ -197,6 +198,13 @@ export default function ExamEvaluator() {
       url,
       ...mockFile
     });
+
+    // Process the selected answer key
+    try {
+      await answerKeyUploadRef.current?.processAnswerKey(url);
+    } catch (error) {
+      console.error('Error processing selected answer key:', error);
+    }
 
    
     try {
@@ -596,6 +604,7 @@ export default function ExamEvaluator() {
               fileName="Answer_Key_Template.docx"
             />
             <AnswerKeyUploadStep
+              ref={answerKeyUploadRef}
               uploadedAnswerKey={uploadedAnswerKey}
               handleAnswerKeyUpload={async (url: string, file: File) => {
                 handleAnswerKeyUpload(url, file);
