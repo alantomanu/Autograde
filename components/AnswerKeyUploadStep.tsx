@@ -1,3 +1,4 @@
+'use client'
 import React, { forwardRef, useImperativeHandle } from 'react';
 import { FileUpload } from './ui/file-upload';
 import { Button } from './ui/button';
@@ -115,4 +116,4 @@ export const AnswerKeyUploadStep = forwardRef<AnswerKeyUploadStepRef, AnswerKeyU
   );
 });
 
-AnswerKeyUploadStep.displayName = 'AnswerKeyUploadStep';
+AnswerKeyUploadStep.displayName = 'AnswerKeyUploadStep'
