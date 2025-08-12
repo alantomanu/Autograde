@@ -17,7 +17,6 @@ import { toast } from "react-hot-toast";
 import { ReevaluationDialog } from './ReevaluationDialog'
 import { BorderBeam } from "@/components/magicui/border-beam";
 import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
-import { RecentAnswerKeys } from './RecentAnswerKeys'
 import { AnswerKeyHistory } from './AnswerKeyHistory'
 import { config } from '../config'
 
@@ -105,7 +104,7 @@ export default function ExamEvaluator() {
   const [newStudentId, setNewStudentId] = useState('');
   const router = useRouter();
   const [showBackground, setShowBackground] = useState(true);
-  const answerKeyUploadRef = useRef<AnswerKeyUploadStepRef>(null);
+  const answerKeyUploadRef = useRef<AnswerKeyUploadStepRef | null>(null);
 
  
   const resetAnswerSheetUpload = () => setUploadedAnswerSheet(null);
